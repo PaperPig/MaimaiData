@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#55FFFFFF">
+    <item>
+        <layer-list>
+
+
+            <item  android:id="@+id/song_genre_bg">
+                <shape android:shape="rectangle">
+                    <solid android:color="#09C8D4" />
+                    <corners
+                       android:radius="24dp"/>
+                </shape>
+            </item>
+
+
+            <item>
+                <shape android:shape="rectangle">
+                    <corners android:radius="24dp" />
+                    <stroke
+                        android:width="2dp"
+                        android:color="#FFFFFF" />
+                </shape>
+            </item>
+
+        </layer-list>
+    </item>
+</ripple>

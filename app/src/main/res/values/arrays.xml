@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="dxp_song_level">
+        <item>ALL</item>
+        <item>LEVEL 15</item>
+        <item>LEVEL 14+</item>
+        <item>LEVEL 14</item>
+        <item>LEVEL 13+</item>
+        <item>LEVEL 13</item>
+        <item>LEVEL 12+</item>
+        <item>LEVEL 12</item>
+        <item>LEVEL 11+</item>
+        <item>LEVEL 11</item>
+        <item>LEVEL 10+</item>
+        <item>LEVEL 10</item>
+        <item>LEVEL 9+</item>
+        <item>LEVEL 9</item>
+        <item>LEVEL 8+</item>
+        <item>LEVEL 8</item>
+        <item>LEVEL 7+</item>
+        <item>LEVEL 7</item>
+        <item>LEVEL 6</item>
+        <item>LEVEL 5</item>
+        <item>LEVEL 4</item>
+        <item>LEVEL 3</item>
+        <item>LEVEL 2</item>
+        <item>LEVEL 1</item>
+    </string-array>
+
+    <string-array name="difficulty_rank">
+        <item>DEFAULT</item>
+        <item>EXPERT-升序</item>
+        <item>EXPERT-降序</item>
+        <item>MASTER-升序</item>
+        <item>MASTER-降序</item>
+        <item>RE:MASTER-升序</item>
+        <item>RE:MASTER-降序</item>
+    </string-array>
+
+</resources>

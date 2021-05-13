@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FFCA0B</color>
+    <color name="colorPrimaryDark">#FFCA0B</color>
+    <color name="colorAccent">#03DAC5</color>
+
+    <color name="songListColor">#FFF18A</color>
+
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="gray">#F2F2F2</color>
+    <color name="basic">#79E944</color>
+    <color name="advanced">#FEC90B</color>
+    <color name="expert">#FE8E9B</color>
+    <color name="master">#AE5AFE</color>
+    <color name="remaster">#EF64FF</color>
+    <color name="divider">#E0E0E0</color>
+
+
+    <color name="pop">#FF972A</color>
+    <color name="vocal">#09C8D4</color>
+    <color name="touhou">#B15BF4</color>
+    <color name="variety">#42DE6A</color>
+    <color name="maimai">#F74949</color>
+    <color name="gekichuni">#3585FE</color>
+
+
+    <color name="great">#F75EA3</color>
+    <color name="good">#2FCA4C</color>
+    <color name="miss">#868686</color>
+</resources>

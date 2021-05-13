@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:padding="12dp">
+
+    <TextView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/search_bar_left_bg"
+        android:gravity="center"
+        android:text="@string/search"
+        android:textColor="@color/white"
+        android:textSize="12sp" />
+
+    <com.paperpig.maimaidata.widgets.ClearEditText
+        android:id="@+id/searchText"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:background="@drawable/search_bar_right_bg"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:padding="6dp"
+        android:textSize="14sp" />
+
+
+    <Button
+        android:textSize="14sp"
+        android:layout_marginStart="12dp"
+        android:id="@+id/searchButton"
+        android:layout_width="72dp"
+        android:layout_height="40dp"
+        android:background="@drawable/search_bar_button_bg"
+        android:text="@string/search"
+        android:textColor="@color/white" />
+</LinearLayout>

@@ -1,0 +1,79 @@
+<resources>
+    <string name="app_name">Maimai Data</string>
+
+
+    <string name="dx_score_transform">DX分数转换</string>
+    <string name="dx_rating_correlation">Rating相关</string>
+    <string name="dx_song_list">曲目列表</string>
+
+    <string name="search">搜索</string>
+    <string name="level">等级</string>
+    <string name="sequencing">难度排序</string>
+    <string name="version">版本</string>
+    <string name="sort">分类</string>
+
+
+    <!--    sort-->
+    <string name="pop">POPSアニメ</string>
+    <string name="niconico">niconicoボーカロイド</string>
+    <string name="touhou">東方Project</string>
+    <string name="game_variety">ゲームバラエティ</string>
+    <string name="ongeki_chuni">オンゲキCHUNITHM</string>
+
+    <!--    version-->
+    <string name="maimai">maimai</string>
+    <string name="green">GreeN</string>
+    <string name="orange">ORANGE</string>
+    <string name="pink">PiNK</string>
+    <string name="murasaki">MURASAKi</string>
+    <string name="milk">MiLK</string>
+    <string name="finale">FiNALE</string>
+    <string name="dx">でらっくす</string>
+    <string name="dx2021">でらっくす 2021</string>
+
+
+    <string name="artist">ARTIST</string>
+    <string name="bpm">BPM</string>
+    <string name="genre">歌曲分类</string>
+    <string name="add_version">添加版本</string>
+
+    <string name="maimai_achievement_desc">%.2f%%</string>
+    <string name="maimaidx_scope_achievement_desc">%.4f%%-—%.4f%%</string>
+    <string name="maimaidx_achievement_desc">%.4f%%</string>
+    <string name="design">谱面作者</string>
+
+
+    <string name="total">TOTAL</string>
+    <string name="tap">TAP</string>
+    <string name="hold">HOLD</string>
+    <string name="slide">SLIDE</string>
+    <string name="_break">BREAK</string>
+    <string name="touch">TOUCH</string>
+    <string name="break_score">break score</string>
+    <string name="dx_achievement">DX Achievement</string>
+
+    <string name="finale_full_achievement">FiNALE理论值</string>
+    <string name="copy_song_name_success">复制歌曲名成功</string>
+
+
+    <string name="perfect">PERFECT</string>
+    <string name="great">GREAT</string>
+    <string name="good">GOOD</string>
+    <string name="miss">MISS</string>
+    <string name="down50">50落</string>
+    <string name="down100">100落</string>
+
+
+    <string name="rating_sheet">RANK 系数表</string>
+    <string name="rank">RANK</string>
+    <string name="achievement">达成率</string>
+    <string name="coefficient">系数</string>
+    <string name="rate">倍率(达成率*系数)</string>
+
+    <string name="song_level">歌曲定数</string>
+    <string name="target_rating">目标rating</string>
+    <string name="single_rating">单曲rating</string>
+    <string name="total_rating">合计rating</string>
+    <string name="calculate">计算</string>
+
+</resources>

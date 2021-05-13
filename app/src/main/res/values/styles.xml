@@ -1,0 +1,29 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowTranslucentStatus">true</item>
+
+    </style>
+
+    <style name="ScoreTypeInputStyle">
+        <item name="android:inputType">number</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+
+    <style name="DXScoreAchievementStyle">
+        <item name="android:gravity">center</item>
+    </style>
+
+
+    <style name="SongDetailActivityTheme" parent="AppTheme">
+
+        <item name="colorControlNormal">@color/white</item>
+
+    </style>
+
+</resources>

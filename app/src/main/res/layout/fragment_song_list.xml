@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/songListColor">
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="fitStart"
+        android:src="@drawable/song_list_sky" />
+
+    <ImageView
+        android:id="@+id/bgGreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/song_list_green" />
+
+    <ImageView
+        android:id="@+id/bgYellow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/song_list_yellow" />
+
+    <ImageView
+        android:id="@+id/bgBlue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/song_list_blue" />
+
+    <ImageView
+        android:id="@+id/bgOrange"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="250dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/song_list_orange" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/songListRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false" />
+
+
+    <include layout="@layout/layout_song_search" />
+
+
+</FrameLayout>
