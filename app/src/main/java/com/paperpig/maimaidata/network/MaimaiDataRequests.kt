@@ -12,7 +12,7 @@ import retrofit2.Response
 
 
 /**
- * @author shenjiayi@didiglobal.com
+ * @author BBS
  * @since  2021/5/13
  */
 object MaimaiDataRequests {

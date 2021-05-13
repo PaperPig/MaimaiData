@@ -5,7 +5,7 @@ import android.content.Context
 import com.paperpig.maimaidata.network.MaimaiDataClient
 
 /**
- * @author shenjiayi@didiglobal.com
+ * @author BBS
  * @since  2021/5/13
  */
 class MaimaiDataApplication : Application() {
