@@ -28,4 +28,13 @@
     <color name="great">#F75EA3</color>
     <color name="good">#2FCA4C</color>
     <color name="miss">#868686</color>
+
+    <color name="mmd_player_rtsong_bsc_main">#6FE163</color>
+    <color name="mmd_player_rtsong_bsc_dark">#025235</color>
+    <color name="mmd_player_rtsong_adv_main">#F8DF3B</color>
+    <color name="mmd_player_rtsong_adv_dark">#C7450C</color>
+    <color name="mmd_player_rtsong_exp_main">#FF818D</color>
+    <color name="mmd_player_rtsong_exp_dark">#C02138</color>
+    <color name="mmd_player_rtsong_mst_main">#C27FF4</color>
+    <color name="mmd_player_rtsong_mst_dark">#671B8D</color>
 </resources>

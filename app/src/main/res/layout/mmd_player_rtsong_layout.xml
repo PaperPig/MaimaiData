@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="#333">
+
+    <FrameLayout
+        android:id="@+id/outer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
+        android:background="@drawable/mmd_player_rtsong_bg"
+        android:paddingStart="2dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="4dp"
+        android:paddingBottom="4dp">
+
+        <RelativeLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/mmd_player_rtsong_container_bg">
+
+            <View
+                android:id="@+id/song_diff"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/mmd_player_rtsong_diff_mst" />
+
+            <TextView
+                android:id="@+id/song_level"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="13dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/mmd_player_rtsong_level_bg"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingTop="16dp"
+                android:textColor="#333"
+                android:textSize="18sp"
+                tools:text="11+" />
+
+            <FrameLayout
+                android:id="@+id/song_jacket_container"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/song_diff"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/mmd_player_rtsong_jacket_bg"
+                android:padding="2dp">
+
+                <ImageView
+                    android:id="@+id/song_jacket"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/song_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/song_jacket_container"
+                android:layout_alignBottom="@+id/song_level"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="4dp"
+                android:layout_toStartOf="@+id/song_level"
+                android:layout_toEndOf="@+id/song_jacket_container"
+                android:background="@drawable/mmd_player_rtsong_title_bg"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                tools:text="私の中の幻想的世界観及びその顕現を想起させたある現実での出来事に関する一考察" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/song_acc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/song_title"
+                android:layout_alignStart="@+id/song_title"
+                android:layout_alignBottom="@+id/song_jacket_container"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="2dp"
+                android:layout_toEndOf="@+id/song_jacket_container"
+                android:background="@drawable/mmd_player_rtsong_other_info_bg"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:textColor="#333"
+                android:textSize="10sp"
+                tools:ignore="SmallSp"
+                tools:text="100.9999%" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/song_acc"
+                android:layout_alignBottom="@+id/song_acc"
+                android:layout_marginStart="4dp"
+                android:layout_toEndOf="@+id/song_acc"
+                android:background="@drawable/mmd_player_rtsong_other_info_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp">
+
+                <ImageView
+                    android:layout_width="33dp"
+                    android:layout_height="13dp"
+                    android:src="@drawable/mmd_player_rtsong_rating_icon" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/song_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:textColor="#333"
+                    android:textSize="10sp"
+                    tools:ignore="SmallSp"
+                    tools:text="211/211" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/song_fsfsd"
+                android:layout_width="24dp"
+                android:layout_height="26dp"
+                android:layout_below="@+id/song_level"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:src="@drawable/mmd_player_rtsong_fsdp" />
+
+            <ImageView
+                android:id="@+id/song_fcap"
+                android:layout_width="24dp"
+                android:layout_height="26dp"
+                android:layout_alignTop="@+id/song_fsfsd"
+                android:layout_marginEnd="4dp"
+                android:layout_toStartOf="@+id/song_fsfsd"
+                android:src="@drawable/mmd_player_rtsong_app" />
+
+            <ImageView
+                android:id="@+id/song_rank"
+                android:layout_width="51dp"
+                android:layout_height="26dp"
+                android:layout_alignTop="@+id/song_fcap"
+                android:layout_marginTop="1dp"
+                android:layout_toStartOf="@+id/song_fcap"
+                android:src="@drawable/mmd_player_rtsong_sssp" />
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="18dp"
+        android:layout_gravity="end|top"
+        android:layout_marginEnd="4dp"
+        android:src="@drawable/mmd_player_rtsong_icon_dx" />
+</FrameLayout>
