@@ -20,10 +20,4 @@
     </style>
 
 
-    <style name="SongDetailActivityTheme" parent="AppTheme">
-
-        <item name="colorControlNormal">@color/white</item>
-
-    </style>
-
 </resources>

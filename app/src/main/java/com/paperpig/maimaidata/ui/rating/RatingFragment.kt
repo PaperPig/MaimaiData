@@ -1,5 +1,6 @@
 package com.paperpig.maimaidata.ui.rating
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.model.Rating
 import com.paperpig.maimaidata.ui.BaseFragment
+import com.paperpig.maimaidata.ui.maimaidxprober.LoginActivity
+import com.paperpig.maimaidata.ui.maimaidxprober.ProberActivity
+import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.utils.getInt
 import kotlinx.android.synthetic.main.fragment_rating.*
 import kotlin.math.floor
@@ -32,6 +36,18 @@ class RatingFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_rating, container, false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (SharePreferencesUtils(context!!).getUserName().isEmpty()) {
+            loginLayout.visibility = View.VISIBLE
+            loggedLayout.visibility = View.GONE
+        } else {
+            account.text = SharePreferencesUtils(context!!).getUserName()
+            loginLayout.visibility = View.GONE
+            loggedLayout.visibility = View.VISIBLE
+        }
+    }
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -40,6 +56,19 @@ class RatingFragment : BaseFragment() {
             resultAdapter = RatingResultAdapter()
             layoutManager = LinearLayoutManager(context)
             adapter = resultAdapter
+        }
+
+        loginBtn.setOnClickListener {
+            startActivity(Intent(context, LoginActivity::class.java))
+        }
+
+        queryBtn.setOnClickListener {
+            startActivity(Intent(context, ProberActivity::class.java))
+        }
+
+        changeBtn.setOnClickListener {
+            startActivity(Intent(context, LoginActivity::class.java))
+
         }
 
         calculateBtn.setOnClickListener {
@@ -82,8 +111,6 @@ class RatingFragment : BaseFragment() {
         resultAdapter.setData(list)
 
     }
-
-
 }
 
 
@@ -115,7 +142,6 @@ private fun getReachableAchievement(level: Int, rating: Int): Int {
     }
     return maxAchi
 }
-
 
 private fun achievementToRating(level: Int, achi: Int): Int {
     val i = when {
