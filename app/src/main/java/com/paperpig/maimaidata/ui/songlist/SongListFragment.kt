@@ -19,6 +19,7 @@ import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.WindowsUtils
 import kotlinx.android.synthetic.main.fragment_song_list.*
 import kotlinx.android.synthetic.main.layout_song_search.*
+import kotlinx.android.synthetic.main.mmd_splash_style_bg_layout.*
 import kotlinx.android.synthetic.main.search_bar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -101,7 +102,7 @@ class SongListFragment : BaseFragment() {
     private suspend fun getData(): List<SongData> {
         return withContext(Dispatchers.IO) {
             val song2021 = context?.assets?.open("music_data.json")?.bufferedReader()
-                    .use { it?.readText() }
+                .use { it?.readText() }
             Gson().fromJson<List<SongData>>(
                 song2021, object : TypeToken<List<SongData>>() {}.type
             )

@@ -1,15 +1,11 @@
 package com.paperpig.maimaidata.ui
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.FragmentTransaction
 import com.paperpig.maimaidata.R
-import com.paperpig.maimaidata.network.MaimaiDataClient
-import com.paperpig.maimaidata.network.MaimaiDataRequests
 import com.paperpig.maimaidata.ui.finaletodx.FinaleToDxFragment
 import com.paperpig.maimaidata.ui.rating.RatingFragment
 import com.paperpig.maimaidata.ui.songlist.SongListFragment
@@ -70,29 +66,6 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-    }
-
-    // TODO: 2021/5/14 sample, should be delete!!!
-    @SuppressLint("CheckResult")
-    override fun onResume() {
-        super.onResume()
-        MaimaiDataRequests
-                .login("sjy0079", "txws0089")
-                .subscribe({
-                    val cookie = it.headers()["set-cookie"] ?: String()
-                    Log.e("test", cookie)
-                    if (cookie.isNotBlank()) {
-                        MaimaiDataRequests
-                                .getRecords(cookie)
-                                .subscribe({ result ->
-                                    Log.e("test", result.toString())
-                                }, { error ->
-                                    error.printStackTrace()
-                                })
-                    }
-                }, {
-                    it.printStackTrace()
-                })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

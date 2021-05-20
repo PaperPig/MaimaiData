@@ -65,6 +65,12 @@
 
 
     <string name="rating_sheet">RANK 系数表</string>
+    <string name="maimaidx_prober">舞萌DX查分器</string>
+    <string name="login">登录</string>
+    <string name="prober_tips">数据来源于舞萌DX查分器，\n请使用舞萌DX查分器进行数据同步</string>
+    <string name="prober_url">https://github.com/Diving-Fish/maimaidx-prober</string>
+    <string name="change_account">更换账户</string>
+    <string name="query_record">查分</string>
     <string name="rank">RANK</string>
     <string name="achievement">达成率</string>
     <string name="coefficient">系数</string>
@@ -75,5 +81,12 @@
     <string name="single_rating">单曲rating</string>
     <string name="total_rating">合计rating</string>
     <string name="calculate">计算</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+    <string name="old_version_25">old version 25</string>
+    <string name="new_version_15">new version 15</string>
+    <string name="old_version_divider">best 25 分界线</string>
+    <string name="new_version_divider">best 15 分界线</string>
+    <string name="rating_scope">%d/%d</string>
 
 </resources>
