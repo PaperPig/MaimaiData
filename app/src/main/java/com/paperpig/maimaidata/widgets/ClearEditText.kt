@@ -12,7 +12,7 @@ import com.paperpig.maimaidata.utils.WindowsUtils
 
 class ClearEditText(context: Context, attrs: AttributeSet?) :
     AppCompatEditText(context, attrs) {
-    var mDrawable: Drawable? = null
+    private var mDrawable: Drawable? = null
 
 
     init {

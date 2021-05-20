@@ -2,7 +2,7 @@ package com.paperpig.maimaidata.ui.maimaidxprober
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +12,7 @@ import com.paperpig.maimaidata.model.ResponseErrorBody
 import com.paperpig.maimaidata.network.MaimaiDataRequests
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.title.*
 
 class LoginActivity : AppCompatActivity() {
 
@@ -19,8 +20,16 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
-        username.setText( SharePreferencesUtils(this).getUserName())
-        password.setText( SharePreferencesUtils(this).getPassword())
+        setSupportActionBar(toolbar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+        }
+        supportActionBar?.title = getString(R.string.login)
+
+
+        username.setText(SharePreferencesUtils(this).getUserName())
+        password.setText(SharePreferencesUtils(this).getPassword())
 
 
         loginBtn.setOnClickListener {
@@ -58,4 +67,11 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home ->
+                finish()
+        }
+        return true
+    }
 }

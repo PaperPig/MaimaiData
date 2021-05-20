@@ -1,0 +1,80 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/songListColor">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="fitStart"
+        android:src="@drawable/song_list_sky" />
+
+    <ImageView
+        android:id="@+id/bgGreen"
+        android:layout_width="822dp"
+        android:layout_height="150dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="-65dp"
+        android:src="@drawable/song_list_green" />
+
+    <ImageView
+        android:id="@+id/bgYellow"
+        android:layout_width="658dp"
+        android:layout_height="300dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/song_list_yellow" />
+
+    <ImageView
+        android:id="@+id/bgBlue"
+        android:layout_width="741dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="210dp"
+        android:src="@drawable/song_list_blue" />
+
+    <ImageView
+        android:id="@+id/plam_l"
+        android:layout_width="250dp"
+        android:layout_height="482dp"
+        android:layout_marginTop="70dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/mmd_home_elem_palm_l" />
+
+    <ImageView
+        android:id="@+id/plam_r"
+        android:layout_width="250dp"
+        android:layout_height="482dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="70dp"
+        android:src="@drawable/mmd_home_elem_palm_r" />
+
+    <ImageView
+        android:id="@+id/bgOrange"
+        android:layout_width="774dp"
+        android:layout_height="340dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="360dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/song_list_orange" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="-300dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/mmd_home_elem_footer" />
+
+    <ImageView
+        android:layout_width="416dp"
+        android:layout_height="447dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="90dp"
+        android:layout_marginEnd="-70dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/mmd_home_elem_otohime" />
+
+</FrameLayout>

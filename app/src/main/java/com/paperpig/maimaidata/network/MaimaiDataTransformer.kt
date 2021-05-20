@@ -1,8 +1,6 @@
 package com.paperpig.maimaidata.network
 
 import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

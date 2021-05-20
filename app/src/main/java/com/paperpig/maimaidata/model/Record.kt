@@ -24,7 +24,7 @@ data class Record(
         "fcp" -> R.drawable.mmd_player_rtsong_fcp
         "ap" -> R.drawable.mmd_player_rtsong_ap
         "app" -> R.drawable.mmd_player_rtsong_app
-        else -> null
+        else -> R.drawable.mmd_player_rtsong_stub
     }
 
     fun getFsIcon() = when (fs) {
@@ -32,7 +32,7 @@ data class Record(
         "fsp" -> R.drawable.mmd_player_rtsong_fsp
         "fsd" -> R.drawable.mmd_player_rtsong_fsd
         "fsdp" -> R.drawable.mmd_player_rtsong_fsdp
-        else -> null
+        else -> R.drawable.mmd_player_rtsong_stub
     }
 
     fun getDifficultyDiff() = when (level_index) {
@@ -40,7 +40,7 @@ data class Record(
         1 -> R.drawable.mmd_player_rtsong_diff_adv
         2 -> R.drawable.mmd_player_rtsong_diff_exp
         3 -> R.drawable.mmd_player_rtsong_diff_mst
-        else -> R.drawable.mmd_player_rtsong_diff_mst
+        else -> R.drawable.mmd_player_rtsong_diff_rem
     }
 
     fun getBackgroundColor() = when (level_index) {
@@ -48,7 +48,7 @@ data class Record(
         1 -> R.color.mmd_player_rtsong_adv_main
         2 -> R.color.mmd_player_rtsong_exp_main
         3 -> R.color.mmd_player_rtsong_mst_main
-        else -> R.color.mmd_player_rtsong_mst_main
+        else -> R.color.mmd_player_rtsong_rem_main
     }
 
 
@@ -57,7 +57,7 @@ data class Record(
         1 -> R.color.mmd_player_rtsong_adv_dark
         2 -> R.color.mmd_player_rtsong_exp_dark
         3 -> R.color.mmd_player_rtsong_mst_dark
-        else -> R.color.mmd_player_rtsong_mst_dark
+        else -> R.color.mmd_player_rtsong_rem_dark
     }
 
     fun getRankIcon() = when (rate) {
@@ -70,7 +70,9 @@ data class Record(
         "aa" -> R.drawable.mmd_player_rtsong_aa
         "aaa" -> R.drawable.mmd_player_rtsong_aaa
         "s" -> R.drawable.mmd_player_rtsong_s
+        "sp" -> R.drawable.mmd_player_rtsong_sp
         "ss" -> R.drawable.mmd_player_rtsong_ss
+        "ssp" -> R.drawable.mmd_player_rtsong_ssp
         "sss" -> R.drawable.mmd_player_rtsong_sss
         "sssp" -> R.drawable.mmd_player_rtsong_sssp
         else -> R.drawable.mmd_player_rtsong_d
