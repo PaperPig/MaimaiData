@@ -14,13 +14,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.paperpig.maimaidata.R
-import com.paperpig.maimaidata.constat.Constant
+import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.SongData
+import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
-import com.paperpig.maimaidata.utils.containsStr
+import com.paperpig.maimaidata.utils.versionCheck
 import java.util.*
 import kotlin.Comparator
 
@@ -74,8 +74,8 @@ class SongListAdapter : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
             }.filter {
                 if (versionList.isNotEmpty()) {
                     if (versionList.contains("でらっくす 2021")) {
-                        return@filter versionList.containsStr(it.basic_info.from) || it.basic_info.is_new
-                    } else return@filter versionList.containsStr(it.basic_info.from) && !it.basic_info.is_new
+                        return@filter versionList.versionCheck(it.basic_info.from) || it.basic_info.is_new
+                    } else return@filter versionList.versionCheck(it.basic_info.from) && !it.basic_info.is_new
                 } else return@filter true
             }
             if (isLevelBySort) {
@@ -180,8 +180,8 @@ class SongListAdapter : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
         genreBg.setColor(ContextCompat.getColor(holder.itemView.context, songData.getBgColor()))
 
 
-        Glide.with(holder.itemView.context)
-            .load(Constant.IMAGE_BASE_URL + songData.basic_info.image_url)
+        GlideApp.with(holder.itemView.context)
+            .load(MaimaiDataClient.IMAGE_BASE_URL + songData.basic_info.image_url)
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(holder.songJacket)
         holder.songJacket.setBackgroundColor(

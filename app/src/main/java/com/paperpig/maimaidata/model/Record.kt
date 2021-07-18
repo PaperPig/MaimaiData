@@ -84,4 +84,20 @@ data class Record(
             R.drawable.mmd_player_rtsong_icon_dx
         else R.drawable.mmd_player_rtsong_icon_standard
     }
+
+    fun getRatingBoard(): Int = when (level_index) {
+        0 -> R.drawable.mmd_rating_board_bsc
+        1 -> R.drawable.mmd_rating_board_adv
+        2 -> R.drawable.mmd_rating_board_exp
+        3 -> R.drawable.mmd_rating_board_mas
+        else -> R.drawable.mmd_rating_board_rem
+    }
+
+    fun getRatingDiff() = when (level_index) {
+        0 -> R.drawable.mmd_rating_diff_basic
+        1 -> R.drawable.mmd_rating_diff_advanced
+        2 -> R.drawable.mmd_rating_diff_expert
+        3 -> R.drawable.mmd_rating_diff_master
+        else -> R.drawable.mmd_rating_diff_remaster
+    }
 }

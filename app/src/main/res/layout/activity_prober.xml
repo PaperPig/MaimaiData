@@ -32,7 +32,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-
                     <RadioGroup
                         android:id="@+id/versionGroup"
                         android:layout_width="match_parent"
@@ -109,10 +108,22 @@
 
                 </FrameLayout>
 
-                <androidx.viewpager2.widget.ViewPager2
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/proberVp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
+                    <ProgressBar
+                        android:id="@+id/loading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:visibility="gone" />
+                </FrameLayout>
 
             </LinearLayout>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

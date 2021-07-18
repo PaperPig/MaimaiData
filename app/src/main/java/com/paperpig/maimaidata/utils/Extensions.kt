@@ -8,11 +8,11 @@ fun String.getInt(): Int {
     }
 }
 
-fun List<String>.containsStr(string: String): Boolean {
+fun List<String>.versionCheck(string: String): Boolean {
     for (i in this) {
         if (i == "maimai") {
-            if (string == i) return true
-        } else if(string.contains(i))
+            if (string == "maimai" || string == "maimai PLUS") return true
+        } else if (string.contains(i))
             return true
     }
     return false

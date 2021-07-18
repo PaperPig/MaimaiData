@@ -83,10 +83,10 @@
     <string name="calculate">计算</string>
     <string name="username">用户名</string>
     <string name="password">密码</string>
-    <string name="old_version_25">old version 25</string>
-    <string name="new_version_15">new version 15</string>
+    <string name="old_version_25">旧版本：%d</string>
+    <string name="new_version_15">现行版本：%d</string>
     <string name="old_version_divider">best 25 分界线</string>
     <string name="new_version_divider">best 15 分界线</string>
     <string name="rating_scope">%d/%d</string>
-
+    <string name="save_best40">保存图片</string>
 </resources>

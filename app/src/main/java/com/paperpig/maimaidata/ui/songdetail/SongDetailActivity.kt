@@ -14,8 +14,9 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.paperpig.maimaidata.R
-import com.paperpig.maimaidata.constat.Constant
+import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.SongData
+import com.paperpig.maimaidata.network.MaimaiDataClient
 import kotlinx.android.synthetic.main.activity_song_detail.*
 
 class SongDetailActivity : AppCompatActivity() {
@@ -45,7 +46,7 @@ class SongDetailActivity : AppCompatActivity() {
         topLayout.setBackgroundColor(ContextCompat.getColor(this, songData.getBgColor()))
         tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, songData.getBgColor()))
 
-        Glide.with(this).load(Constant.IMAGE_BASE_URL + songData.basic_info.image_url)
+        GlideApp.with(this).load(MaimaiDataClient.IMAGE_BASE_URL + songData.basic_info.image_url)
             .into(songJacket)
 
         songTitle.text = songData.basic_info.title

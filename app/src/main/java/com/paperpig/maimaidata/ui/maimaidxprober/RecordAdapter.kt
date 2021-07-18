@@ -15,9 +15,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.paperpig.maimaidata.R
-import com.paperpig.maimaidata.constat.Constant
+import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
+import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.utils.WindowsUtils
 
 class RecordAdapter(private val songData: List<SongData>) :
@@ -82,7 +83,7 @@ class RecordAdapter(private val songData: List<SongData>) :
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
         if (viewHolder is RecordHolder) {
             val context = viewHolder.itemView.context
-            val record = recordList[position]
+            val record = recordList[getRealPosition(position)]
             viewHolder.songLevel.text = record.ds.toString()
             viewHolder.songTitle.text = record.title
             viewHolder.songAcc.text =
@@ -95,8 +96,8 @@ class RecordAdapter(private val songData: List<SongData>) :
 
             songData.forEach {
                 if (it.id == record.song_id) {
-                    Glide.with(context)
-                        .load(Constant.IMAGE_BASE_URL + it.basic_info.image_url)
+                    GlideApp.with(context)
+                        .load(MaimaiDataClient.IMAGE_BASE_URL + it.basic_info.image_url)
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .apply(RequestOptions.bitmapTransform(RoundedCorners(WindowsUtils.dp2px(
                             context,
@@ -142,7 +143,17 @@ class RecordAdapter(private val songData: List<SongData>) :
     }
 
     override fun getItemCount(): Int {
-        return recordList.size
+        return if ((versionType == 0 && recordList.size > 25) || (versionType == 1 && recordList.size > 15)) {
+            recordList.size + 1
+        } else recordList.size
+    }
+
+    private fun getRealPosition(position: Int): Int {
+        return if ((versionType == 0 && position > 25) || (versionType == 1 && position > 15)) {
+            position - 1
+        } else {
+            position
+        }
     }
 
     override fun getItemViewType(position: Int): Int {

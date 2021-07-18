@@ -1,15 +1,17 @@
 package com.paperpig.maimaidata.ui.maimaidxprober
 
+import android.Manifest
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -17,21 +19,26 @@ import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataRequests
+import com.paperpig.maimaidata.utils.CreateBest40
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import kotlinx.android.synthetic.main.activity_prober.*
 import kotlinx.android.synthetic.main.mmd_splash_style_bg_layout.*
 import kotlinx.android.synthetic.main.title.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 
 class ProberActivity : AppCompatActivity() {
+
+
     private lateinit var proberVersionAdapter: ProberVersionAdapter
+    private var songData = listOf<SongData>()
+    private var oldRating = listOf<Record>()
+    private var newRating = listOf<Record>()
 
+    companion object {
+        const val PERMISSION_REQUEST = 200
+    }
 
-    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_prober)
@@ -43,14 +50,19 @@ class ProberActivity : AppCompatActivity() {
             setDisplayShowHomeEnabled(true)
         }
         supportActionBar?.title = getString(R.string.maimaidx_prober)
+        oldVersionRdoBtn.text =
+            String.format(getString(R.string.old_version_25), 0)
+        newVersionRdoBtn.text =
+            String.format(getString(R.string.new_version_15), 0)
 
         setupAnimation()
 
+
         CoroutineScope(Dispatchers.Main).launch {
-            val data = getData()
+            songData = getData()
 
             proberVp.apply {
-                proberVersionAdapter = ProberVersionAdapter(data)
+                proberVersionAdapter = ProberVersionAdapter(songData)
                 adapter = proberVersionAdapter
                 registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
@@ -91,7 +103,7 @@ class ProberActivity : AppCompatActivity() {
             }
 
             MaimaiDataRequests.getRecords(SharePreferencesUtils(this@ProberActivity).getCookie())
-                .subscribe({
+                .subscribe({ it ->
                     refreshLayout.isRefreshing = false
                     val hasStatus = it.asJsonObject.has("status")
                     if (hasStatus) {
@@ -99,6 +111,7 @@ class ProberActivity : AppCompatActivity() {
                             Toast.makeText(this@ProberActivity, "请求出错，请重新登录", Toast.LENGTH_SHORT)
                                 .show()
                             startActivity(Intent(this@ProberActivity, LoginActivity::class.java))
+                            finish()
                             return@subscribe
                         }
                     }
@@ -111,10 +124,35 @@ class ProberActivity : AppCompatActivity() {
                                 type)
                         proberVersionAdapter.setData(records)
 
+                        oldRating =
+                            records.filter { !it.is_new }.sortedByDescending {
+                                it.ra
+                            }.let {
+                                it.subList(0, if (it.size >= 25) 25 else it.size)
+
+                            }
+                        newRating =
+                            records.filter { it.is_new }.sortedByDescending {
+                                it.ra
+                            }.let {
+                                it.subList(0, if (it.size >= 15) 15 else it.size)
+                            }
+
+                        oldVersionRdoBtn.text =
+                            String.format(getString(R.string.old_version_25),
+                                oldRating.sumBy { it.ra })
+                        newVersionRdoBtn.text =
+                            String.format(getString(R.string.new_version_15),
+                                newRating.sumBy { it.ra })
+
                     }
                 }, { error ->
                     refreshLayout.isRefreshing = false
                     error.printStackTrace()
+                    Toast.makeText(this@ProberActivity, "请求出错，请重新登录", Toast.LENGTH_SHORT)
+                        .show()
+                    startActivity(Intent(this@ProberActivity, LoginActivity::class.java))
+                    finish()
                 })
         }
     }
@@ -129,10 +167,17 @@ class ProberActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.share_menu, menu)
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home ->
                 finish()
+            R.id.menu_share ->
+                checkPermission()
         }
         return true
     }
@@ -160,5 +205,58 @@ class ProberActivity : AppCompatActivity() {
         )
 
         translationAnimatorSet.start()
+    }
+
+    private fun createImage() {
+
+        GlobalScope.launch(Dispatchers.Main) {
+
+            loading.visibility = View.VISIBLE
+
+            CreateBest40.createSongInfo(this@ProberActivity,
+                songData,
+                oldRating,
+                newRating
+            )
+
+            loading.visibility = View.GONE
+
+
+        }
+
+    }
+
+
+    private fun checkPermission() {
+        val permissionsStorage = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if (ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(this, permissionsStorage, PERMISSION_REQUEST)
+            } else {
+                createImage()
+            }
+        } else {
+            createImage()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == PERMISSION_REQUEST) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                createImage()
+            } else {
+                Toast.makeText(this, "保存失败，没有获取储存权限", Toast.LENGTH_SHORT).show()
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }
