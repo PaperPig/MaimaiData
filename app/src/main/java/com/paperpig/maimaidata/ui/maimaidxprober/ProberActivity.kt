@@ -125,15 +125,20 @@ class ProberActivity : AppCompatActivity() {
                         proberVersionAdapter.setData(records)
 
                         oldRating =
-                            records.filter { !it.is_new }.sortedByDescending {
+                            records.sortedByDescending {
                                 it.ra
+                            }.filter {
+                                val find = songData.find { data -> data.id == it.song_id }
+                                !find!!.basic_info.is_new
                             }.let {
                                 it.subList(0, if (it.size >= 25) 25 else it.size)
-
                             }
                         newRating =
-                            records.filter { it.is_new }.sortedByDescending {
+                            records.sortedByDescending {
                                 it.ra
+                            }.filter {
+                                val find = songData.find { data -> data.id == it.song_id }
+                                find!!.basic_info.is_new
                             }.let {
                                 it.subList(0, if (it.size >= 15) 15 else it.size)
                             }

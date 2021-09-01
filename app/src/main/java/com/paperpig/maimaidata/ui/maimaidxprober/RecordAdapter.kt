@@ -10,7 +10,6 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
@@ -36,10 +35,11 @@ class RecordAdapter(private val songData: List<SongData>) :
         set(value) {
             field = value
                 .filter {
+                    val find = songData.find { data -> data.id == it.song_id }
                     if (versionType == 0) {
-                        !it.is_new
+                        !find!!.basic_info.is_new
                     } else {
-                        it.is_new
+                        find!!.basic_info.is_new
                     }
                 }
                 .sortedByDescending { it.ra }
@@ -93,19 +93,17 @@ class RecordAdapter(private val songData: List<SongData>) :
                 record.ra,
                 (record.ds * 14.07).toInt())
 
-
-            songData.forEach {
-                if (it.id == record.song_id) {
-                    GlideApp.with(context)
-                        .load(MaimaiDataClient.IMAGE_BASE_URL + it.basic_info.image_url)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .apply(RequestOptions.bitmapTransform(RoundedCorners(WindowsUtils.dp2px(
-                            context,
-                            5f).toInt())))
-                        .into(viewHolder.songJacket)
-                    return@forEach
-                }
+            val find = songData.find { it.id == record.song_id }
+            if (find != null) {
+                GlideApp.with(context)
+                    .load(MaimaiDataClient.IMAGE_BASE_URL + find.basic_info.image_url)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .apply(RequestOptions.bitmapTransform(RoundedCorners(WindowsUtils.dp2px(
+                        context,
+                        5f).toInt())))
+                    .into(viewHolder.songJacket)
             }
+
 
             (viewHolder.out.background as GradientDrawable).setColor(ContextCompat.getColor(
                 context,
