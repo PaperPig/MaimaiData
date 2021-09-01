@@ -51,9 +51,9 @@ object CreateBest40 {
             return
         }
         withContext(Dispatchers.IO) {
-            val containerBitmap = Bitmap.createBitmap(containerWidth,
-                containerHeight + headerHeight,
-                Bitmap.Config.ARGB_8888)
+
+            val containerBitmap = drawableToBitmap(context, R.drawable.mmd_player_best40_bg, containerWidth,
+                containerHeight+ headerHeight)
             val containerCanvas = Canvas(containerBitmap)
             val textPaint = TextPaint()
 
@@ -82,65 +82,6 @@ object CreateBest40 {
                     null)
             }
 
-
-            //绘制背景图片
-            val bgDrawable =
-                ContextCompat.getDrawable(context, R.drawable.mmd_rating_bg)
-            val bgBitmap = Bitmap.createBitmap(containerBitmap.width,
-                containerBitmap.height,
-                Bitmap.Config.ARGB_8888)
-            val bgCanvas = Canvas(bgBitmap)
-            bgDrawable!!.setBounds(0,
-                0,
-                bgBitmap.width,
-                bgBitmap.height)
-            bgDrawable.draw(bgCanvas)
-
-            //绘制波浪图层
-            val waveDrawable =
-                ContextCompat.getDrawable(context, R.drawable.mmd_rating_wave_bg)
-            val waveBitmap = Bitmap.createBitmap(containerBitmap.width,
-                waveDrawable!!.intrinsicHeight,
-                Bitmap.Config.ARGB_8888)
-            val waveCanvas = Canvas(waveBitmap)
-            waveDrawable.setBounds(0,
-                0,
-                waveBitmap.width,
-                waveBitmap.height)
-            waveDrawable.draw(waveCanvas)
-
-            //绘制右上角图片
-            val charaBitmap = drawableToBitmap(context, R.drawable.chara, 350, 340)
-            //绘制舞萌dx logo
-            val logoBitmap =
-                drawableToBitmap(context, R.drawable.maimaidx_logo, 400, 200)
-            //绘制rating框
-            val ratingBitmap = drawableToBitmap(context,
-                R.drawable.rating_base_normal,
-                198,
-                56)
-            //绘制姓名框
-            val nameBoxDrawable =
-                ContextCompat.getDrawable(context, R.drawable.mmp_rating_name_box)
-            val nameBoxBitmap = Bitmap.createBitmap(300,
-                70,
-                Bitmap.Config.ARGB_8888)
-            val nameBoxCanvas = Canvas(nameBoxBitmap)
-            nameBoxDrawable!!.setBounds(0, 0, nameBoxBitmap.width, nameBoxBitmap.height)
-            nameBoxDrawable.draw(nameBoxCanvas)
-
-            //绘制姓名框下方的rating信息框
-            val trophyBitmap = drawableToBitmap(context, R.drawable.trophy_normal, 280, 30)
-
-
-            containerCanvas.drawColor(Color.YELLOW)
-            containerCanvas.drawBitmap(waveBitmap, 0f, 40f, null)
-            containerCanvas.drawBitmap(bgBitmap, 0f, 50f, null)
-            containerCanvas.drawBitmap(charaBitmap, 1300f, 0f, null)
-            containerCanvas.drawBitmap(logoBitmap, 20f, 20f, null)
-            containerCanvas.drawBitmap(ratingBitmap, 430f, 50f, null)
-            containerCanvas.drawBitmap(nameBoxBitmap, 420f, 100f, null)
-            containerCanvas.drawBitmap(trophyBitmap, 430f, 170f, null)
             containerCanvas.drawBitmap(mainBitmap, 0f, 250f, null)
 
 
