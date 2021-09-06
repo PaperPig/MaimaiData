@@ -1,6 +1,8 @@
 package com.paperpig.maimaidata.network
 
+import com.google.gson.Gson
 import com.google.gson.JsonElement
+import com.paperpig.maimaidata.model.AppUpdateModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -40,4 +42,18 @@ object MaimaiDataRequests {
             .getService()
             .getRecords(cookie)
             .compose(MaimaiDataTransformer.handleResult())
+
+    /**
+     * fetch the version info for updating
+     */
+    fun fetchUpdateInfo(): Observable<AppUpdateModel> =
+            MaimaiDataClient
+                    .instance
+                    .getService()
+                    .getUpdateInfo()
+                    .compose(MaimaiDataTransformer.handleResult())
+                    .flatMap {
+                        val model = Gson().fromJson(it, AppUpdateModel::class.java)
+                        Observable.just(model)
+                    }
 }

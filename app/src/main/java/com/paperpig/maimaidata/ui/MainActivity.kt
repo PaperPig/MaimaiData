@@ -1,14 +1,21 @@
 package com.paperpig.maimaidata.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.FragmentTransaction
+import com.afollestad.materialdialogs.DialogAction
+import com.afollestad.materialdialogs.MaterialDialog
+import com.paperpig.maimaidata.BuildConfig
 import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.network.MaimaiDataRequests
 import com.paperpig.maimaidata.ui.finaletodx.FinaleToDxFragment
 import com.paperpig.maimaidata.ui.rating.RatingFragment
 import com.paperpig.maimaidata.ui.songlist.SongListFragment
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.title.*
 
@@ -16,6 +23,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var finaleToDxFragment: FinaleToDxFragment
     private lateinit var ratingFragment: RatingFragment
     private lateinit var songListFragment: SongListFragment
+    private var updateDisposable: Disposable? = null
+    private var isUpdateChecked = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,6 +95,47 @@ class MainActivity : AppCompatActivity() {
             RatingFragment.TAG,
             ratingFragment
         )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!isUpdateChecked) {
+            updateDisposable?.dispose()
+            checkUpdate()
+        }
+    }
+
+    /**
+     * check update
+     */
+    private fun checkUpdate() {
+        updateDisposable = MaimaiDataRequests
+            .fetchUpdateInfo()
+            .subscribe({
+                if (it.version != null &&
+                    it.version!! > BuildConfig.VERSION_NAME &&
+                    !it.url.isNullOrBlank()
+                ) {
+                    isUpdateChecked = true
+                    MaterialDialog.Builder(this)
+                        .title(R.string.maimai_data_update_title)
+                        .content(R.string.maimai_data_update_content)
+                        .positiveText(R.string.common_confirm)
+                        .onPositive { _, which ->
+                            if (DialogAction.POSITIVE == which) {
+                                startActivity(Intent().apply {
+                                    action = Intent.ACTION_VIEW
+                                    data = Uri.parse(it.url)
+                                })
+                            }
+                        }
+                        .autoDismiss(true)
+                        .cancelable(true)
+                        .show()
+                }
+            }, {
+                it.printStackTrace()
+            })
     }
 
 

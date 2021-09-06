@@ -35,4 +35,11 @@ interface MaimaiDataService {
      */
     @GET("/api/maimaidxprober/player/records")
     fun getRecords(@Header("Cookie") cookie: String): Observable<JsonElement>
+
+    /**
+     * fetch update info from a noob's server
+     */
+    @Headers("urlName:http://123.57.246.220:3000")
+    @GET("/checkUpdate")
+    fun getUpdateInfo(): Observable<JsonElement>
 }
