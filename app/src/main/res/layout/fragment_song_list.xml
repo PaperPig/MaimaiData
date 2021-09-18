@@ -4,7 +4,9 @@
     android:layout_height="match_parent"
     android:background="@color/songListColor">
 
-    <include layout="@layout/mmd_splash_style_bg_layout" />
+
+    <include layout="@layout/mmd_universe_style_bg_layout"/>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/songListRecyclerView"
@@ -15,6 +17,7 @@
 
 
     <include layout="@layout/layout_song_search" />
+
 
 
 </FrameLayout>

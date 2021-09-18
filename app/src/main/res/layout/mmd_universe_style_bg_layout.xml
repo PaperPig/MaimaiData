@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dosTopRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dosUnderRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="350dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        android:src="@drawable/mmd_home_elem_deco_center" />
+
+    <ImageView
+        android:layout_gravity="center"
+        android:src="@drawable/chara_sp"
+        android:scaleType="centerCrop"
+        android:layout_width="351dp"
+        android:layout_height="426dp"/>
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/mmd_home_elem_corner_left" />
+
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/mmd_home_elem_corner_right" />
+
+
+</FrameLayout>

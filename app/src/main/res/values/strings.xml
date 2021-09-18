@@ -2,6 +2,7 @@
     <string name="app_name">Maimai Data</string>
 
     <string name="common_confirm">确定</string>
+    <string name="common_cancel">取消</string>
 
     <string name="dx_score_transform">DX分数转换</string>
     <string name="dx_rating_correlation">Rating相关</string>

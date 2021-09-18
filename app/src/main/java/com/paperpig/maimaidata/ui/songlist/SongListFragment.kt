@@ -1,9 +1,7 @@
 package com.paperpig.maimaidata.ui.songlist
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.CheckBox
@@ -11,25 +9,32 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.paperpig.maimaidata.R
-import com.paperpig.maimaidata.model.SongData
+import com.paperpig.maimaidata.model.SongListModel
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.WindowsUtils
 import kotlinx.android.synthetic.main.fragment_song_list.*
 import kotlinx.android.synthetic.main.layout_song_search.*
-import kotlinx.android.synthetic.main.mmd_splash_style_bg_layout.*
+import kotlinx.android.synthetic.main.mmd_universe_style_bg_layout.*
 import kotlinx.android.synthetic.main.search_bar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.math.hypot
 
 
 class SongListFragment : BaseFragment() {
     private lateinit var songAdapter: SongListAdapter
+    private val mHandler: Handler = Handler()
+    private val scrollRunnable: Runnable by lazy {
+        object : Runnable {
+            override fun run() {
+                dosTopRecyclerView.scrollBy(1, 0)
+                dosUnderRecyclerView.scrollBy(1, 0)
+                mHandler.postDelayed(this, 50)
+            }
+        }
+    }
 
     companion object {
 
@@ -94,19 +99,10 @@ class SongListFragment : BaseFragment() {
 
 
         CoroutineScope(Dispatchers.Main).launch {
-            songAdapter.setData(getData())
+            songAdapter.setData(SongListModel().getData(context)
+                .sortedByDescending { it.id.toInt() })
         }
 
-    }
-
-    private suspend fun getData(): List<SongData> {
-        return withContext(Dispatchers.IO) {
-            val song2021 = context?.assets?.open("music_data.json")?.bufferedReader()
-                .use { it?.readText() }
-            Gson().fromJson<List<SongData>>(
-                song2021, object : TypeToken<List<SongData>>() {}.type
-            )
-        }
     }
 
 
@@ -190,27 +186,30 @@ class SongListFragment : BaseFragment() {
     }
 
     private fun setupAnimation() {
-        val translationAnimatorSet = AnimatorSet()
-        translationAnimatorSet.playTogether(
-            ObjectAnimator.ofFloat(bgGreen, "translationY", -20f, 20f, -20f).apply {
-                duration = 10000L
-                repeatCount = ValueAnimator.INFINITE
-            },
-            ObjectAnimator.ofFloat(bgYellow, "translationY", -20f, 20f, -20f).apply {
-                duration = 120000L
-                repeatCount = ValueAnimator.INFINITE
-            },
-            ObjectAnimator.ofFloat(bgBlue, "translationY", -20f, 20f, -20f).apply {
-                duration = 8000L
-                repeatCount = ValueAnimator.INFINITE
-            },
-            ObjectAnimator.ofFloat(bgOrange, "translationY", -20f, 20f, -20f).apply {
-                duration = 7000L
-                repeatCount = ValueAnimator.INFINITE
-            }
-        )
+        val topLayoutManager = LinearLayoutManager(context)
+        topLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+        dosTopRecyclerView.apply {
+            layoutManager = topLayoutManager
+            adapter = DotsScrollAdapter(context, R.drawable.mmd_home_elem_dots_top)
+        }
+        val underLayoutManager = LinearLayoutManager(context)
+        underLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+        dosUnderRecyclerView.apply {
+            layoutManager = underLayoutManager
+            adapter = DotsScrollAdapter(context, R.drawable.mmd_home_elem_dots_under)
+        }
+        mHandler.postDelayed(scrollRunnable, 100)
 
-        translationAnimatorSet.start()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mHandler.postDelayed(scrollRunnable, 100)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mHandler.removeCallbacks(scrollRunnable)
     }
 
 

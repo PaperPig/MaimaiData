@@ -1,29 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FFCA0B</color>
-    <color name="colorPrimaryDark">#FFCA0B</color>
+    <color name="colorPrimary">#68BAFF</color>
+    <color name="colorPrimaryDark">#319DF8</color>
     <color name="colorAccent">#03DAC5</color>
 
-    <color name="songListColor">#FFF18A</color>
+    <color name="songListColor">#57C0FF</color>
 
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
-    <color name="gray">#F2F2F2</color>
-    <color name="basic">#79E944</color>
-    <color name="advanced">#FEC90B</color>
-    <color name="expert">#FE8E9B</color>
-    <color name="master">#AE5AFE</color>
-    <color name="remaster">#EF64FF</color>
+    <color name="basic">#6FD43D</color>
+    <color name="advanced">#F8B709</color>
+    <color name="expert">#FF818D</color>
+    <color name="master">#9F51DC</color>
+    <color name="remaster">#CB5EEA</color>
     <color name="divider">#E0E0E0</color>
     <color name="textColor">#333333</color>
 
 
-    <color name="pop">#FF972A</color>
-    <color name="vocal">#09C8D4</color>
-    <color name="touhou">#B15BF4</color>
-    <color name="variety">#42DE6A</color>
-    <color name="maimai">#F74949</color>
-    <color name="gekichuni">#3585FE</color>
+    <color name="pop">#FF9C24</color>
+    <color name="pop_stroke">#FFD21F</color>
+    <color name="vocal">#12B4FF</color>
+    <color name="vocal_stroke">#7ED6FF</color>
+    <color name="touhou">#CA6FEB</color>
+    <color name="touhou_stroke">#E8A7FF</color>
+    <color name="variety">#6AE03F</color>
+    <color name="variety_stroke">#BAFBA3</color>
+    <color name="maimai">#FF4646</color>
+    <color name="maimai_stroke">#FFA7A7</color>
+    <color name="gekichuni">#319DF8</color>
+    <color name="gekichuni_stroke">#99D1FF</color>
 
 
     <color name="great">#F75EA3</color>

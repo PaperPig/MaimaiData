@@ -81,9 +81,9 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putString("TOOLBAR_TITLE", supportActionBar?.title.toString())
         if (::finaleToDxFragment.isInitialized) supportFragmentManager.putFragment(
-                outState,
-                FinaleToDxFragment.TAG,
-                finaleToDxFragment
+            outState,
+            FinaleToDxFragment.TAG,
+            finaleToDxFragment
         )
         if (::songListFragment.isInitialized) supportFragmentManager.putFragment(
             outState,
@@ -121,6 +121,7 @@ class MainActivity : AppCompatActivity() {
                         .title(R.string.maimai_data_update_title)
                         .content(R.string.maimai_data_update_content)
                         .positiveText(R.string.common_confirm)
+                        .negativeText(R.string.common_cancel)
                         .onPositive { _, which ->
                             if (DialogAction.POSITIVE == which) {
                                 startActivity(Intent().apply {
@@ -128,6 +129,9 @@ class MainActivity : AppCompatActivity() {
                                     data = Uri.parse(it.url)
                                 })
                             }
+                        }
+                        .onNegative { d, _ ->
+                            d.dismiss()
                         }
                         .autoDismiss(true)
                         .cancelable(true)

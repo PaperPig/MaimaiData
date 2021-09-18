@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:elevation="6dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="18dp"
@@ -11,10 +10,6 @@
     android:orientation="vertical">
 
     <TextView
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:minWidth="150dp"
-        android:textStyle="bold"
         android:id="@+id/songGenre"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
@@ -23,7 +18,11 @@
         android:layout_marginEnd="16dp"
         android:background="@drawable/song_list_genre_bg"
         android:gravity="center"
-        android:textColor="@color/white" />
+        android:minWidth="150dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,11 +31,11 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:padding="3dp"
             android:id="@+id/songJacket"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_marginStart="18dp" />
+            android:layout_marginStart="18dp"
+            android:padding="2dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -69,12 +68,12 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp"
                 android:layout_weight="2"
-                android:gravity="center_vertical"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:text="@string/artist"
                     android:textColor="@color/white"
                     android:textSize="10sp" />
@@ -86,8 +85,8 @@
                     <TextView
                         android:id="@+id/songArtist"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:ellipsize="end"
                         android:lines="2"
                         android:textColor="@color/white"
@@ -111,8 +110,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="12dp"
         android:gravity="end|center_vertical"
         android:orientation="horizontal">
 
@@ -122,7 +123,8 @@
             android:layout_height="48dp"
             android:background="@drawable/level_basic_bg"
             android:gravity="center"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/levelAdvanced"
@@ -131,7 +133,8 @@
             android:layout_marginStart="4dp"
             android:background="@drawable/level_advanced_bg"
             android:gravity="center"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/levelExpert"
@@ -140,7 +143,8 @@
             android:layout_marginStart="4dp"
             android:background="@drawable/level_expert_bg"
             android:gravity="center"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/levelMaster"
@@ -149,7 +153,8 @@
             android:layout_marginStart="4dp"
             android:background="@drawable/level_master_bg"
             android:gravity="center"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/levelRemaster"
@@ -158,7 +163,8 @@
             android:layout_marginStart="4dp"
             android:background="@drawable/level_remaster_bg"
             android:gravity="center"
-            android:textColor="@color/remaster" />
+            android:textColor="@color/remaster"
+            android:textStyle="bold" />
 
 
     </LinearLayout>

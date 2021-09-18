@@ -14,9 +14,10 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/songListColor">
 
-        <include layout="@layout/mmd_splash_style_bg_layout" />
+        <include layout="@layout/mmd_universe_style_bg_layout" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refreshLayout"
@@ -113,9 +114,9 @@
                     android:layout_height="match_parent">
 
                     <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/proberVp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                        android:id="@+id/proberVp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
 
                     <ProgressBar
                         android:id="@+id/loading"

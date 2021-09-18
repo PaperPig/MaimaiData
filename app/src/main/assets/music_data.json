@@ -20355,6 +20355,399 @@
 	"type": "DX"
 }, {
 	"basic_info": {
+		"artist": "ヒゲドライバー feat.らいむっくま(CV:村川梨衣) ＆ れもんっくま(CV:MoeMi)",
+		"bpm": 132,
+		"from": "maimai でらっくす Splash",
+		"genre": "maimai",
+		"image_url": "c8bed480e22142c9.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "ぼくたちいつでも　しゅわっしゅわ！",
+		"title_kana": "ホクタチイツテモシユワツシユワ"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [158, 4, 3, 4, 5]
+	}, {
+		"charter": "-",
+		"notes": [240, 21, 9, 26, 4]
+	}, {
+		"charter": "華火職人",
+		"notes": [371, 65, 34, 34, 49]
+	}, {
+		"charter": "ぴちネコ",
+		"notes": [510, 52, 67, 123, 14]
+	}],
+	"ds": [4.0, 7.0, 11.3, 12.9],
+	"id": "11152",
+	"level": ["4", "7", "11", "12+"],
+	"title": "ぼくたちいつでも　しゅわっしゅわ！",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "technoplanet",
+		"bpm": 262,
+		"from": "maimai でらっくす Splash",
+		"genre": "maimai",
+		"image_url": "747c68a6bf27de45.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "Boys O’Clock",
+		"title_kana": "BOYSOCLOCK"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [139, 13, 4, 13, 3]
+	}, {
+		"charter": "-",
+		"notes": [218, 36, 11, 30, 8]
+	}, {
+		"charter": "サファ太",
+		"notes": [317, 78, 29, 55, 33]
+	}, {
+		"charter": "譜面-100号",
+		"notes": [580, 22, 16, 168, 25]
+	}],
+	"ds": [5.0, 7.7, 10.8, 13.0],
+	"id": "11153",
+	"level": ["5", "7+", "10+", "13"],
+	"title": "Boys O’Clock",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "hanzo",
+		"bpm": 160,
+		"from": "maimai でらっくす Splash",
+		"genre": "maimai",
+		"image_url": "c02537aab0c8a6a2.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "居並ぶ穀物と溜息まじりの運送屋",
+		"title_kana": "イナラフコクモツトタメイキマシリノウンソウヤ"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [120, 18, 4, 18, 5]
+	}, {
+		"charter": "-",
+		"notes": [299, 36, 10, 41, 8]
+	}, {
+		"charter": "小鳥遊さん",
+		"notes": [394, 69, 35, 70, 22]
+	}, {
+		"charter": "隅田川星人",
+		"notes": [697, 70, 123, 26, 34]
+	}],
+	"ds": [4.0, 7.8, 11.8, 12.9],
+	"id": "11154",
+	"level": ["4", "7+", "11+", "12+"],
+	"title": "居並ぶ穀物と溜息まじりの運送屋",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "千本松 仁",
+		"bpm": 180,
+		"from": "maimai でらっくす Splash",
+		"genre": "maimai",
+		"image_url": "63687937bbd3b9f4.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "ARAIS",
+		"title_kana": "ARAIS"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [156, 28, 6, 8, 8]
+	}, {
+		"charter": "-",
+		"notes": [374, 23, 15, 15, 9]
+	}, {
+		"charter": "小鳥遊さん",
+		"notes": [475, 83, 30, 14, 34]
+	}, {
+		"charter": "Sukiyaki vs Happy",
+		"notes": [851, 14, 59, 54, 22]
+	}],
+	"ds": [5.0, 8.8, 12.0, 14.3],
+	"id": "11155",
+	"level": ["5", "8+", "12", "14"],
+	"title": "ARAIS",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "Cranky feat.おもしろ三国志",
+		"bpm": 175,
+		"from": "maimai でらっくす Splash",
+		"genre": "オンゲキCHUNITHM",
+		"image_url": "034cbece579217c7.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "宛城、炎上！！",
+		"title_kana": "エンシヨウエンシヨウ"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [223, 13, 7, 12, 6]
+	}, {
+		"charter": "-",
+		"notes": [347, 30, 18, 31, 11]
+	}, {
+		"charter": "サファ太",
+		"notes": [477, 81, 42, 25, 100]
+	}, {
+		"charter": "小鳥遊さん",
+		"notes": [762, 130, 51, 272, 52]
+	}],
+	"ds": [5.0, 8.8, 12.5, 14.0],
+	"id": "11175",
+	"level": ["5", "8+", "12", "14"],
+	"title": "宛城、炎上！！",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "Petit Rabbit\u0027s",
+		"bpm": 158,
+		"from": "maimai でらっくす Splash",
+		"genre": "POPSアニメ",
+		"image_url": "657e8629f3cba345.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "ノーポイッ!",
+		"title_kana": "ノオホイツ"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [69, 6, 2, 7, 1]
+	}, {
+		"charter": "-",
+		"notes": [149, 17, 5, 15, 2]
+	}, {
+		"charter": "小鳥遊さん",
+		"notes": [232, 34, 17, 47, 16]
+	}, {
+		"charter": "サファ太",
+		"notes": [329, 38, 66, 23, 28]
+	}],
+	"ds": [3.0, 6.2, 8.9, 12.0],
+	"id": "11178",
+	"level": ["3", "6", "8+", "12"],
+	"title": "ノーポイッ!",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "shami momo（吉田優子・千代田桃）／CV：小原好美・鬼頭明里",
+		"bpm": 165,
+		"from": "maimai でらっくす Splash",
+		"genre": "POPSアニメ",
+		"image_url": "27c7a499b2c2ce7b.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "町かどタンジェント",
+		"title_kana": "マチカトタンシエント"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [59, 10, 1, 9, 2]
+	}, {
+		"charter": "-",
+		"notes": [173, 16, 6, 16, 4]
+	}, {
+		"charter": "華火職人",
+		"notes": [263, 21, 20, 20, 15]
+	}, {
+		"charter": "はっぴー",
+		"notes": [295, 16, 56, 17, 15]
+	}],
+	"ds": [2.0, 6.5, 8.8, 11.8],
+	"id": "11179",
+	"level": ["2", "6", "8+", "11+"],
+	"title": "町かどタンジェント",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "LiSA",
+		"bpm": 135,
+		"from": "maimai でらっくす Splash",
+		"genre": "POPSアニメ",
+		"image_url": "b6dec4f1a549149c.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "紅蓮華",
+		"title_kana": "クレンケ"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [126, 10, 5, 9, 12]
+	}, {
+		"charter": "-",
+		"notes": [159, 28, 18, 10, 5]
+	}, {
+		"charter": "隅田川星人",
+		"notes": [349, 42, 25, 48, 12]
+	}, {
+		"charter": "シチミヘルツ",
+		"notes": [361, 84, 53, 36, 26]
+	}, {
+		"charter": "Jack",
+		"notes": [430, 112, 99, 43, 23]
+	}],
+	"ds": [3.0, 6.2, 9.0, 11.5, 12.9],
+	"id": "11180",
+	"level": ["3", "6", "9", "11", "12+"],
+	"title": "紅蓮華",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "カンザキイオリ",
+		"bpm": 200,
+		"from": "maimai でらっくす Splash",
+		"genre": "niconicoボーカロイド",
+		"image_url": "8dfce10e2d015493.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "命に嫌われている",
+		"title_kana": "イノチニキラワレテイル"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [128, 6, 5, 7, 3]
+	}, {
+		"charter": "-",
+		"notes": [273, 20, 8, 8, 3]
+	}, {
+		"charter": "Jack",
+		"notes": [414, 80, 47, 34, 9]
+	}, {
+		"charter": "はっぴー",
+		"notes": [696, 24, 135, 13, 21]
+	}],
+	"ds": [4.0, 7.0, 10.2, 12.8],
+	"id": "11185",
+	"level": ["4", "7", "10", "12+"],
+	"title": "命に嫌われている",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "作曲：カジャ　作詞：傘村トータ　編曲：ねじ式　調声：シリア",
+		"bpm": 178,
+		"from": "maimai でらっくす Splash",
+		"genre": "niconicoボーカロイド",
+		"image_url": "0641b4abd73b15ea.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "アンクローズ・ヒューマン",
+		"title_kana": "アンクロオスヒユウマン"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [144, 9, 5, 16, 5]
+	}, {
+		"charter": "-",
+		"notes": [299, 12, 8, 15, 2]
+	}, {
+		"charter": "隅田川星人",
+		"notes": [484, 68, 34, 45, 2]
+	}, {
+		"charter": "Safata.Hz",
+		"notes": [635, 52, 151, 25, 34]
+	}],
+	"ds": [4.0, 7.2, 9.8, 13.1],
+	"id": "11186",
+	"level": ["4", "7", "9+", "13"],
+	"title": "アンクローズ・ヒューマン",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "DECO*27",
+		"bpm": 134,
+		"from": "maimai でらっくす Splash",
+		"genre": "niconicoボーカロイド",
+		"image_url": "cb3762ad24071bdc.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "乙女解剖",
+		"title_kana": "オトメカイホウ"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [94, 17, 3, 13, 8]
+	}, {
+		"charter": "-",
+		"notes": [193, 22, 6, 34, 4]
+	}, {
+		"charter": "サファ太",
+		"notes": [265, 57, 40, 18, 8]
+	}, {
+		"charter": "隅田川星人",
+		"notes": [436, 69, 69, 53, 26]
+	}],
+	"ds": [3.0, 6.5, 8.8, 12.5],
+	"id": "11187",
+	"level": ["3", "6", "8+", "12"],
+	"title": "乙女解剖",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "森羅万象",
+		"bpm": 192,
+		"from": "maimai でらっくす Splash",
+		"genre": "東方Project",
+		"image_url": "5c5ae698a3ca6825.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "悪戯センセーション",
+		"title_kana": "イタスラセンセイシヨン"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [161, 4, 2, 8, 4]
+	}, {
+		"charter": "-",
+		"notes": [234, 19, 9, 13, 4]
+	}, {
+		"charter": "はっぴー",
+		"notes": [273, 72, 24, 30, 10]
+	}, {
+		"charter": "ものくろっく",
+		"notes": [443, 40, 95, 30, 26]
+	}],
+	"ds": [4.0, 7.7, 9.8, 12.7],
+	"id": "11199",
+	"level": ["4", "7+", "9+", "12+"],
+	"title": "悪戯センセーション",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "DiGiTAL WiNG feat. 花たん",
+		"bpm": 150,
+		"from": "maimai でらっくす Splash",
+		"genre": "東方Project",
+		"image_url": "2bb6a69fa0e66cc6.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "Paranoia",
+		"title_kana": "PARANOIA"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [175, 6, 2, 14, 14]
+	}, {
+		"charter": "-",
+		"notes": [254, 26, 12, 25, 12]
+	}, {
+		"charter": "サファ太",
+		"notes": [337, 38, 46, 33, 27]
+	}, {
+		"charter": "某S氏",
+		"notes": [554, 42, 88, 54, 30]
+	}],
+	"ds": [4.0, 7.0, 9.5, 12.7],
+	"id": "11200",
+	"level": ["4", "7", "9", "12+"],
+	"title": "Paranoia",
+	"type": "DX"
+}, {
+	"basic_info": {
 		"artist": "TANO*C Sound Team",
 		"bpm": 200,
 		"from": "maimai でらっくす Splash",
@@ -20382,5 +20775,125 @@
 	"id": "11206",
 	"level": ["6", "8", "12", "14+"],
 	"title": "BATTLE NO.1",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "owl＊tree feat.yu＊tree",
+		"bpm": 98,
+		"from": "maimai でらっくす Splash",
+		"genre": "maimai",
+		"image_url": "6371b8c7d2c59e7f.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "Jörqer",
+		"title_kana": "JORQER"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [141, 11, 3, 12, 3]
+	}, {
+		"charter": "-",
+		"notes": [231, 38, 8, 30, 6]
+	}, {
+		"charter": "Jack",
+		"notes": [449, 75, 24, 42, 19]
+	}, {
+		"charter": "シチミヘルツ",
+		"notes": [616, 27, 63, 75, 22]
+	}],
+	"ds": [4.0, 7.0, 11.8, 13.5],
+	"id": "11214",
+	"level": ["4", "7", "11+", "13"],
+	"title": "Jörqer",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "owl＊tree Remixed by Camellia",
+		"bpm": 154,
+		"from": "maimai でらっくす Splash",
+		"genre": "maimai",
+		"image_url": "fcb1d9c95bb8205d.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "Sqlupp (Camellia\u0027s \"Sqleipd*Hiytex\" Remix)",
+		"title_kana": "SQLUPPCAMELLIAREMIX"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [169, 33, 7, 18, 7]
+	}, {
+		"charter": "-",
+		"notes": [334, 35, 28, 22, 10]
+	}, {
+		"charter": "小鳥遊さん",
+		"notes": [527, 129, 43, 45, 54]
+	}, {
+		"charter": "華火職人",
+		"notes": [844, 68, 68, 107, 114]
+	}],
+	"ds": [5.0, 8.0, 12.2, 14.4],
+	"id": "11215",
+	"level": ["5", "8", "12", "14"],
+	"title": "Sqlupp (Camellia\u0027s \"Sqleipd*Hiytex\" Remix)",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "onoken",
+		"bpm": 180,
+		"from": "maimai でらっくす Splash",
+		"genre": "ゲームバラエティ",
+		"image_url": "372b2bdce425ac62.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "felys -final remix-",
+		"title_kana": "FELYSFINALREMIX"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [163, 10, 7, 8, 2]
+	}, {
+		"charter": "-",
+		"notes": [257, 45, 12, 24, 7]
+	}, {
+		"charter": "Jack",
+		"notes": [432, 57, 62, 38, 9]
+	}, {
+		"charter": "Jack",
+		"notes": [925, 33, 117, 23, 13]
+	}],
+	"ds": [3.0, 7.7, 10.7, 14.4],
+	"id": "11216",
+	"level": ["3", "7+", "10+", "14"],
+	"title": "felys -final remix-",
+	"type": "DX"
+}, {
+	"basic_info": {
+		"artist": "Official髭男dism",
+		"bpm": 92,
+		"from": "maimai でらっくす Splash",
+		"genre": "POPSアニメ",
+		"image_url": "072583714f1097b4.png",
+		"is_new": true,
+		"release_date": "",
+		"title": "Pretender",
+		"title_kana": "PRETENDER"
+	},
+	"charts": [{
+		"charter": "-",
+		"notes": [91, 10, 5, 8, 6]
+	}, {
+		"charter": "-",
+		"notes": [166, 29, 7, 13, 4]
+	}, {
+		"charter": "シチミヘルツ",
+		"notes": [321, 37, 15, 5, 21]
+	}, {
+		"charter": "はっぴー",
+		"notes": [404, 34, 52, 5, 7]
+	}],
+	"ds": [2.0, 5.8, 8.5, 12.4],
+	"id": "11217",
+	"level": ["2", "5", "8", "12"],
+	"title": "Pretender",
 	"type": "DX"
 }]

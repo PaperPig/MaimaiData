@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.model.SongData
-import com.paperpig.maimaidata.model.totalScore
 import kotlinx.android.synthetic.main.fragment_song_level.*
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -118,6 +117,14 @@ class SongLevelFragment : Fragment() {
                                 (note[0] * 500 + note[1] * 1000 + note[2] * 1500 + note[3] * 2500) * 100
                     ).setScale(2, BigDecimal.ROUND_DOWN)
                 )
+        }
+    }
+
+    private fun totalScore(note: List<Int>, isDx: Boolean): Int {
+        return if (isDx) {
+            (note[0] + note[3]) + note[1] * 2 + note[2] * 3 + note[4] * 5
+        } else {
+            note[0] + note[1] * 2 + note[2] * 3 + note[3] * 5
         }
     }
 

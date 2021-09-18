@@ -20,6 +20,7 @@ import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
+import com.paperpig.maimaidata.utils.WindowsUtils
 import com.paperpig.maimaidata.utils.versionCheck
 import java.util.*
 import kotlin.Comparator
@@ -166,10 +167,18 @@ class SongListAdapter : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
             ((holder.itemView.background as LayerDrawable).getDrawable(0) as LayerDrawable).findDrawableByLayerId(
                 R.id.song_list_stroke
             ) as GradientDrawable
+
+        val bgInnerStroke =
+            ((holder.itemView.background as LayerDrawable).getDrawable(0) as LayerDrawable).findDrawableByLayerId(
+                R.id.song_list_inner_stroke
+            ) as GradientDrawable
         bgColor.setColor(ContextCompat.getColor(holder.itemView.context, songData.getBgColor()))
+        bgInnerStroke.setStroke(WindowsUtils.dp2px(holder.itemView.context,3f).toInt(),ContextCompat.getColor(holder.itemView.context,
+            songData.getBgColor()))
+
         bgStroke.setStroke(
-            10,
-            ContextCompat.getColor(holder.itemView.context, songData.getBgColor())
+            WindowsUtils.dp2px(holder.itemView.context,4f).toInt(),
+            ContextCompat.getColor(holder.itemView.context, songData.getStrokeColor())
         )
 
         holder.songGenre.text = songData.basic_info.genre
@@ -187,7 +196,7 @@ class SongListAdapter : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
         holder.songJacket.setBackgroundColor(
             ContextCompat.getColor(
                 holder.itemView.context,
-                songData.getBgColor()
+                songData.getStrokeColor()
             )
         )
         holder.songTitle.text = songData.basic_info.title

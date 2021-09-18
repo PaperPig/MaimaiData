@@ -1,39 +1,49 @@
 package com.paperpig.maimaidata.ui.maimaidxprober
 
 import android.Manifest
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
+import com.paperpig.maimaidata.model.SongListModel
 import com.paperpig.maimaidata.network.MaimaiDataRequests
+import com.paperpig.maimaidata.ui.songlist.DotsScrollAdapter
 import com.paperpig.maimaidata.utils.CreateBest40
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import kotlinx.android.synthetic.main.activity_prober.*
-import kotlinx.android.synthetic.main.mmd_splash_style_bg_layout.*
+import kotlinx.android.synthetic.main.mmd_universe_style_bg_layout.*
 import kotlinx.android.synthetic.main.title.*
 import kotlinx.coroutines.*
 
 
 class ProberActivity : AppCompatActivity() {
-
-
     private lateinit var proberVersionAdapter: ProberVersionAdapter
     private var songData = listOf<SongData>()
     private var oldRating = listOf<Record>()
     private var newRating = listOf<Record>()
+
+    private val mHandler: Handler = Handler()
+    private val scrollRunnable: Runnable by lazy {
+        object : Runnable {
+            override fun run() {
+                dosTopRecyclerView.scrollBy(1, 0)
+                dosUnderRecyclerView.scrollBy(1, 0)
+                mHandler.postDelayed(this, 50)
+            }
+        }
+    }
 
     companion object {
         const val PERMISSION_REQUEST = 200
@@ -59,7 +69,7 @@ class ProberActivity : AppCompatActivity() {
 
 
         CoroutineScope(Dispatchers.Main).launch {
-            songData = getData()
+            songData = SongListModel().getData(this@ProberActivity)
 
             proberVp.apply {
                 proberVersionAdapter = ProberVersionAdapter(songData)
@@ -162,15 +172,6 @@ class ProberActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun getData(): List<SongData> {
-        return withContext(Dispatchers.IO) {
-            val song2021 = assets.open("music_data.json").bufferedReader()
-                .use { it.readText() }
-            Gson().fromJson<List<SongData>>(
-                song2021, object : TypeToken<List<SongData>>() {}.type
-            )
-        }
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.share_menu, menu)
@@ -189,27 +190,19 @@ class ProberActivity : AppCompatActivity() {
 
 
     private fun setupAnimation() {
-        val translationAnimatorSet = AnimatorSet()
-        translationAnimatorSet.playTogether(
-            ObjectAnimator.ofFloat(bgGreen, "translationY", -20f, 20f, -20f).apply {
-                duration = 10000L
-                repeatCount = ValueAnimator.INFINITE
-            },
-            ObjectAnimator.ofFloat(bgYellow, "translationY", -20f, 20f, -20f).apply {
-                duration = 120000L
-                repeatCount = ValueAnimator.INFINITE
-            },
-            ObjectAnimator.ofFloat(bgBlue, "translationY", -20f, 20f, -20f).apply {
-                duration = 8000L
-                repeatCount = ValueAnimator.INFINITE
-            },
-            ObjectAnimator.ofFloat(bgOrange, "translationY", -20f, 20f, -20f).apply {
-                duration = 7000L
-                repeatCount = ValueAnimator.INFINITE
-            }
-        )
-
-        translationAnimatorSet.start()
+        val topLayoutManager = LinearLayoutManager(this)
+        topLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+        dosTopRecyclerView.apply {
+            layoutManager = topLayoutManager
+            adapter = DotsScrollAdapter(context, R.drawable.mmd_home_elem_dots_top)
+        }
+        val underLayoutManager = LinearLayoutManager(this)
+        underLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+        dosUnderRecyclerView.apply {
+            layoutManager = underLayoutManager
+            adapter = DotsScrollAdapter(context, R.drawable.mmd_home_elem_dots_under)
+        }
+        mHandler.postDelayed(scrollRunnable, 100)
     }
 
     private fun createImage() {
@@ -248,6 +241,16 @@ class ProberActivity : AppCompatActivity() {
         } else {
             createImage()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mHandler.postDelayed(scrollRunnable, 100)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mHandler.removeCallbacks(scrollRunnable)
     }
 
     override fun onRequestPermissionsResult(

@@ -23,6 +23,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import android.graphics.Bitmap
 
 
 object CreateBest40 {
@@ -52,7 +53,7 @@ object CreateBest40 {
         }
         withContext(Dispatchers.IO) {
 
-            val containerBitmap = drawableToBitmap(context, R.drawable.mmd_player_best40_bg, containerWidth,
+            val containerBitmap = drawableToBitmap(context, R.drawable.mmd_player_best40_n, containerWidth,
                 containerHeight+ headerHeight)
             val containerCanvas = Canvas(containerBitmap)
             val textPaint = TextPaint()
@@ -222,8 +223,8 @@ object CreateBest40 {
 
 
         //绘制rank标记
-        val rankBitmap = drawableToBitmap(context, record.getRankIcon(), 76, 39)
-        canvas.drawBitmap(rankBitmap, 15f, 145f, null)
+        val rankBitmap = trim(drawableToBitmap(context, record.getRankIcon(), 106, 36))
+        canvas.drawBitmap(rankBitmap, 22f, 145f, null)
 
 
         //绘制fc/fs标记
@@ -291,6 +292,51 @@ object CreateBest40 {
         return bitmap
     }
 
+
+    /**
+     * 剪裁bitmap透明区域
+     */
+    private fun trim(source: Bitmap): Bitmap {
+        var firstX = 0
+        var firstY = 0
+        var lastX = source.width
+        var lastY = source.height
+        val pixels = IntArray(source.width * source.height)
+        source.getPixels(pixels, 0, source.width, 0, 0, source.width, source.height)
+        loop@ for (x in 0 until source.width) {
+            for (y in 0 until source.height) {
+                if (pixels[x + y * source.width] != Color.TRANSPARENT) {
+                    firstX = x
+                    break@loop
+                }
+            }
+        }
+        loop@ for (y in 0 until source.height) {
+            for (x in firstX until source.width) {
+                if (pixels[x + y * source.width] != Color.TRANSPARENT) {
+                    firstY = y
+                    break@loop
+                }
+            }
+        }
+        loop@ for (x in source.width - 1 downTo firstX) {
+            for (y in source.height - 1 downTo firstY) {
+                if (pixels[x + y * source.width] != Color.TRANSPARENT) {
+                    lastX = x
+                    break@loop
+                }
+            }
+        }
+        loop@ for (y in source.height - 1 downTo firstY) {
+            for (x in source.width - 1 downTo firstX) {
+                if (pixels[x + y * source.width] != Color.TRANSPARENT) {
+                    lastY = y
+                    break@loop
+                }
+            }
+        }
+        return Bitmap.createBitmap(source, firstX, firstY, lastX - firstX, lastY - firstY)
+    }
 }
 
 

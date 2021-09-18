@@ -26,31 +26,33 @@ data class SongData(
             else -> R.color.gekichuni
         }
 
+    fun getStrokeColor() =
+        when (basic_info.genre) {
+            "POPSアニメ" -> R.color.pop_stroke
+            "niconicoボーカロイド" -> R.color.vocal_stroke
+            "東方Project" -> R.color.touhou_stroke
+            "バラエティ" -> R.color.variety_stroke
+            "ゲームバラエティ" -> R.color.variety_stroke
+            "maimai" -> R.color.maimai_stroke
+            else -> R.color.gekichuni_stroke
+        }
+
+    inner class BasicInfo(
+        val artist: String,
+        val bpm: Int,
+        val from: String,
+        val genre: String,
+        val is_new: Boolean,
+        var release_date: String,
+        val title: String,
+        var title_kana: String,
+        var image_url: String
+    ) : Serializable
+
+    inner class Chart(
+        val charter: String,
+        val notes: List<Int>
+    ) : Serializable
 
 }
 
-data class BasicInfo(
-    val artist: String,
-    val bpm: Int,
-    val from: String,
-    val genre: String,
-    val is_new: Boolean,
-    var release_date: String,
-    val title: String,
-    var title_kana: String,
-    var image_url: String
-):Serializable
-
-data class Chart(
-    val charter: String,
-    val notes: List<Int>
-):Serializable
-
-
-fun totalScore(note: List<Int>, isDx: Boolean): Int {
-    return if (isDx) {
-        (note[0] + note[3]) + note[1] * 2 + note[2] * 3 + note[4] * 5
-    } else {
-        note[0] + note[1] * 2 + note[2] * 3 + note[3] * 5
-    }
-}
