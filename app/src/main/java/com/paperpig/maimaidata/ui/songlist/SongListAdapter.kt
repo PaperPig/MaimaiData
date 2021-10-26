@@ -15,11 +15,13 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
+import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.utils.WindowsUtils
 import com.paperpig.maimaidata.utils.versionCheck
 import java.util.*
@@ -27,6 +29,7 @@ import kotlin.Comparator
 
 
 class SongListAdapter : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
+    private val spUtils = SharePreferencesUtils(MaimaiDataApplication.instance, "songInfo")
     private val remasterAscComparator: java.util.Comparator<SongData> = Comparator { a1, a2 ->
 
         if (a1.ds.size < 5 && a2.ds.size < 5) {
@@ -54,6 +57,7 @@ class SongListAdapter : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
     private var selectLevel = ""
     private var selectDifficulty = "DEFAULT"
     private var searchText = ""
+    private var isShowFavoriteSong = false
     private var originList = listOf<SongData>()
     private var versionList = listOf<String>()
     private var sortList = listOf<String>()
@@ -78,6 +82,12 @@ class SongListAdapter : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
                         return@filter versionList.versionCheck(it.basic_info.from) || it.basic_info.is_new
                     } else return@filter versionList.versionCheck(it.basic_info.from) && !it.basic_info.is_new
                 } else return@filter true
+            }.filter {
+                if (isShowFavoriteSong) {
+                    spUtils.isFavorite(it.id)
+                } else {
+                    true
+                }
             }
             if (isLevelBySort) {
                 field = field.filter {
@@ -226,7 +236,8 @@ class SongListAdapter : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
         list1: List<String>,
         list2: List<String>,
         level: String,
-        sequencing: String
+        sequencing: String,
+        isShowFavor: Boolean
     ) {
         searchText = str
         sortList = list1
@@ -236,6 +247,7 @@ class SongListAdapter : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
             isLevelBySort = true
             selectLevel = getLevel(level)
         }
+        isShowFavoriteSong = isShowFavor
         selectDifficulty = sequencing
         songList = originList
         notifyDataSetChanged()

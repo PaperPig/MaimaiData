@@ -75,7 +75,8 @@ class SongListFragment : BaseFragment() {
                 getSortCheck(),
                 getVersionCheck(),
                 levelSpinner.selectedItem.toString(),
-                sortSpinner.selectedItem.toString()
+                sortSpinner.selectedItem.toString(),
+                favorCheck.isChecked
             )
             hideKeyboard(it)
             showOrHideSearchBar()
@@ -89,7 +90,8 @@ class SongListFragment : BaseFragment() {
                         getSortCheck(),
                         getVersionCheck(),
                         levelSpinner.selectedItem.toString(),
-                        sortSpinner.selectedItem.toString()
+                        sortSpinner.selectedItem.toString(),
+                        favorCheck.isChecked
                     )
                     showOrHideSearchBar()
                 }
