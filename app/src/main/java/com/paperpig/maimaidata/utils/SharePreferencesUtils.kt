@@ -32,6 +32,16 @@ class SharePreferencesUtils(
         }
     }
 
+    fun isFavorite(id: String): Boolean {
+        return prefs.getBoolean(id, false)
+    }
+
+    fun setFavorite(id: String, isFav: Boolean) {
+        prefs.edit().apply {
+            putBoolean(id, isFav)
+        }.apply()
+    }
+
     fun clear() {
         prefs.edit().clear().apply()
     }

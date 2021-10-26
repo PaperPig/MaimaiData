@@ -2,6 +2,7 @@ package com.paperpig.maimaidata.ui.songdetail
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
@@ -13,13 +14,16 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
+import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import kotlinx.android.synthetic.main.activity_song_detail.*
 
 class SongDetailActivity : AppCompatActivity() {
+    private val spUtils = SharePreferencesUtils(MaimaiDataApplication.instance, "songInfo")
 
     companion object {
         fun actionStart(context: Context, songData: SongData) {
@@ -54,6 +58,22 @@ class SongDetailActivity : AppCompatActivity() {
         songBpm.text = songData.basic_info.bpm.toString()
         songGenre.text = songData.basic_info.genre
         setVersionImage(songAddVersion, songData.basic_info.from)
+
+        val colorFilter: (Boolean) -> Int = { isFavor: Boolean ->
+            if (isFavor) {
+                0
+            } else {
+                Color.WHITE
+            }
+        }
+        favButton.apply {
+            setColorFilter(colorFilter.invoke(spUtils.isFavorite(songData.id)))
+            setOnClickListener {
+                val isFavor = spUtils.isFavorite(songData.id)
+                spUtils.setFavorite(songData.id, !isFavor)
+                setColorFilter(colorFilter.invoke(!isFavor))
+            }
+        }
 
         tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, songData.getBgColor()))
 
