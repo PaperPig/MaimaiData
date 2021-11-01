@@ -95,8 +95,9 @@
     <string name="name_plate_query">牌子查询</string>
     <string name="name_plate_achieved">%d/%d</string>
 
-    <string name="maimai_data_update_title">检查更新</string>
-    <string name="maimai_data_update_content">新版本来了，点击确定下载</string>
+    <string name="maimai_data_update_title">新版本：%s</string>
+    <string name="maimai_data_update_default_content">BUG修复</string>
+    <string name="maimai_data_update_download">下载</string>
 
 
 
