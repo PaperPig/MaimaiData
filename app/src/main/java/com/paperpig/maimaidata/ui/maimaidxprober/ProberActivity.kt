@@ -15,22 +15,26 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.databinding.ActivityProberBinding
+import com.paperpig.maimaidata.databinding.MmdUniverseStyleBgLayoutBinding
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.model.SongListModel
 import com.paperpig.maimaidata.network.MaimaiDataRequests
+import com.paperpig.maimaidata.ui.nameplate.NamePlateActivity
 import com.paperpig.maimaidata.ui.songlist.DotsScrollAdapter
 import com.paperpig.maimaidata.utils.CreateBest40
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
-import kotlinx.android.synthetic.main.activity_prober.*
-import kotlinx.android.synthetic.main.mmd_universe_style_bg_layout.*
-import kotlinx.android.synthetic.main.title.*
 import kotlinx.coroutines.*
 
 
 class ProberActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityProberBinding
+    private lateinit var backgroundBinding: MmdUniverseStyleBgLayoutBinding
+
     private lateinit var proberVersionAdapter: ProberVersionAdapter
     private var songData = listOf<SongData>()
+    private var recordData = arrayListOf<Record>()
     private var oldRating = listOf<Record>()
     private var newRating = listOf<Record>()
 
@@ -38,8 +42,8 @@ class ProberActivity : AppCompatActivity() {
     private val scrollRunnable: Runnable by lazy {
         object : Runnable {
             override fun run() {
-                dosTopRecyclerView.scrollBy(1, 0)
-                dosUnderRecyclerView.scrollBy(1, 0)
+                backgroundBinding.dosTopRecyclerView.scrollBy(1, 0)
+                backgroundBinding.dosUnderRecyclerView.scrollBy(1, 0)
                 mHandler.postDelayed(this, 50)
             }
         }
@@ -51,18 +55,20 @@ class ProberActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_prober)
+        binding = ActivityProberBinding.inflate(layoutInflater)
+        backgroundBinding = MmdUniverseStyleBgLayoutBinding.bind(binding.root)
 
+        setContentView(binding.root)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
         }
         supportActionBar?.title = getString(R.string.maimaidx_prober)
-        oldVersionRdoBtn.text =
+        binding.oldVersionRdoBtn.text =
             String.format(getString(R.string.old_version_25), 0)
-        newVersionRdoBtn.text =
+        binding.newVersionRdoBtn.text =
             String.format(getString(R.string.new_version_15), 0)
 
         setupAnimation()
@@ -71,42 +77,42 @@ class ProberActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             songData = SongListModel().getData(this@ProberActivity)
 
-            proberVp.apply {
+            binding.proberVp.apply {
                 proberVersionAdapter = ProberVersionAdapter(songData)
                 adapter = proberVersionAdapter
                 registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         if (position == 0) {
-                            oldVersionRdoBtn.isChecked = true
-                            oldVersionIndicator.visibility = View.VISIBLE
-                            newVersionIndicator.visibility = View.GONE
+                            binding.oldVersionRdoBtn.isChecked = true
+                            binding.oldVersionIndicator.visibility = View.VISIBLE
+                            binding.newVersionIndicator.visibility = View.GONE
                         } else {
-                            newVersionRdoBtn.isChecked = true
-                            oldVersionIndicator.visibility = View.GONE
-                            newVersionIndicator.visibility = View.VISIBLE
+                            binding.newVersionRdoBtn.isChecked = true
+                            binding.oldVersionIndicator.visibility = View.GONE
+                            binding.newVersionIndicator.visibility = View.VISIBLE
                         }
                     }
                 })
             }
 
 
-            versionGroup.setOnCheckedChangeListener { _, i ->
+            binding.versionGroup.setOnCheckedChangeListener { _, i ->
                 when (i) {
                     R.id.oldVersionRdoBtn -> {
-                        proberVp.currentItem = 0
-                        oldVersionIndicator.visibility = View.VISIBLE
-                        newVersionIndicator.visibility = View.GONE
+                        binding.proberVp.currentItem = 0
+                        binding.oldVersionIndicator.visibility = View.VISIBLE
+                        binding.newVersionIndicator.visibility = View.GONE
                     }
                     R.id.newVersionRdoBtn -> {
-                        proberVp.currentItem = 1
-                        oldVersionIndicator.visibility = View.GONE
-                        newVersionIndicator.visibility = View.VISIBLE
+                        binding.proberVp.currentItem = 1
+                        binding.oldVersionIndicator.visibility = View.GONE
+                        binding.newVersionIndicator.visibility = View.VISIBLE
                     }
                 }
             }
 
 
-            refreshLayout.apply {
+            binding.refreshLayout.apply {
                 isEnabled = false
                 isRefreshing = true
                 setColorSchemeResources(R.color.colorPrimary)
@@ -114,7 +120,7 @@ class ProberActivity : AppCompatActivity() {
 
             MaimaiDataRequests.getRecords(SharePreferencesUtils(this@ProberActivity).getCookie())
                 .subscribe({ it ->
-                    refreshLayout.isRefreshing = false
+                    binding.refreshLayout.isRefreshing = false
                     val hasStatus = it.asJsonObject.has("status")
                     if (hasStatus) {
                         if (it.asJsonObject.get("status").asString == "error") {
@@ -128,14 +134,16 @@ class ProberActivity : AppCompatActivity() {
 
                     val hasRecords = it.asJsonObject.has("records")
                     if (hasRecords) {
-                        val type = object : TypeToken<List<Record>>() {}.type
-                        val records =
-                            Gson().fromJson<List<Record>>(it.asJsonObject.get("records").asJsonArray,
-                                type)
-                        proberVersionAdapter.setData(records)
+                        val type = object : TypeToken<ArrayList<Record>>() {}.type
+                        recordData =
+                            Gson().fromJson(
+                                it.asJsonObject.get("records").asJsonArray,
+                                type
+                            )
+                        proberVersionAdapter.setData(recordData)
 
                         oldRating =
-                            records.sortedByDescending {
+                            recordData.sortedByDescending {
                                 it.ra
                             }.filter {
                                 val find = songData.find { data -> data.id == it.song_id }
@@ -144,7 +152,7 @@ class ProberActivity : AppCompatActivity() {
                                 it.subList(0, if (it.size >= 25) 25 else it.size)
                             }
                         newRating =
-                            records.sortedByDescending {
+                            recordData.sortedByDescending {
                                 it.ra
                             }.filter {
                                 val find = songData.find { data -> data.id == it.song_id }
@@ -153,16 +161,18 @@ class ProberActivity : AppCompatActivity() {
                                 it.subList(0, if (it.size >= 15) 15 else it.size)
                             }
 
-                        oldVersionRdoBtn.text =
+                        binding.oldVersionRdoBtn.text =
                             String.format(getString(R.string.old_version_25),
-                                oldRating.sumBy { it.ra })
-                        newVersionRdoBtn.text =
+                                oldRating.sumOf { it.ra }
+                            )
+                        binding.newVersionRdoBtn.text =
                             String.format(getString(R.string.new_version_15),
-                                newRating.sumBy { it.ra })
+                                newRating.sumOf { it.ra }
+                            )
 
                     }
                 }, { error ->
-                    refreshLayout.isRefreshing = false
+                    binding.refreshLayout.isRefreshing = false
                     error.printStackTrace()
                     Toast.makeText(this@ProberActivity, "请求出错，请重新登录", Toast.LENGTH_SHORT)
                         .show()
@@ -184,6 +194,8 @@ class ProberActivity : AppCompatActivity() {
                 finish()
             R.id.menu_share ->
                 checkPermission()
+            R.id.menu_nameplate ->
+                NamePlateActivity.actionStart(this,recordData)
         }
         return true
     }
@@ -192,13 +204,13 @@ class ProberActivity : AppCompatActivity() {
     private fun setupAnimation() {
         val topLayoutManager = LinearLayoutManager(this)
         topLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        dosTopRecyclerView.apply {
+        backgroundBinding.dosTopRecyclerView.apply {
             layoutManager = topLayoutManager
             adapter = DotsScrollAdapter(context, R.drawable.mmd_home_elem_dots_top)
         }
         val underLayoutManager = LinearLayoutManager(this)
         underLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        dosUnderRecyclerView.apply {
+        backgroundBinding.dosUnderRecyclerView.apply {
             layoutManager = underLayoutManager
             adapter = DotsScrollAdapter(context, R.drawable.mmd_home_elem_dots_under)
         }
@@ -208,18 +220,15 @@ class ProberActivity : AppCompatActivity() {
     private fun createImage() {
 
         GlobalScope.launch(Dispatchers.Main) {
+            binding.loading.visibility = View.VISIBLE
+                CreateBest40.createSongInfo(
+                    this@ProberActivity,
+                    songData,
+                    oldRating,
+                    newRating
+                )
 
-            loading.visibility = View.VISIBLE
-
-            CreateBest40.createSongInfo(this@ProberActivity,
-                songData,
-                oldRating,
-                newRating
-            )
-
-            loading.visibility = View.GONE
-
-
+            binding.loading.visibility = View.GONE
         }
 
     }
@@ -228,11 +237,14 @@ class ProberActivity : AppCompatActivity() {
     private fun checkPermission() {
         val permissionsStorage = arrayOf(
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            if (ActivityCompat.checkSelfPermission(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
             ) {
                 ActivityCompat.requestPermissions(this, permissionsStorage, PERMISSION_REQUEST)
             } else {

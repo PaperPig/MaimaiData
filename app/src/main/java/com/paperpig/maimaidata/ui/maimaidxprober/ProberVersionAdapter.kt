@@ -25,8 +25,7 @@ class ProberVersionAdapter(private val songList: List<SongData>) :
         holder.recyclerView.apply {
             val recordAdapter = RecordAdapter(songList)
             adapter = recordAdapter
-            recordAdapter.setData(recordList)
-            recordAdapter.setVersion(position)
+            recordAdapter.setData(recordList,position)
             layoutManager = LinearLayoutManager(holder.itemView.context)
 
         }

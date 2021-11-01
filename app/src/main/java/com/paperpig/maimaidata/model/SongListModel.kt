@@ -11,7 +11,7 @@ class SongListModel {
         return withContext(Dispatchers.IO) {
             val list = context?.assets?.open("music_data.json")?.bufferedReader()
                 .use { it?.readText() }
-            Gson().fromJson<List<SongData>>(
+            Gson().fromJson(
                 list, object : TypeToken<List<SongData>>() {}.type
             )
         }

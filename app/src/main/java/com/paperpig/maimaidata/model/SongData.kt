@@ -1,10 +1,13 @@
 package com.paperpig.maimaidata.model
 
+import android.os.Parcelable
 import androidx.annotation.ColorRes
 import com.paperpig.maimaidata.R
+import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 
 
+@Parcelize
 data class SongData(
     val basic_info: BasicInfo,
     val charts: List<Chart>,
@@ -13,7 +16,7 @@ data class SongData(
     val level: List<String>,
     val title: String,
     val type: String
-) : Serializable {
+) : Parcelable {
     @ColorRes
     fun getBgColor() =
         when (basic_info.genre) {

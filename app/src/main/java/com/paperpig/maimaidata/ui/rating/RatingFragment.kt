@@ -2,23 +2,21 @@ package com.paperpig.maimaidata.ui.rating
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.databinding.FragmentRatingBinding
 import com.paperpig.maimaidata.model.Rating
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.ui.maimaidxprober.LoginActivity
 import com.paperpig.maimaidata.ui.maimaidxprober.ProberActivity
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.utils.getInt
-import kotlinx.android.synthetic.main.fragment_rating.*
 import kotlin.math.floor
 
-class RatingFragment : BaseFragment() {
+class RatingFragment : BaseFragment<FragmentRatingBinding>() {
+    private lateinit var binding: FragmentRatingBinding
     private lateinit var resultAdapter: RatingResultAdapter
-
 
     companion object {
         @JvmStatic
@@ -28,52 +26,48 @@ class RatingFragment : BaseFragment() {
         const val TAG = "RatingFragment"
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.fragment_rating, container, false)
+    override fun getViewBinding(container: ViewGroup?): FragmentRatingBinding {
+        binding = FragmentRatingBinding.inflate(layoutInflater, container, false)
+        return binding
     }
 
     override fun onResume() {
         super.onResume()
-        if (SharePreferencesUtils(context!!).getUserName().isEmpty()) {
-            loginLayout.visibility = View.VISIBLE
-            loggedLayout.visibility = View.GONE
+        if (SharePreferencesUtils(requireContext()).getUserName().isEmpty()) {
+            binding.loginLayout.visibility = View.VISIBLE
+            binding.loggedLayout.visibility = View.GONE
         } else {
-            account.text = SharePreferencesUtils(context!!).getUserName()
-            loginLayout.visibility = View.GONE
-            loggedLayout.visibility = View.VISIBLE
+            binding.account.text = SharePreferencesUtils(requireContext()).getUserName()
+            binding.loginLayout.visibility = View.GONE
+            binding.loggedLayout.visibility = View.VISIBLE
         }
     }
 
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        ratingResultRecyclerView.apply {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.ratingResultRecyclerView.apply {
             resultAdapter = RatingResultAdapter()
             layoutManager = LinearLayoutManager(context)
             adapter = resultAdapter
         }
 
-        loginBtn.setOnClickListener {
+        binding.loginBtn.setOnClickListener {
             startActivity(Intent(context, LoginActivity::class.java))
         }
 
-        queryBtn.setOnClickListener {
+        binding.queryBtn.setOnClickListener {
             startActivity(Intent(context, ProberActivity::class.java))
         }
 
-        changeBtn.setOnClickListener {
+        binding.changeBtn.setOnClickListener {
             startActivity(Intent(context, LoginActivity::class.java))
 
         }
 
-        calculateBtn.setOnClickListener {
+        binding.calculateBtn.setOnClickListener {
             hideKeyboard(view)
-            onCalculate(targetRatingEt.text.toString())
+            onCalculate(binding.targetRatingEt.text.toString())
         }
     }
 

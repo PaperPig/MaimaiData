@@ -7,7 +7,6 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:textColor">@color/textColor</item>
-
     </style>
 
     <style name="ScoreTypeInputStyle">

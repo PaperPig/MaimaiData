@@ -92,7 +92,27 @@
     <string name="new_version_divider">best 15 分界线</string>
     <string name="rating_scope">%d/%d</string>
     <string name="save_best40">保存图片</string>
+    <string name="name_plate_query">牌子查询</string>
+    <string name="name_plate_achieved">%d/%d</string>
 
     <string name="maimai_data_update_title">检查更新</string>
     <string name="maimai_data_update_content">新版本来了，点击确定下载</string>
+
+
+
+    <string-array name="maimai_version_values">
+        <item>maimai &amp; maimai PLUS</item>
+        <item>maimai GreeN</item>
+        <item>maimai GreeN PLUS</item>
+        <item>maimai ORANGE</item>
+        <item>maimai ORANGE PLUS</item>
+        <item>maimai PiNK</item>
+        <item>maimai PiNK PLUS</item>
+        <item>maimai MURASAKi</item>
+        <item>maimai MURASAKi PLUS</item>
+        <item>maimai MiLK</item>
+        <item>maimai MiLK PLUS</item>
+        <item>maimai FiNALE</item>
+        <item>maimai でらっくす</item>
+    </string-array>
 </resources>

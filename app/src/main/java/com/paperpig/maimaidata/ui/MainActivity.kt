@@ -11,15 +11,16 @@ import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
 import com.paperpig.maimaidata.BuildConfig
 import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.databinding.ActivityMainBinding
 import com.paperpig.maimaidata.network.MaimaiDataRequests
 import com.paperpig.maimaidata.ui.finaletodx.FinaleToDxFragment
 import com.paperpig.maimaidata.ui.rating.RatingFragment
 import com.paperpig.maimaidata.ui.songlist.SongListFragment
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.title.*
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+
     private lateinit var finaleToDxFragment: FinaleToDxFragment
     private lateinit var ratingFragment: RatingFragment
     private lateinit var songListFragment: SongListFragment
@@ -29,10 +30,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setHomeButtonEnabled(true)
@@ -63,15 +65,15 @@ class MainActivity : AppCompatActivity() {
                 ratingFragment = this as RatingFragment
             }
         } else {
-            navView.setCheckedItem(R.id.navDXSongList)
+            binding.navView.setCheckedItem(R.id.navDXSongList)
             showFragment(R.id.navDXSongList)
         }
 
 
 
-        navView.setNavigationItemSelectedListener {
+        binding.navView.setNavigationItemSelectedListener {
             showFragment(it.itemId)
-            drawerLayout.closeDrawers()
+            binding.drawerLayout.closeDrawers()
             true
         }
 
@@ -146,7 +148,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home ->
-                drawerLayout.openDrawer(GravityCompat.START)
+                binding.drawerLayout.openDrawer(GravityCompat.START)
         }
 
         return false

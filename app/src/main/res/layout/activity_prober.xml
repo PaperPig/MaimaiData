@@ -9,7 +9,9 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
-        <include layout="@layout/title" />
+        <include
+            android:id="@+id/toolbarLayout"
+            layout="@layout/title" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
@@ -17,7 +19,8 @@
         android:layout_height="match_parent"
         android:background="@color/songListColor">
 
-        <include layout="@layout/mmd_universe_style_bg_layout" />
+        <include
+            layout="@layout/mmd_universe_style_bg_layout" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refreshLayout"

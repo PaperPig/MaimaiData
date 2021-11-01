@@ -23,6 +23,7 @@
             android:orientation="horizontal">
 
             <include
+                android:id="@+id/searchBarLayout"
                 layout="@layout/search_bar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

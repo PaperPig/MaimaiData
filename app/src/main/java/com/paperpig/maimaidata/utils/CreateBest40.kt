@@ -18,12 +18,12 @@ import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
-import android.graphics.Bitmap
 
 
 object CreateBest40 {
@@ -52,36 +52,54 @@ object CreateBest40 {
             return
         }
         withContext(Dispatchers.IO) {
-
-            val containerBitmap = drawableToBitmap(context, R.drawable.mmd_player_best40_n, containerWidth,
-                containerHeight+ headerHeight)
+            val containerBitmap = drawableToBitmap(
+                context, R.drawable.mmd_player_best40_n, containerWidth,
+                containerHeight + headerHeight
+            )
             val containerCanvas = Canvas(containerBitmap)
             val textPaint = TextPaint()
 
 
             //绘制rating数据图
             val mainBitmap =
-                Bitmap.createBitmap(containerWidth,
+                Bitmap.createBitmap(
+                    containerWidth,
                     containerHeight,
-                    Bitmap.Config.ARGB_8888)
+                    Bitmap.Config.ARGB_8888
+                )
             val canvas = Canvas(mainBitmap)
             //绘制旧版本乐曲
-            for (i in old.indices) {
-                val drawBitmap = drawSongItem(context,
-                    old[i], songData)
-                canvas.drawBitmap(drawBitmap!!,
-                    (i % 5 * itemWidth + i % 5 * itemPadding).toFloat(),
-                    (i / 5 * itemHeight + i / 5 * itemPadding).toFloat(),
-                    null)
+            val drawJacketJob = launch {
+                for (i in old.indices) {
+                    launch {
+                        val drawBitmap = drawSongItem(
+                            context,
+                            old[i], songData
+                        )
+                        canvas.drawBitmap(
+                            drawBitmap!!,
+                            (i % 5 * itemWidth + i % 5 * itemPadding).toFloat(),
+                            (i / 5 * itemHeight + i / 5 * itemPadding).toFloat(),
+                            null
+                        )
+                    }
+
+                }
+                //绘制现行版本乐曲
+                for (i in new.indices) {
+                    launch {
+                        val drawBitmap = drawSongItem(context, new[i], songData)
+                        canvas.drawBitmap(
+                            drawBitmap!!,
+                            (i % 3 * itemWidth + (itemWidth + itemPadding) * 5 + versionPadding + i % 3 * itemPadding).toFloat(),
+                            (i / 3 * itemHeight + i / 3 * itemPadding).toFloat(),
+                            null
+                        )
+                    }
+                }
             }
-            //绘制现行版本乐曲
-            for (i in new.indices) {
-                val drawBitmap = drawSongItem(context, new[i], songData)
-                canvas.drawBitmap(drawBitmap!!,
-                    (i % 3 * itemWidth + (itemWidth + itemPadding) * 5 + versionPadding + i % 3 * itemPadding).toFloat(),
-                    (i / 3 * itemHeight + i / 3 * itemPadding).toFloat(),
-                    null)
-            }
+
+            drawJacketJob.join()
 
             containerCanvas.drawBitmap(mainBitmap, 0f, 250f, null)
 
@@ -94,20 +112,23 @@ object CreateBest40 {
                 color = Color.BLACK
                 letterSpacing = 0.3f
             }
-            containerCanvas.drawText(SharePreferencesUtils(context).getUserName(),
+            containerCanvas.drawText(
+                SharePreferencesUtils(context).getUserName(),
                 450f,
                 145f,
-                textPaint)
+                textPaint
+            )
 
             //绘制总rating
             textPaint.apply {
                 color = Color.YELLOW
                 textPaint.textSize = 25f
             }
-            containerCanvas.drawText((old.sumBy { it.ra } + new.sumBy { it.ra }).toString(),
+            containerCanvas.drawText((old.sumOf { it.ra } + new.sumOf { it.ra }).toString(),
                 531f,
                 85f,
-                textPaint)
+                textPaint
+            )
 
 
             //绘制分版本rating
@@ -116,10 +137,11 @@ object CreateBest40 {
                 textSize = 14f
                 letterSpacing = 0f
             }
-            containerCanvas.drawText(("旧版本：${old.sumBy { it.ra }}   现行版本：${new.sumBy { it.ra }}"),
+            containerCanvas.drawText(("旧版本：${old.sumOf { it.ra }}   现行版本：${new.sumOf { it.ra }}"),
                 470f,
                 190f,
-                textPaint)
+                textPaint
+            )
             val time: String = SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA).format(Date())
 
 
@@ -130,8 +152,10 @@ object CreateBest40 {
                     put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
                 }
                 val uri =
-                    context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        values)
+                    context.contentResolver.insert(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        values
+                    )
 
 
 
@@ -141,9 +165,11 @@ object CreateBest40 {
                         flush()
                         close()
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(context,
+                            Toast.makeText(
+                                context,
                                 "文件已保存至${savePath}目录",
-                                Toast.LENGTH_SHORT)
+                                Toast.LENGTH_SHORT
+                            )
                                 .show()
                         }
                     }
@@ -154,15 +180,18 @@ object CreateBest40 {
                 val outputDir =
                     Environment.getExternalStoragePublicDirectory(savePath)
                 val imageFile = File(
-                    outputDir, "best40_${time}.png")
+                    outputDir, "best40_${time}.png"
+                )
                 if (!outputDir.exists()) outputDir.mkdirs()
                 try {
                     FileOutputStream(imageFile).use {
                         containerBitmap.compress(Bitmap.CompressFormat.PNG, 90, it)
                         it.flush()
                         it.close()
-                        MediaScannerConnection.scanFile(context, arrayOf(imageFile.path),
-                            null, null)
+                        MediaScannerConnection.scanFile(
+                            context, arrayOf(imageFile.path),
+                            null, null
+                        )
                         withContext(Dispatchers.Main) {
                             Toast.makeText(context, "文件已保存至${savePath}目录", Toast.LENGTH_SHORT)
                                 .show()
@@ -190,8 +219,10 @@ object CreateBest40 {
         val canvas = Canvas(songContainerBitmap)
 
         //绘制歌曲背景板
-        val ratingBoardBitmap = drawableToBitmap(context, record.getRatingBoard(), itemWidth,
-            itemHeight)
+        val ratingBoardBitmap = drawableToBitmap(
+            context, record.getRatingBoard(), itemWidth,
+            itemHeight
+        )
         canvas.drawBitmap(ratingBoardBitmap, 0f, 0f, null)
 
 
@@ -206,16 +237,20 @@ object CreateBest40 {
         val diffDrawable =
             ContextCompat.getDrawable(context, record.getRatingDiff())
         val diffBitmap =
-            Bitmap.createBitmap(diffDrawable!!.intrinsicWidth / 2,
+            Bitmap.createBitmap(
+                diffDrawable!!.intrinsicWidth / 2,
                 diffDrawable.intrinsicHeight / 2,
-                Bitmap.Config.ARGB_8888)
+                Bitmap.Config.ARGB_8888
+            )
         val diffCanvas = Canvas(diffBitmap)
         diffDrawable.setBounds(0, 0, diffBitmap.width, diffBitmap.height)
         diffDrawable.draw(diffCanvas)
-        canvas.drawBitmap(diffBitmap,
+        canvas.drawBitmap(
+            diffBitmap,
             (itemWidth - diffBitmap.width - 25).toFloat(),
             30f,
-            null)
+            null
+        )
 
         //绘制类型标记
         val typeBitmap = drawableToBitmap(context, record.getTypeIcon(), 96, 27)
@@ -259,18 +294,26 @@ object CreateBest40 {
 
 
         textPaint.textSize = 12f
-        val achievement = String.format(context.getString(R.string.maimaidx_achievement_desc),
-            record.achievements)
-        canvas.drawText("Lv:${
-            record.ds
-        }", 22f, 226f, textPaint)
-        canvas.drawText("Ra:${
-            record.ra
-        }", 140f, 226f, textPaint)
-        canvas.drawText(achievement,
+        val achievement = String.format(
+            context.getString(R.string.maimaidx_achievement_desc),
+            record.achievements
+        )
+        canvas.drawText(
+            "Lv:${
+                record.ds
+            }", 22f, 226f, textPaint
+        )
+        canvas.drawText(
+            "Ra:${
+                record.ra
+            }", 140f, 226f, textPaint
+        )
+        canvas.drawText(
+            achievement,
             (itemWidth - textPaint.measureText(achievement)) / 2,
             226f,
-            textPaint)
+            textPaint
+        )
 
 
         return songContainerBitmap
@@ -284,10 +327,12 @@ object CreateBest40 {
     ): Bitmap {
         var bitmap = BitmapFactory.decodeResource(context.resources, res)
         if (dstHeight != 0 && dstHeight != 0) {
-            bitmap = Bitmap.createScaledBitmap(bitmap,
+            bitmap = Bitmap.createScaledBitmap(
+                bitmap,
                 dstWidth,
                 dstHeight,
-                false)
+                false
+            )
         }
         return bitmap
     }

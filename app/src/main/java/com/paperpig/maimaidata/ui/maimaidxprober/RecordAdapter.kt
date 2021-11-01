@@ -14,6 +14,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.databinding.MmdPlayerRtsongDividerLayoutBinding
+import com.paperpig.maimaidata.databinding.MmdPlayerRtsongLayoutBinding
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
@@ -46,36 +48,41 @@ class RecordAdapter(private val songData: List<SongData>) :
         }
 
 
-    inner class RecordHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val songLevel: TextView = view.findViewById(R.id.song_level)
-        val songDiff: View = view.findViewById(R.id.song_diff)
-        val songJacket: ImageView = view.findViewById(R.id.song_jacket)
-        val songJacketContainer: FrameLayout = view.findViewById(R.id.song_jacket_container)
-        val songTitle: TextView = view.findViewById(R.id.song_title)
-        val songAcc: TextView = view.findViewById(R.id.song_acc)
-        val songRating: TextView = view.findViewById(R.id.song_rating)
-        val songFsfsd: ImageView = view.findViewById(R.id.song_fsfsd)
-        val songFcap: ImageView = view.findViewById(R.id.song_fcap)
-        val songRank: ImageView = view.findViewById(R.id.song_rank)
-        val songType: ImageView = view.findViewById(R.id.song_type)
-        val out: FrameLayout = view.findViewById(R.id.outer)
-        val container: RelativeLayout = view.findViewById(R.id.container)
+    inner class RecordHolder(binding: MmdPlayerRtsongLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        val songLevel: TextView = binding.songLevel
+        val songDiff: View = binding.songDiff
+        val songJacket: ImageView = binding.songJacket
+        val songJacketContainer: FrameLayout = binding.songJacketContainer
+        val songTitle: TextView = binding.songTitle
+        val songAcc: TextView = binding.songAcc
+        val songRating: TextView = binding.songRating
+        val songFsfsd: ImageView = binding.songFsfsd
+        val songFcap: ImageView = binding.songFcap
+        val songRank: ImageView = binding.songRank
+        val songType: ImageView = binding.songType
+        val out: FrameLayout = binding.outer
+        val container: RelativeLayout = binding.container
     }
 
-    inner class DividerHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val dividerText: TextView = view.findViewById(R.id.dividerText)
+    inner class DividerHolder(binding: MmdPlayerRtsongDividerLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        val dividerText: TextView = binding.dividerText
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == TYPE_RECORD) {
             RecordHolder(
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.mmd_player_rtsong_layout, parent, false)
+                MmdPlayerRtsongLayoutBinding.inflate(
+                    LayoutInflater.from(parent.context), parent, false
+                )
             )
         } else {
             DividerHolder(
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.mmd_player_rtsong_divider_layout, parent, false)
+                MmdPlayerRtsongDividerLayoutBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent, false
+                )
             )
         }
     }
@@ -171,15 +178,11 @@ class RecordAdapter(private val songData: List<SongData>) :
         }
     }
 
-    fun setData(list: List<Record>) {
+    fun setData(list: List<Record>,version: Int) {
         originList = list
         recordList = originList
+        versionType = version
         notifyDataSetChanged()
     }
 
-    fun setVersion(int: Int) {
-        versionType = int
-        recordList = originList
-        notifyDataSetChanged()
-    }
 }

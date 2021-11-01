@@ -72,7 +72,7 @@
                 android:orientation="horizontal"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
-                android:paddingBottom="36dp">
+                android:paddingBottom="18dp">
 
                 <ImageView
                     android:id="@+id/songJacket"

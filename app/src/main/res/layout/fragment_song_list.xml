@@ -5,7 +5,8 @@
     android:background="@color/songListColor">
 
 
-    <include layout="@layout/mmd_universe_style_bg_layout"/>
+    <include
+        layout="@layout/mmd_universe_style_bg_layout"/>
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -16,7 +17,9 @@
         android:clipToPadding="false" />
 
 
-    <include layout="@layout/layout_song_search" />
+    <include
+        android:id="@+id/songSearchLayout"
+        layout="@layout/layout_song_search" />
 
 
 

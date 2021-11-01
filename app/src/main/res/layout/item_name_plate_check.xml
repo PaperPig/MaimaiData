@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_margin="1dp"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_height="64dp">
+
+    <ImageView
+        android:id="@+id/songJacket"
+        android:layout_width="64dp"
+        android:layout_height="64dp"/>
+    <LinearLayout
+        android:padding="6dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:lines="1"
+            android:ellipsize="end"
+            android:id="@+id/songTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:gravity="center_vertical|end"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/songRank"
+                android:layout_width="72dp"
+                android:layout_height="24dp"/>
+            <ImageView
+                android:id="@+id/songFcap"
+                android:layout_width="30dp"
+                android:layout_height="32dp"/>
+            <ImageView
+                android:id="@+id/songFsfsd"
+                android:layout_width="30dp"
+                android:layout_height="32dp"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+</LinearLayout>

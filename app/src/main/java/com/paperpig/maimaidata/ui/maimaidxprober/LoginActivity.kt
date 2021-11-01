@@ -8,19 +8,20 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.databinding.ActivityLoginBinding
 import com.paperpig.maimaidata.model.ResponseErrorBody
 import com.paperpig.maimaidata.network.MaimaiDataRequests
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
-import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.title.*
 
 class LoginActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_login)
-        setSupportActionBar(toolbar)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
@@ -28,22 +29,22 @@ class LoginActivity : AppCompatActivity() {
         supportActionBar?.title = getString(R.string.login)
 
 
-        username.setText(SharePreferencesUtils(this).getUserName())
-        password.setText(SharePreferencesUtils(this).getPassword())
+        binding.username.setText(SharePreferencesUtils(this).getUserName())
+        binding.password.setText(SharePreferencesUtils(this).getPassword())
 
 
-        loginBtn.setOnClickListener {
-            val username = username.text.toString()
-            val password = password.text.toString()
+        binding.loginBtn.setOnClickListener {
+            val username = binding.username.text.toString()
+            val password = binding.password.text.toString()
             if (username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "请输入用户名和密码", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            loading.visibility = View.VISIBLE
+            binding.loading.visibility = View.VISIBLE
             MaimaiDataRequests.login(username, password)
                 .subscribe({
-                    loading.visibility = View.GONE
+                    binding.loading.visibility = View.GONE
 
                     if (it.code() == 200) {
                         val cookie = it.headers()["set-cookie"] ?: String()
@@ -60,7 +61,7 @@ class LoginActivity : AppCompatActivity() {
                             .show()
                     }
                 }, {
-                    loading.visibility = View.GONE
+                    binding.loading.visibility = View.GONE
                     it.printStackTrace()
                 })
         }

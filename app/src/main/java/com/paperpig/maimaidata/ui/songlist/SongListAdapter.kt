@@ -7,7 +7,6 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import android.text.TextUtils
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.databinding.ItemSongBinding
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
@@ -69,8 +69,8 @@ class SongListAdapter : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
                 if (searchText.isEmpty() || TextUtils.isEmpty(it.title)) {
                     return@filter true
                 }
-                return@filter it.title.toLowerCase(Locale.ROOT)
-                    .contains(searchText.toLowerCase(Locale.ROOT))
+                return@filter it.title.lowercase(Locale.ROOT)
+                    .contains(searchText.lowercase(Locale.ROOT))
             }.filter {
                 if (sortList.isNotEmpty()) {
                     return@filter sortList.contains(it.basic_info.genre)
@@ -126,22 +126,24 @@ class SongListAdapter : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
         }
 
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val songJacket: ImageView = view.findViewById(R.id.songJacket)
-        val songTitle: TextView = view.findViewById(R.id.songTitle)
-        val songArtist: TextView = view.findViewById(R.id.songArtist)
-        val songGenre: TextView = view.findViewById(R.id.songGenre)
-        val difficultyBasic: TextView = view.findViewById(R.id.levelBasic)
-        val difficultyAdvanced: TextView = view.findViewById(R.id.levelAdvanced)
-        val difficultyExpert: TextView = view.findViewById(R.id.levelExpert)
-        val difficultyMaster: TextView = view.findViewById(R.id.levelMaster)
-        val difficultyRemaster: TextView = view.findViewById(R.id.levelRemaster)
-        val songType: ImageView = view.findViewById(R.id.songType)
+    inner class ViewHolder(binding: ItemSongBinding) : RecyclerView.ViewHolder(binding.root) {
+        val songJacket: ImageView = binding.songJacket
+        val songTitle: TextView = binding.songTitle
+        val songArtist: TextView = binding.songArtist
+        val songGenre: TextView = binding.songGenre
+        val difficultyBasic: TextView = binding.levelBasic
+        val difficultyAdvanced: TextView = binding.levelAdvanced
+        val difficultyExpert: TextView = binding.levelExpert
+        val difficultyMaster: TextView = binding.levelMaster
+        val difficultyRemaster: TextView = binding.levelRemaster
+        val songType: ImageView = binding.songType
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_song, parent, false)
+            ItemSongBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
         )
     }
 
@@ -183,11 +185,15 @@ class SongListAdapter : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
                 R.id.song_list_inner_stroke
             ) as GradientDrawable
         bgColor.setColor(ContextCompat.getColor(holder.itemView.context, songData.getBgColor()))
-        bgInnerStroke.setStroke(WindowsUtils.dp2px(holder.itemView.context,3f).toInt(),ContextCompat.getColor(holder.itemView.context,
-            songData.getBgColor()))
+        bgInnerStroke.setStroke(
+            WindowsUtils.dp2px(holder.itemView.context, 3f).toInt(), ContextCompat.getColor(
+                holder.itemView.context,
+                songData.getBgColor()
+            )
+        )
 
         bgStroke.setStroke(
-            WindowsUtils.dp2px(holder.itemView.context,4f).toInt(),
+            WindowsUtils.dp2px(holder.itemView.context, 4f).toInt(),
             ContextCompat.getColor(holder.itemView.context, songData.getStrokeColor())
         )
 

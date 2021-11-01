@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -379,7 +377,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="150dp"
                 android:divider="@drawable/divider"
                 android:orientation="horizontal"
                 android:showDividers="middle">
@@ -392,13 +390,34 @@
                     android:text="@string/_break"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/breakGreatScore"
-                    style="@style/DXScoreAchievementStyle"
+                <LinearLayout
+                    android:divider="@drawable/divider"
+                    android:showDividers="middle"
+                    android:orientation="vertical"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:textColor="@color/great" />
+                    android:layout_weight="3">
+                    <TextView
+                        android:id="@+id/breakGreat4xScore"
+                        style="@style/DXScoreAchievementStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:textColor="@color/great" />
+                    <TextView
+                        android:id="@+id/breakGreat3xScore"
+                        style="@style/DXScoreAchievementStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:textColor="@color/great" />
+                    <TextView
+                        android:id="@+id/breakGreat25xScore"
+                        style="@style/DXScoreAchievementStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:textColor="@color/great" />
+                </LinearLayout>
+
+
 
                 <TextView
                     android:id="@+id/breakGoodScore"

@@ -14,7 +14,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <include layout="@layout/title" />
+        <include
+            android:id="@+id/toolbarLayout"
+            layout="@layout/title" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <EditText

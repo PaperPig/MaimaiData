@@ -10,27 +10,27 @@ import androidx.core.animation.doOnStart
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.databinding.FragmentSongListBinding
+import com.paperpig.maimaidata.databinding.MmdUniverseStyleBgLayoutBinding
 import com.paperpig.maimaidata.model.SongListModel
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.WindowsUtils
-import kotlinx.android.synthetic.main.fragment_song_list.*
-import kotlinx.android.synthetic.main.layout_song_search.*
-import kotlinx.android.synthetic.main.mmd_universe_style_bg_layout.*
-import kotlinx.android.synthetic.main.search_bar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.math.hypot
 
 
-class SongListFragment : BaseFragment() {
+class SongListFragment : BaseFragment<FragmentSongListBinding>() {
+    private lateinit var binding: FragmentSongListBinding
+    private lateinit var backgroundBinding: MmdUniverseStyleBgLayoutBinding
     private lateinit var songAdapter: SongListAdapter
     private val mHandler: Handler = Handler()
     private val scrollRunnable: Runnable by lazy {
         object : Runnable {
             override fun run() {
-                dosTopRecyclerView.scrollBy(1, 0)
-                dosUnderRecyclerView.scrollBy(1, 0)
+                backgroundBinding.dosTopRecyclerView.scrollBy(1, 0)
+                backgroundBinding.dosUnderRecyclerView.scrollBy(1, 0)
                 mHandler.postDelayed(this, 50)
             }
         }
@@ -46,11 +46,10 @@ class SongListFragment : BaseFragment() {
     }
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_song_list, container, false)
+    override fun getViewBinding(container: ViewGroup?): FragmentSongListBinding {
+        binding = FragmentSongListBinding.inflate(layoutInflater, container, false)
+        backgroundBinding = MmdUniverseStyleBgLayoutBinding.bind(binding.root)
+        return binding
     }
 
 
@@ -59,40 +58,41 @@ class SongListFragment : BaseFragment() {
 
         setupAnimation()
 
-        songListRecyclerView.apply {
+        binding.songListRecyclerView.apply {
             songAdapter = SongListAdapter()
             adapter = songAdapter
             layoutManager = LinearLayoutManager(context)
         }
 
-        closeLayout.setOnClickListener {
+        binding.songSearchLayout.closeLayout.setOnClickListener {
             showOrHideSearchBar()
         }
 
-        searchButton.setOnClickListener {
+        binding.songSearchLayout.searchBarLayout.searchButton.setOnClickListener {
             songAdapter.search(
-                searchText.text.toString(),
+                binding.songSearchLayout.searchBarLayout.searchText.text.toString(),
                 getSortCheck(),
                 getVersionCheck(),
-                levelSpinner.selectedItem.toString(),
-                sortSpinner.selectedItem.toString(),
-                favorCheck.isChecked
+                binding.songSearchLayout.levelSpinner.selectedItem.toString(),
+                binding.songSearchLayout.sortSpinner.selectedItem.toString(),
+                binding.songSearchLayout.favorCheck.isChecked
             )
             hideKeyboard(it)
             showOrHideSearchBar()
         }
 
-        searchText.setOnEditorActionListener { _, i, _ ->
+        binding.songSearchLayout.searchBarLayout.searchText.setOnEditorActionListener { _, i, _ ->
             when (i) {
                 EditorInfo.IME_ACTION_SEARCH -> {
                     songAdapter.search(
-                        searchText.text.toString(),
+                        binding.songSearchLayout.searchBarLayout.searchText.text.toString(),
                         getSortCheck(),
                         getVersionCheck(),
-                        levelSpinner.selectedItem.toString(),
-                        sortSpinner.selectedItem.toString(),
-                        favorCheck.isChecked
+                        binding.songSearchLayout.levelSpinner.selectedItem.toString(),
+                        binding.songSearchLayout.sortSpinner.selectedItem.toString(),
+                        binding.songSearchLayout.favorCheck.isChecked
                     )
+                    hideKeyboard(view)
                     showOrHideSearchBar()
                 }
             }
@@ -111,12 +111,12 @@ class SongListFragment : BaseFragment() {
     private fun getSortCheck(): List<String> {
         val checkBoxList =
             listOf<CheckBox>(
-                popCheck,
-                nicoCheck,
-                touhouCheck,
-                gameVarietyCheck,
-                maimaiSortCheck,
-                ongekiChuniCheck
+                binding.songSearchLayout.popCheck,
+                binding.songSearchLayout.nicoCheck,
+                binding.songSearchLayout.touhouCheck,
+                binding.songSearchLayout.gameVarietyCheck,
+                binding.songSearchLayout.maimaiSortCheck,
+                binding.songSearchLayout.ongekiChuniCheck
             )
         val sortList = mutableListOf<String>()
         for (cb in checkBoxList) {
@@ -128,15 +128,15 @@ class SongListFragment : BaseFragment() {
 
     private fun getVersionCheck(): List<String> {
         val checkBoxList = listOf<CheckBox>(
-            maimaiCheck,
-            greenCheck,
-            orangeCheck,
-            pinkCheck,
-            murasakiCheck,
-            milkCheck,
-            finaleCheck,
-            dxCheck,
-            dx2021Check
+            binding.songSearchLayout.maimaiCheck,
+            binding.songSearchLayout.greenCheck,
+            binding.songSearchLayout.orangeCheck,
+            binding.songSearchLayout.pinkCheck,
+            binding.songSearchLayout.murasakiCheck,
+            binding.songSearchLayout.milkCheck,
+            binding.songSearchLayout.finaleCheck,
+            binding.songSearchLayout.dxCheck,
+            binding.songSearchLayout.dx2021Check
         )
         val versionList = mutableListOf<String>()
         for (cb in checkBoxList) {
@@ -165,23 +165,26 @@ class SongListFragment : BaseFragment() {
     private fun showOrHideSearchBar() {
         val windowWidth = WindowsUtils.getWindowWidth(context)
         val radius =
-            hypot(searchLayout.width.toDouble(), searchLayout.height.toDouble()).toFloat()
+            hypot(
+                binding.songSearchLayout.searchLayout.width.toDouble(),
+                binding.songSearchLayout.searchLayout.height.toDouble()
+            ).toFloat()
 
-        if (searchLayout.isVisible) {
+        if (binding.songSearchLayout.searchLayout.isVisible) {
             val createCircularReveal = ViewAnimationUtils.createCircularReveal(
-                searchLayout, windowWidth.toInt(), 0, radius, 0f
+                binding.songSearchLayout.searchLayout, windowWidth.toInt(), 0, radius, 0f
             )
             createCircularReveal.setDuration(300).doOnEnd {
-                searchLayout.visibility = View.GONE
+                binding.songSearchLayout.searchLayout.visibility = View.GONE
             }
             createCircularReveal.start()
 
         } else {
             val createCircularReveal = ViewAnimationUtils.createCircularReveal(
-                searchLayout, windowWidth.toInt(), 0, 0f, radius
+                binding.songSearchLayout.searchLayout, windowWidth.toInt(), 0, 0f, radius
             )
             createCircularReveal.setDuration(300).doOnStart {
-                searchLayout.visibility = View.VISIBLE
+                binding.songSearchLayout.searchLayout.visibility = View.VISIBLE
             }
             createCircularReveal.start()
         }
@@ -190,13 +193,13 @@ class SongListFragment : BaseFragment() {
     private fun setupAnimation() {
         val topLayoutManager = LinearLayoutManager(context)
         topLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        dosTopRecyclerView.apply {
+        backgroundBinding.dosTopRecyclerView.apply {
             layoutManager = topLayoutManager
             adapter = DotsScrollAdapter(context, R.drawable.mmd_home_elem_dots_top)
         }
         val underLayoutManager = LinearLayoutManager(context)
         underLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        dosUnderRecyclerView.apply {
+        backgroundBinding.dosUnderRecyclerView.apply {
             layoutManager = underLayoutManager
             adapter = DotsScrollAdapter(context, R.drawable.mmd_home_elem_dots_under)
         }

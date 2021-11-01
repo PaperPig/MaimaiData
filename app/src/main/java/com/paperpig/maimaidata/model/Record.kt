@@ -1,7 +1,10 @@
 package com.paperpig.maimaidata.model
 
+import android.os.Parcelable
 import com.paperpig.maimaidata.R
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Record(
     val achievements: Double,
     val ds: Double,
@@ -18,7 +21,7 @@ data class Record(
     val title: String,
     val type: String
 
-) {
+):Parcelable {
     fun getFcIcon() = when (fc) {
         "fc" -> R.drawable.mmd_player_rtsong_fc
         "fcp" -> R.drawable.mmd_player_rtsong_fcp

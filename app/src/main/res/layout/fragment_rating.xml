@@ -53,11 +53,15 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:lines="1"
+                    android:ellipsize="end"
+                    android:gravity="end"
                     android:id="@+id/account"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:text="PaperPig" />
+                    android:layout_marginEnd="2dp"
+                    android:text="" />
 
                 <Button
                     android:id="@+id/queryBtn"

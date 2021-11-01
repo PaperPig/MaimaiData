@@ -1,27 +1,28 @@
 package com.paperpig.maimaidata.ui.rating
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.databinding.ItemRatingReusltBinding
 import com.paperpig.maimaidata.model.Rating
 
 class RatingResultAdapter : RecyclerView.Adapter<RatingResultAdapter.ViewHolder>() {
     private var data = listOf<Rating>()
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val innerLevel: TextView = view.findViewById(R.id.innerLevel)
-        val achievement: TextView = view.findViewById(R.id.achievement)
-        val rating: TextView = view.findViewById(R.id.rating)
-        val totalRating: TextView = view.findViewById(R.id.totalRating)
+    inner class ViewHolder(binding: ItemRatingReusltBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        val innerLevel: TextView = binding.innerLevel
+        val achievement: TextView = binding.achievement
+        val rating: TextView = binding.rating
+        val totalRating: TextView = binding.totalRating
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         return ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_rating_reuslt, parent, false)
+            ItemRatingReusltBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false)
         )
     }
 

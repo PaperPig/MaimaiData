@@ -16,13 +16,14 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.databinding.ActivitySongDetailBinding
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
-import kotlinx.android.synthetic.main.activity_song_detail.*
 
 class SongDetailActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySongDetailBinding
     private val spUtils = SharePreferencesUtils(MaimaiDataApplication.instance, "songInfo")
 
     companion object {
@@ -36,28 +37,35 @@ class SongDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_song_detail)
+        binding = ActivitySongDetailBinding.inflate(layoutInflater)
 
-        setSupportActionBar(toolbar)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
         }
 
 
-        val songData = intent.getSerializableExtra("songData") as SongData
+        val songData: SongData = intent.getParcelableExtra("songData")!!
 
-        topLayout.setBackgroundColor(ContextCompat.getColor(this, songData.getBgColor()))
-        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, songData.getBgColor()))
+        binding.topLayout.setBackgroundColor(ContextCompat.getColor(this, songData.getBgColor()))
+        binding.tabLayout.setSelectedTabIndicatorColor(
+            ContextCompat.getColor(
+                this,
+                songData.getBgColor()
+            )
+        )
 
         GlideApp.with(this).load(MaimaiDataClient.IMAGE_BASE_URL + songData.basic_info.image_url)
-            .into(songJacket)
+            .into(binding.songJacket)
 
-        songTitle.text = songData.basic_info.title
-        songArtist.text = songData.basic_info.artist
-        songBpm.text = songData.basic_info.bpm.toString()
-        songGenre.text = songData.basic_info.genre
-        setVersionImage(songAddVersion, songData.basic_info.from)
+        binding.songTitle.text = songData.basic_info.title
+        binding.songArtist.text = songData.basic_info.artist
+        binding.songBpm.text = songData.basic_info.bpm.toString()
+        binding.songGenre.text = songData.basic_info.genre
+        setVersionImage(binding.songAddVersion, songData.basic_info.from)
 
         val colorFilter: (Boolean) -> Int = { isFavor: Boolean ->
             if (isFavor) {
@@ -66,7 +74,7 @@ class SongDetailActivity : AppCompatActivity() {
                 Color.WHITE
             }
         }
-        favButton.apply {
+        binding.favButton.apply {
             setColorFilter(colorFilter.invoke(spUtils.isFavorite(songData.id)))
             setOnClickListener {
                 val isFavor = spUtils.isFavorite(songData.id)
@@ -75,7 +83,12 @@ class SongDetailActivity : AppCompatActivity() {
             }
         }
 
-        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, songData.getBgColor()))
+        binding.tabLayout.setSelectedTabIndicatorColor(
+            ContextCompat.getColor(
+                this,
+                songData.getBgColor()
+            )
+        )
 
         val list = ArrayList<Fragment>()
         list.add(SongLevelFragment.newInstance(songData, 0))
@@ -85,8 +98,8 @@ class SongDetailActivity : AppCompatActivity() {
 
         if (songData.level.size == 5)
             list.add(SongLevelFragment.newInstance(songData, 4))
-        viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
-        tabLayout.setupWithViewPager(viewPager)
+        binding.viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
 
     }
 
@@ -136,7 +149,7 @@ class SongDetailActivity : AppCompatActivity() {
             "maimai MURASAKi" -> versionDrawable = R.drawable.maimai_murasaki
             "maimai MURASAKi PLUS" -> versionDrawable = R.drawable.maimai_murasaki_plus
             "maimai MiLK" -> versionDrawable = R.drawable.maimai_milk
-            "MiLK PLUS" -> versionDrawable = R.drawable.maimai_milk_plus
+            "maimai MiLK PLUS" -> versionDrawable = R.drawable.maimai_milk_plus
             "maimai FiNALE" -> versionDrawable = R.drawable.maimai_finale
             "maimai でらっくす" -> versionDrawable = R.drawable.maimaidx
             "maimai でらっくす PLUS" -> versionDrawable = R.drawable.maimaidx_plus
