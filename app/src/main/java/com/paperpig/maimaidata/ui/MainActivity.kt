@@ -120,9 +120,9 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     isUpdateChecked = true
                     MaterialDialog.Builder(this)
-                        .title(R.string.maimai_data_update_title)
-                        .content(R.string.maimai_data_update_content)
-                        .positiveText(R.string.common_confirm)
+                        .title(this@MainActivity.getString(R.string.maimai_data_update_title, it.version))
+                        .content((it.info ?: this@MainActivity.getString(R.string.maimai_data_update_default_content)).replace("\\n", "\n"))
+                        .positiveText(R.string.maimai_data_update_download)
                         .negativeText(R.string.common_cancel)
                         .onPositive { _, which ->
                             if (DialogAction.POSITIVE == which) {

@@ -17,5 +17,11 @@ data class AppUpdateModel(
      * newest apk url
      */
     @SerializedName("emperor_url")
-    var url: String? = null
+    var url: String? = null,
+
+    /**
+     * update info
+     */
+    @SerializedName("emperor_info")
+    var info: String? = null
 )
