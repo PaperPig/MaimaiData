@@ -52,7 +52,7 @@
     <string name="slide">SLIDE</string>
     <string name="_break">BREAK</string>
     <string name="touch">TOUCH</string>
-    <string name="break_score">break score</string>
+    <string name="break_score">break score(在绝赞全黄时填写)</string>
     <string name="dx_achievement">DX Achievement</string>
 
     <string name="finale_full_achievement">FiNALE理论值</string>

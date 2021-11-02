@@ -180,8 +180,8 @@ class RecordAdapter(private val songData: List<SongData>) :
 
     fun setData(list: List<Record>,version: Int) {
         originList = list
-        recordList = originList
         versionType = version
+        recordList = originList
         notifyDataSetChanged()
     }
 

@@ -18,7 +18,8 @@ class FinaleToDxFragment : BaseFragment<FragmentFinaleToDxBinding>() {
     private var holdCount = 0
     private var slideCount = 0
     private var breakCount = 0
-    private var dxPlayScore = 0
+    private var dxPlayMaxScore = 0
+    private var dxPlayMinScore = 0
     private var dxTotalScore = 0
 
 
@@ -96,16 +97,21 @@ class FinaleToDxFragment : BaseFragment<FragmentFinaleToDxBinding>() {
                 breakCount = breakPerfect + breakGreat + breakGood + breakMiss
 
                 dxTotalScore = tapCount * 10 + holdCount * 20 + slideCount * 30 + breakCount * 50
-                dxPlayScore = tapPerfect * 10 + tapGreat * 8 + tapGood * 5 +
+                dxPlayMaxScore = tapPerfect * 10 + tapGreat * 8 + tapGood * 5 +
                         holdPerfect * 20 + holdGreat * 16 + holdGood * 10 +
                         slidePerfect * 30 + slideGreat * 24 + slideGood * 15 +
-                        breakPerfect * 50 + breakGreat * 40 + breakGood * 25
+                        breakPerfect * 50 + breakGreat * 40 + breakGood * 20
+
+                dxPlayMinScore = tapPerfect * 10 + tapGreat * 8 + tapGood * 5 +
+                        holdPerfect * 20 + holdGreat * 16 + holdGood * 10 +
+                        slidePerfect * 30 + slideGreat * 24 + slideGood * 15 +
+                        breakPerfect * 50 + breakGreat * 25 + breakGood * 20
 
                 if (breakScore == 0) {
                     val dxMaxScore =
-                        dxPlayScore.toFloat() / dxTotalScore * 100 + breakPerfect.toFloat() / breakCount * 1
+                        dxPlayMaxScore.toFloat() / dxTotalScore * 100 + breakPerfect.toFloat() / breakCount * 1 + breakGreat.toFloat() / breakCount * 0.4 + breakGood.toFloat() / breakCount * 0.3
                     val dxMinScore =
-                        dxPlayScore.toFloat() / dxTotalScore * 100 + breakPerfect.toFloat() / breakCount * 0.5
+                        dxPlayMinScore.toFloat() / dxTotalScore * 100 + breakPerfect.toFloat() / breakCount * 0.5 + breakGreat.toFloat() / breakCount * 0.4 + breakGood.toFloat() / breakCount * 0.3
 
 
                     dxScore.text = String.format(
@@ -120,7 +126,7 @@ class FinaleToDxFragment : BaseFragment<FragmentFinaleToDxBinding>() {
                         val dxBreakScore =
                             1 - 0.25 * (breakCount * 2600 - breakScore) / 50 / breakCount
                         val dxCurrentScore =
-                            dxPlayScore.toFloat() / dxTotalScore * 100 + dxBreakScore
+                            dxPlayMaxScore.toFloat() / dxTotalScore * 100 + dxBreakScore
 
                         dxScore.text =
                             String.format(
