@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/searchLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -88,10 +89,10 @@
             android:layout_marginStart="12dp"
             android:text="@string/sort" />
 
-        <LinearLayout
+        <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            app:flexWrap="wrap">
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/popCheck"
@@ -105,12 +106,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/niconico" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/touhouCheck"
@@ -129,19 +124,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/maimai" />
-        </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/ongekiChuniCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ongeki_chuni" />
-        </LinearLayout>
+        </com.google.android.flexbox.FlexboxLayout>
 
         <View
             android:layout_width="match_parent"
@@ -156,10 +146,10 @@
             android:layout_marginStart="12dp"
             android:text="@string/version" />
 
-        <LinearLayout
+        <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            app:flexWrap="wrap">
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/maimaiCheck"
@@ -184,12 +174,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/pink" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/murasakiCheck"
@@ -209,14 +193,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/finale" />
 
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/dxCheck"
                 android:layout_width="wrap_content"
@@ -228,7 +204,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/dx2021" />
-        </LinearLayout>
+        </com.google.android.flexbox.FlexboxLayout>
 
         <View
             android:layout_width="match_parent"

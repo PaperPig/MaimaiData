@@ -7,11 +7,11 @@
     android:padding="12dp">
 
     <TextView
-        android:layout_width="40dp"
+        android:layout_width="50dp"
         android:layout_height="40dp"
         android:background="@drawable/search_bar_left_bg"
         android:gravity="center"
-        android:text="@string/search"
+        android:text="@string/song_title"
         android:textColor="@color/white"
         android:textSize="12sp" />
 

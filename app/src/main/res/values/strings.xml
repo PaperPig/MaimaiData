@@ -9,6 +9,7 @@
     <string name="dx_song_list">曲目列表</string>
 
     <string name="search">搜索</string>
+    <string name="song_title">歌曲名</string>
     <string name="level">等级</string>
     <string name="sequencing">难度排序</string>
     <string name="version">版本</string>
