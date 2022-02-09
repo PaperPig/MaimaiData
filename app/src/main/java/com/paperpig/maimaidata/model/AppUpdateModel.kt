@@ -8,20 +8,32 @@ import com.google.gson.annotations.SerializedName
  */
 data class AppUpdateModel(
     /**
-     * version string
+     * apk version string
      */
-    @SerializedName("emperor_version")
+    @SerializedName("apk_version")
     var version: String? = null,
 
     /**
      * newest apk url
      */
-    @SerializedName("emperor_url")
+    @SerializedName("apk_url")
     var url: String? = null,
 
     /**
      * update info
      */
-    @SerializedName("emperor_info")
-    var info: String? = null
+    @SerializedName("apk_info")
+    var info: String? = null,
+
+    /**
+     * json data version string
+     */
+    @SerializedName("data_version")
+    var dataVersion: String? = null,
+
+    /**
+     * new json url
+     */
+    @SerializedName("data_url")
+    var dataUrl: String? = null
 )

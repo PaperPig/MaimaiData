@@ -42,6 +42,16 @@ class SharePreferencesUtils(
         }.apply()
     }
 
+    fun getDataVersion(): String {
+        return prefs.getString("version", "0") ?: "0"
+    }
+
+    fun setDataVersion(version: String) {
+        prefs.edit().apply {
+            putString("version", version).apply()
+        }
+    }
+
     fun clear() {
         prefs.edit().clear().apply()
     }

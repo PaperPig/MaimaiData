@@ -99,6 +99,11 @@
     <string name="maimai_data_update_title">新版本：%s</string>
     <string name="maimai_data_update_default_content">BUG修复</string>
     <string name="maimai_data_update_download">下载</string>
+    <string name="maimai_data_data_update_title">数据更新</string>
+    <string name="maimai_data_data_update_info">本地数据版本:%s，检测到数据版本:%s，需要现在更新吗？</string>
+    <string name="maimai_data_download_title">正在下载</string>
+    <string name="maimai_data_start_download">开始下载</string>
+    <string name="maimai_data_download_error">下载出错，请重新下载</string>
 
 
 

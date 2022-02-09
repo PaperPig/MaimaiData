@@ -39,7 +39,7 @@ interface MaimaiDataService {
     /**
      * fetch update info from a noob's server
      */
-    @Headers("urlName:http://123.57.246.220:3000")
-    @GET("/checkUpdate")
+    @Headers("urlName:https://bucket-1256206908.cos.ap-shanghai.myqcloud.com")
+    @GET("/update.json")
     fun getUpdateInfo(): Observable<JsonElement>
 }

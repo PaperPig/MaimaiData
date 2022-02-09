@@ -99,7 +99,11 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
             false
         }
 
+        loadData()
 
+    }
+
+    fun loadData(){
         CoroutineScope(Dispatchers.Main).launch {
             songAdapter.setData(SongListModel().getData(context)
                 .sortedByDescending { it.id.toInt() })

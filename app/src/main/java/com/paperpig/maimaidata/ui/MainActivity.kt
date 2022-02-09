@@ -4,19 +4,26 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.FragmentTransaction
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
+import com.liulishuo.okdownload.DownloadTask
+import com.liulishuo.okdownload.core.cause.ResumeFailedCause
+import com.liulishuo.okdownload.core.listener.DownloadListener3
 import com.paperpig.maimaidata.BuildConfig
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityMainBinding
+import com.paperpig.maimaidata.model.AppUpdateModel
 import com.paperpig.maimaidata.network.MaimaiDataRequests
 import com.paperpig.maimaidata.ui.finaletodx.FinaleToDxFragment
 import com.paperpig.maimaidata.ui.rating.RatingFragment
 import com.paperpig.maimaidata.ui.songlist.SongListFragment
+import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import io.reactivex.disposables.Disposable
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -26,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var songListFragment: SongListFragment
     private var updateDisposable: Disposable? = null
     private var isUpdateChecked = false
-
+    private var downloadTask: DownloadTask? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,9 +146,88 @@ class MainActivity : AppCompatActivity() {
                         .cancelable(true)
                         .show()
                 }
+                if (SharePreferencesUtils(this, "version").getDataVersion() < it.dataVersion!!) {
+                    isUpdateChecked = true
+                    MaterialDialog.Builder(this)
+                        .title(this@MainActivity.getString(R.string.maimai_data_data_update_title))
+                        .content(
+                            String.format(
+                                this@MainActivity.getString(R.string.maimai_data_data_update_info),
+                                SharePreferencesUtils(this, "version").getDataVersion(),
+                                it.dataVersion
+                            )
+                        )
+                        .positiveText(R.string.maimai_data_update_download)
+                        .negativeText(R.string.common_cancel)
+                        .onPositive { _, which ->
+                            if (DialogAction.POSITIVE == which) {
+                                startDataDownload(it)
+                            }
+                        }
+                        .onNegative { d, _ ->
+                            d.dismiss()
+                        }
+                        .autoDismiss(true)
+                        .cancelable(true)
+                        .show()
+                }
             }, {
                 it.printStackTrace()
             })
+    }
+
+    private fun startDataDownload(appUpdateModel: AppUpdateModel) {
+        val updateDialog =
+            MaterialDialog.Builder(this)
+                .title(getString(R.string.maimai_data_download_title))
+                .content(getString(R.string.maimai_data_start_download))
+                .cancelable(false)
+                .show()
+        downloadTask = DownloadTask.Builder(appUpdateModel.dataUrl!!,filesDir.path,"songdata.json")
+            .setMinIntervalMillisCallbackProcess(16)
+            .setPassIfAlreadyCompleted(false)
+            .build()
+
+
+        downloadTask!!.enqueue(object : DownloadListener3() {
+            override fun retry(task: DownloadTask, cause: ResumeFailedCause) {
+            }
+
+            override fun connected(
+                task: DownloadTask,
+                blockCount: Int,
+                currentOffset: Long,
+                totalLength: Long
+            ) {
+            }
+
+            override fun progress(task: DownloadTask, currentOffset: Long, totalLength: Long) {
+                updateDialog.setContent( "$currentOffset/$totalLength")
+            }
+
+            override fun started(task: DownloadTask) {
+                updateDialog.show()
+            }
+
+            override fun completed(task: DownloadTask) {
+                updateDialog.dismiss()
+                songListFragment.loadData()
+                SharePreferencesUtils(this@MainActivity, "version").setDataVersion(appUpdateModel.dataVersion!!)
+            }
+
+            override fun canceled(task: DownloadTask) {
+                updateDialog.dismiss()
+            }
+
+            override fun error(task: DownloadTask, e: Exception) {
+                Toast.makeText(this@MainActivity, getString(R.string.maimai_data_download_error), Toast.LENGTH_SHORT).show()
+                updateDialog.dismiss()
+            }
+
+            override fun warn(task: DownloadTask) {
+            }
+
+        })
     }
 
 

@@ -55,7 +55,7 @@ object CreateBest40 {
             val containerBitmap = drawableToBitmap(
                 context, R.drawable.mmd_player_best40_n, containerWidth,
                 containerHeight + headerHeight
-            )
+            ).copy(Bitmap.Config.ARGB_8888,true)
             val containerCanvas = Canvas(containerBitmap)
             val textPaint = TextPaint()
 
