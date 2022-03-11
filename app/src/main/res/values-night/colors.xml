@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#319DF8</color>
+    <color name="colorPrimaryDark">#68BAFF</color>
+    <color name="colorAccent">#03DAC5</color>
+
+    <color name="songListColor">#57C0FF</color>
+
+    <color name="white">#000000</color>
+    <color name="black">#ffffff</color>
+    <color name="basic">#6FD43D</color>
+    <color name="advanced">#F8B709</color>
+    <color name="expert">#FF818D</color>
+    <color name="master">#9F51DC</color>
+    <color name="remaster">#CB5EEA</color>
+    <color name="divider">#1F1F1F</color>
+    <color name="textColor">#cccccc</color>
+
+
+    <color name="pop">#8A4C00</color>
+    <color name="pop_stroke">#FFD21F</color>
+    <color name="vocal">#12B4FF</color>
+    <color name="vocal_stroke">#7ED6FF</color>
+    <color name="touhou">#6A2E7F</color>
+    <color name="touhou_stroke">#E8A7FF</color>
+    <color name="variety">#317718</color>
+    <color name="variety_stroke">#BAFBA3</color>
+    <color name="maimai">#A30000</color>
+    <color name="maimai_stroke">#FFA7A7</color>
+    <color name="gekichuni">#0F5085</color>
+    <color name="gekichuni_stroke">#99D1FF</color>
+
+
+    <color name="great">#F75EA3</color>
+    <color name="good">#2FCA4C</color>
+    <color name="miss">#868686</color>
+
+    <color name="mmd_player_rtsong_bsc_main">#6FE163</color>
+    <color name="mmd_player_rtsong_bsc_dark">#025235</color>
+    <color name="mmd_player_rtsong_adv_main">#F8DF3B</color>
+    <color name="mmd_player_rtsong_adv_dark">#C7450C</color>
+    <color name="mmd_player_rtsong_exp_main">#FF818D</color>
+    <color name="mmd_player_rtsong_exp_dark">#C02138</color>
+    <color name="mmd_player_rtsong_mst_main">#C27FF4</color>
+    <color name="mmd_player_rtsong_mst_dark">#671B8D</color>
+    <color name="mmd_player_rtsong_rem_main">#E5DDEA</color>
+    <color name="mmd_player_rtsong_rem_dark">#8C2DD5</color>
+</resources>
