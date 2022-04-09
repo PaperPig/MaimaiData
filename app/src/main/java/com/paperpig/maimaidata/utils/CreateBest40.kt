@@ -37,9 +37,6 @@ object CreateBest40 {
     private const val containerHeight = itemHeight * 5 + itemPadding * 5
 
 
-    private val savePath = Environment.DIRECTORY_PICTURES + File.separator + "maimaidata_image/"
-
-
     suspend fun createSongInfo(
         context: Activity,
         songData: List<SongData>,
@@ -144,65 +141,7 @@ object CreateBest40 {
             )
             val time: String = SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA).format(Date())
 
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                val values = ContentValues().apply {
-                    put(MediaStore.MediaColumns.RELATIVE_PATH, savePath)
-                    put(MediaStore.MediaColumns.DISPLAY_NAME, "best40_${time}")
-                    put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
-                }
-                val uri =
-                    context.contentResolver.insert(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        values
-                    )
-
-
-
-                context.contentResolver.openOutputStream(uri!!).use {
-                    containerBitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-                    it?.apply {
-                        flush()
-                        close()
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(
-                                context,
-                                "文件已保存至${savePath}目录",
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
-                        }
-                    }
-                }
-
-
-            } else {
-                val outputDir =
-                    Environment.getExternalStoragePublicDirectory(savePath)
-                val imageFile = File(
-                    outputDir, "best40_${time}.png"
-                )
-                if (!outputDir.exists()) outputDir.mkdirs()
-                try {
-                    FileOutputStream(imageFile).use {
-                        containerBitmap.compress(Bitmap.CompressFormat.PNG, 90, it)
-                        it.flush()
-                        it.close()
-                        MediaScannerConnection.scanFile(
-                            context, arrayOf(imageFile.path),
-                            null, null
-                        )
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(context, "文件已保存至${savePath}目录", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    }
-
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-            }
+            PictureUtils.savePicture(context, containerBitmap, "best40_${time}")
         }
 
     }

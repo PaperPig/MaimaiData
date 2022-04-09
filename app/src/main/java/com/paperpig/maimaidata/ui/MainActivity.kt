@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -121,11 +120,11 @@ class MainActivity : AppCompatActivity() {
         updateDisposable = MaimaiDataRequests
             .fetchUpdateInfo()
             .subscribe({
+                isUpdateChecked = true
                 if (it.version != null &&
                     it.version!! > BuildConfig.VERSION_NAME &&
                     !it.url.isNullOrBlank()
                 ) {
-                    isUpdateChecked = true
                     MaterialDialog.Builder(this)
                         .title(this@MainActivity.getString(R.string.maimai_data_update_title, it.version))
                         .content((it.info ?: this@MainActivity.getString(R.string.maimai_data_update_default_content)).replace("\\n", "\n"))
@@ -146,8 +145,7 @@ class MainActivity : AppCompatActivity() {
                         .cancelable(true)
                         .show()
                 }
-                if (SharePreferencesUtils(this, "version").getDataVersion() < it.dataVersion!!) {
-                    isUpdateChecked = true
+                else if (SharePreferencesUtils(this, "version").getDataVersion() < it.dataVersion!!) {
                     MaterialDialog.Builder(this)
                         .title(this@MainActivity.getString(R.string.maimai_data_data_update_title))
                         .content(

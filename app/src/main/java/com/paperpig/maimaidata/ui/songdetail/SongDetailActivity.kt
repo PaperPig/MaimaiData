@@ -39,68 +39,74 @@ class SongDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySongDetailBinding.inflate(layoutInflater)
 
-        setContentView(binding.root)
+        with(binding) {
+            setContentView(root)
 
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowHomeEnabled(true)
-        }
-
-
-        val songData: SongData = intent.getParcelableExtra("songData")!!
-
-        binding.topLayout.setBackgroundColor(ContextCompat.getColor(this, songData.getBgColor()))
-        binding.tabLayout.setSelectedTabIndicatorColor(
-            ContextCompat.getColor(
-                this,
-                songData.getBgColor()
-            )
-        )
-
-        GlideApp.with(this).load(MaimaiDataClient.IMAGE_BASE_URL + songData.basic_info.image_url)
-            .into(binding.songJacket)
-
-        binding.songTitle.text = songData.basic_info.title
-        binding.songArtist.text = songData.basic_info.artist
-        binding.songBpm.text = songData.basic_info.bpm.toString()
-        binding.songGenre.text = songData.basic_info.genre
-        setVersionImage(binding.songAddVersion, songData.basic_info.from)
-
-        val colorFilter: (Boolean) -> Int = { isFavor: Boolean ->
-            if (isFavor) {
-                0
-            } else {
-                Color.WHITE
+            setSupportActionBar(toolbar)
+            supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
+                setDisplayShowHomeEnabled(true)
             }
-        }
-        binding.favButton.apply {
-            setColorFilter(colorFilter.invoke(spUtils.isFavorite(songData.id)))
-            setOnClickListener {
-                val isFavor = spUtils.isFavorite(songData.id)
-                spUtils.setFavorite(songData.id, !isFavor)
-                setColorFilter(colorFilter.invoke(!isFavor))
-            }
-        }
 
-        binding.tabLayout.setSelectedTabIndicatorColor(
-            ContextCompat.getColor(
-                this,
-                songData.getBgColor()
+            val songData: SongData = intent.getParcelableExtra("songData")!!
+
+            topLayout.setBackgroundColor(
+                ContextCompat.getColor(
+                    this@SongDetailActivity,
+                    songData.getBgColor()
+                )
             )
-        )
+            tabLayout.setSelectedTabIndicatorColor(
+                ContextCompat.getColor(
+                    this@SongDetailActivity,
+                    songData.getBgColor()
+                )
+            )
 
-        val list = ArrayList<Fragment>()
-        list.add(SongLevelFragment.newInstance(songData, 0))
-        list.add(SongLevelFragment.newInstance(songData, 1))
-        list.add(SongLevelFragment.newInstance(songData, 2))
-        list.add(SongLevelFragment.newInstance(songData, 3))
+            GlideApp.with(this@SongDetailActivity)
+                .load(MaimaiDataClient.IMAGE_BASE_URL + songData.basic_info.image_url)
+                .into(songJacket)
 
-        if (songData.level.size == 5)
-            list.add(SongLevelFragment.newInstance(songData, 4))
-        binding.viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
-        binding.tabLayout.setupWithViewPager(binding.viewPager)
+            songTitle.text = songData.basic_info.title
+            songArtist.text = songData.basic_info.artist
+            songBpm.text = songData.basic_info.bpm.toString()
+            songGenre.text = songData.basic_info.genre
+            setVersionImage(songAddVersion, songData.basic_info.from)
 
+            val colorFilter: (Boolean) -> Int = { isFavor: Boolean ->
+                if (isFavor) {
+                    0
+                } else {
+                    Color.WHITE
+                }
+            }
+            favButton.apply {
+                setColorFilter(colorFilter.invoke(spUtils.isFavorite(songData.id)))
+                setOnClickListener {
+                    val isFavor = spUtils.isFavorite(songData.id)
+                    spUtils.setFavorite(songData.id, !isFavor)
+                    setColorFilter(colorFilter.invoke(!isFavor))
+                }
+            }
+
+            tabLayout.setSelectedTabIndicatorColor(
+                ContextCompat.getColor(
+                    this@SongDetailActivity,
+                    songData.getBgColor()
+                )
+            )
+
+            val list = ArrayList<Fragment>()
+            list.add(SongLevelFragment.newInstance(songData, 0))
+            list.add(SongLevelFragment.newInstance(songData, 1))
+            list.add(SongLevelFragment.newInstance(songData, 2))
+            list.add(SongLevelFragment.newInstance(songData, 3))
+
+            if (songData.level.size == 5)
+                list.add(SongLevelFragment.newInstance(songData, 4))
+            viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
+            tabLayout.setupWithViewPager(binding.viewPager)
+        }
     }
 
 
@@ -154,6 +160,7 @@ class SongDetailActivity : AppCompatActivity() {
             "maimai でらっくす" -> versionDrawable = R.drawable.maimaidx
             "maimai でらっくす PLUS" -> versionDrawable = R.drawable.maimaidx_plus
             "maimai でらっくす Splash" -> versionDrawable = R.drawable.maimaidx_splash
+            "maimai でらっくす Splash PLUS" -> versionDrawable = R.drawable.maimaidx_splash_plus
         }
         Glide.with(view.context)
             .load(versionDrawable)
