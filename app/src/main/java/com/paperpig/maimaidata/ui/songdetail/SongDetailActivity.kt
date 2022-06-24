@@ -71,7 +71,7 @@ class SongDetailActivity : AppCompatActivity() {
             songArtist.text = songData.basic_info.artist
             songBpm.text = songData.basic_info.bpm.toString()
             songGenre.text = songData.basic_info.genre
-            setVersionImage(songAddVersion, songData.basic_info.from)
+            setVersionImage(songAddVersion, songData.basic_info.version)
 
             val colorFilter: (Boolean) -> Int = { isFavor: Boolean ->
                 if (isFavor) {
@@ -143,24 +143,26 @@ class SongDetailActivity : AppCompatActivity() {
     private fun setVersionImage(view: ImageView, addVersion: String) {
 
         @DrawableRes var versionDrawable = 0
-        when (addVersion) {
-            "maimai" -> versionDrawable = R.drawable.maimai
-            "maimai PLUS" -> versionDrawable = R.drawable.maimai_plus
-            "maimai GreeN" -> versionDrawable = R.drawable.maimai_green
-            "maimai GreeN PLUS" -> versionDrawable = R.drawable.maimai_green_plus
-            "maimai ORANGE" -> versionDrawable = R.drawable.maimai_orange
-            "maimai ORANGE PLUS" -> versionDrawable = R.drawable.maimai_orange_plus
-            "maimai PiNK" -> versionDrawable = R.drawable.maimai_pink
-            "maimai PiNK PLUS" -> versionDrawable = R.drawable.maimai_pink_plus
-            "maimai MURASAKi" -> versionDrawable = R.drawable.maimai_murasaki
-            "maimai MURASAKi PLUS" -> versionDrawable = R.drawable.maimai_murasaki_plus
-            "maimai MiLK" -> versionDrawable = R.drawable.maimai_milk
-            "maimai MiLK PLUS" -> versionDrawable = R.drawable.maimai_milk_plus
-            "maimai FiNALE" -> versionDrawable = R.drawable.maimai_finale
-            "maimai でらっくす" -> versionDrawable = R.drawable.maimaidx
-            "maimai でらっくす PLUS" -> versionDrawable = R.drawable.maimaidx_plus
-            "maimai でらっくす Splash" -> versionDrawable = R.drawable.maimaidx_splash
-            "maimai でらっくす Splash PLUS" -> versionDrawable = R.drawable.maimaidx_splash_plus
+        with(addVersion){
+            when{
+                startsWith("100") -> versionDrawable = R.drawable.maimai
+                startsWith("110") -> versionDrawable = R.drawable.maimai_plus
+                startsWith("120") -> versionDrawable = R.drawable.maimai_green
+                startsWith("130") -> versionDrawable = R.drawable.maimai_green_plus
+                startsWith("140") -> versionDrawable = R.drawable.maimai_orange
+                startsWith("150") -> versionDrawable = R.drawable.maimai_orange_plus
+                startsWith("160") -> versionDrawable = R.drawable.maimai_pink
+                startsWith("170") -> versionDrawable = R.drawable.maimai_pink_plus
+                startsWith("180") -> versionDrawable = R.drawable.maimai_murasaki
+                startsWith("185") -> versionDrawable = R.drawable.maimai_murasaki_plus
+                startsWith("190") -> versionDrawable = R.drawable.maimai_milk
+                startsWith("195") -> versionDrawable = R.drawable.maimai_milk_plus
+                startsWith("199") -> versionDrawable = R.drawable.maimai_finale
+                startsWith("200") -> versionDrawable = R.drawable.maimaidx
+                startsWith("205") -> versionDrawable = R.drawable.maimaidx_plus
+                startsWith("210") -> versionDrawable = R.drawable.maimaidx_splash
+                startsWith("215") -> versionDrawable = R.drawable.maimaidx_splash_plus
+            }
         }
         Glide.with(view.context)
             .load(versionDrawable)

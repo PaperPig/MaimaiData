@@ -82,7 +82,6 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.closeDrawers()
             true
         }
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

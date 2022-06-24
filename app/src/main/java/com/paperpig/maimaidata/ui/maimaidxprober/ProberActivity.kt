@@ -194,8 +194,8 @@ class ProberActivity : AppCompatActivity() {
                 finish()
             R.id.menu_share ->
                 checkPermission()
-            R.id.menu_nameplate ->
-                NamePlateActivity.actionStart(this,recordData)
+//            R.id.menu_nameplate ->
+//                NamePlateActivity.actionStart(this,recordData)
         }
         return true
     }

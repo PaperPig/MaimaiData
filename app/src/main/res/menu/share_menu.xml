@@ -6,10 +6,5 @@
         android:id="@+id/menu_share"
         android:orderInCategory="100"
         android:title="@string/save_best40"
-        app:showAsAction="collapseActionView" />
-
-    <item android:id="@+id/menu_nameplate"
-        android:orderInCategory="100"
-        android:title="@string/name_plate_query"
-        app:showAsAction="collapseActionView" />
+        app:showAsAction="always" />
 </menu>

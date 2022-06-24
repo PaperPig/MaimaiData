@@ -78,9 +78,7 @@ class SongListAdapter : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
                     return@filter true
             }.filter {
                 if (versionList.isNotEmpty()) {
-                    if (versionList.contains("でらっくす 2021")) {
-                        return@filter versionList.versionCheck(it.basic_info.from) || it.basic_info.is_new
-                    } else return@filter versionList.versionCheck(it.basic_info.from) && !it.basic_info.is_new
+                    return@filter versionList.versionCheck(it.basic_info.from)
                 } else return@filter true
             }.filter {
                 if (isShowFavoriteSong) {

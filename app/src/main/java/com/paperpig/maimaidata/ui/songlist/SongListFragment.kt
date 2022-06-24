@@ -140,7 +140,8 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
             binding.songSearchLayout.milkCheck,
             binding.songSearchLayout.finaleCheck,
             binding.songSearchLayout.dxCheck,
-            binding.songSearchLayout.dx2021Check
+            binding.songSearchLayout.dx2021Check,
+            binding.songSearchLayout.dx2022Check
         )
         val versionList = mutableListOf<String>()
         for (cb in checkBoxList) {

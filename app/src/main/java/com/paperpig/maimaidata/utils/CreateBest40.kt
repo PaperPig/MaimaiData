@@ -43,7 +43,7 @@ object CreateBest40 {
         old: List<Record>,
         new: List<Record>
     ) {
-        if (old.isEmpty() || new.isEmpty()) {
+        if (old.isEmpty() && new.isEmpty()) {
             Toast.makeText(context, "尚未取得歌曲信息，请稍后重试", Toast.LENGTH_SHORT)
                 .show()
             return
