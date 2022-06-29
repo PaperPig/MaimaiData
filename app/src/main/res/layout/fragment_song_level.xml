@@ -305,7 +305,7 @@
                 <TextView
                     style="@style/DXScoreAchievementStyle"
                     android:layout_width="0dp"
-                    android:layout_height="60dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:text="@string/hold"
                     android:textStyle="bold" />

@@ -188,7 +188,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="歌曲rating = 15个最高单曲rating(舞萌2021分类) + 25个最高单曲rating(舞萌2021以外分类)" />
+                android:text="歌曲rating = 15个最高单曲rating(舞萌2022分类) + 25个最高单曲rating(舞萌2022以外分类)" />
         </LinearLayout>
 
         <LinearLayout
