@@ -16,8 +16,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/songListColor">
+        android:layout_height="match_parent">
 
         <include
             layout="@layout/mmd_universe_style_bg_layout" />

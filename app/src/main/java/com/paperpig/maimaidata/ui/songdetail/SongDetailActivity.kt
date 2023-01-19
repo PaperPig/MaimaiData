@@ -20,6 +20,7 @@ import com.paperpig.maimaidata.databinding.ActivitySongDetailBinding
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
+import com.paperpig.maimaidata.utils.MaimaiRecordUtils
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 
 class SongDetailActivity : AppCompatActivity() {
@@ -49,6 +50,7 @@ class SongDetailActivity : AppCompatActivity() {
             }
 
             val songData: SongData = intent.getParcelableExtra("songData")!!
+            val record = MaimaiRecordUtils.getRecord(this@SongDetailActivity)
 
             topLayout.setBackgroundColor(
                 ContextCompat.getColor(
@@ -62,10 +64,18 @@ class SongDetailActivity : AppCompatActivity() {
                     songData.getBgColor()
                 )
             )
+            toolbarLayout.setContentScrimResource(songData.getBgColor())
 
             GlideApp.with(this@SongDetailActivity)
                 .load(MaimaiDataClient.IMAGE_BASE_URL + songData.basic_info.image_url)
                 .into(songJacket)
+
+            songJacket.setBackgroundColor(
+                ContextCompat.getColor(
+                    this@SongDetailActivity,
+                    songData.getStrokeColor()
+                )
+            )
 
             songTitle.text = songData.basic_info.title
             songArtist.text = songData.basic_info.artist
@@ -97,13 +107,15 @@ class SongDetailActivity : AppCompatActivity() {
             )
 
             val list = ArrayList<Fragment>()
-            list.add(SongLevelFragment.newInstance(songData, 0))
-            list.add(SongLevelFragment.newInstance(songData, 1))
-            list.add(SongLevelFragment.newInstance(songData, 2))
-            list.add(SongLevelFragment.newInstance(songData, 3))
 
-            if (songData.level.size == 5)
-                list.add(SongLevelFragment.newInstance(songData, 4))
+            (1..songData.level.size).forEach { i ->
+                val position = songData.level.size - i
+                list.add(SongLevelFragment.newInstance(songData, position, record?.find {
+                    it.title == songData.basic_info.title &&
+                            it.level_index == position
+                }))
+            }
+
             viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
             tabLayout.setupWithViewPager(binding.viewPager)
         }
@@ -116,7 +128,6 @@ class SongDetailActivity : AppCompatActivity() {
         private val list: List<Fragment>
     ) :
         FragmentPagerAdapter(fragmentManager, behavior) {
-        private val titleArray = arrayOf("BAS", "ADV", "EXP", "MAS", "Re:MAS")
 
         override fun getItem(position: Int): Fragment {
             return list[position]
@@ -127,7 +138,8 @@ class SongDetailActivity : AppCompatActivity() {
         }
 
         override fun getPageTitle(position: Int): CharSequence {
-            return titleArray[position]
+            return if (count == 4) arrayOf("MAS", "EXP", "ADV", "BAS")[position]
+            else arrayOf("Re:MAS", "MAS", "EXP", "ADV", "BAS")[position]
         }
 
     }
@@ -143,8 +155,8 @@ class SongDetailActivity : AppCompatActivity() {
     private fun setVersionImage(view: ImageView, addVersion: String) {
 
         @DrawableRes var versionDrawable = 0
-        with(addVersion){
-            when{
+        with(addVersion) {
+            when {
                 startsWith("100") -> versionDrawable = R.drawable.maimai
                 startsWith("110") -> versionDrawable = R.drawable.maimai_plus
                 startsWith("120") -> versionDrawable = R.drawable.maimai_green
@@ -162,6 +174,9 @@ class SongDetailActivity : AppCompatActivity() {
                 startsWith("205") -> versionDrawable = R.drawable.maimaidx_plus
                 startsWith("210") -> versionDrawable = R.drawable.maimaidx_splash
                 startsWith("215") -> versionDrawable = R.drawable.maimaidx_splash_plus
+                startsWith("220") -> versionDrawable = R.drawable.maimaidx_universe
+                startsWith("225") -> versionDrawable = R.drawable.maimaidx_universe_plus
+                startsWith("230") -> versionDrawable = R.drawable.maimaidx_festival
             }
         }
         Glide.with(view.context)

@@ -46,6 +46,9 @@
     <string name="maimaidx_scope_achievement_desc">%.4f%%-—%.4f%%</string>
     <string name="maimaidx_achievement_desc">%.4f%%</string>
     <string name="design">谱面作者</string>
+    <string name="status">达成状态</string>
+    <string name="no_record">暂无成绩</string>
+    <string name="no_record_tips">尚未游玩过当前难度的谱面，或者你需要登陆本应用中的查分器来更新你的分数信息</string>
 
 
     <string name="total">TOTAL</string>
@@ -105,7 +108,6 @@
     <string name="maimai_data_download_title">正在下载</string>
     <string name="maimai_data_start_download">开始下载</string>
     <string name="maimai_data_download_error">下载出错，请重新下载</string>
-
 
 
     <string-array name="maimai_version_values">

@@ -5,10 +5,12 @@ import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentSongLevelBinding
+import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.ui.BaseFragment
 import java.math.BigDecimal
@@ -17,6 +19,7 @@ import java.text.DecimalFormat
 
 private const val ARG_PARAM1 = "songData"
 private const val ARG_PARAM2 = "position"
+private const val ARG_PARAM3 = "record"
 
 /**
  * A simple [Fragment] subclass.
@@ -26,6 +29,7 @@ private const val ARG_PARAM2 = "position"
 class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
     private lateinit var binding: FragmentSongLevelBinding
     private lateinit var songData: SongData
+    private var record: Record? = null
     private var position: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,12 +37,13 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
         arguments?.let {
             songData = it.getParcelable(ARG_PARAM1)!!
             position = it.getInt(ARG_PARAM2)
+            record = it.getParcelable(ARG_PARAM3)
         }
     }
 
 
     override fun getViewBinding(container: ViewGroup?): FragmentSongLevelBinding {
-        binding =  FragmentSongLevelBinding.inflate(layoutInflater, container, false)
+        binding = FragmentSongLevelBinding.inflate(layoutInflater, container, false)
         return binding
     }
 
@@ -46,6 +51,27 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (record != null) {
+            binding.songLevelAchievementLayout.visibility = View.VISIBLE
+            binding.songLevelNoAchievementLayout.visibility = View.GONE
+            binding.songAchievement.text = record!!.achievements.toString() + "%"
+            binding.songRank.setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), record!!.getRankIcon())
+            )
+            binding.songFcap.setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), record!!.getFcIcon())
+            )
+            binding.songFsfsd.setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), record!!.getFsIcon())
+            )
+        } else {
+            binding.songLevelAchievementLayout.visibility = View.GONE
+            binding.songLevelNoAchievementLayout.visibility = View.VISIBLE
+
+            binding.recordTips.setOnClickListener {
+                Toast.makeText(context, R.string.no_record_tips, Toast.LENGTH_LONG).show()
+            }
+        }
 
         val note = songData.charts[position].notes
 
@@ -111,7 +137,10 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
                 R.id.note_achievement_bg
             ) as GradientDrawable
 
-        noteAchievementBg.setStroke(5, ContextCompat.getColor(requireContext(), songData.getBgColor()))
+        noteAchievementBg.setStroke(
+            5,
+            ContextCompat.getColor(requireContext(), songData.getBgColor())
+        )
 
         if (songData.type == "DX") {
             binding.finaleAchievementLayout.visibility = View.GONE
@@ -136,11 +165,12 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
     }
 
     companion object {
-        fun newInstance(song: SongData, position: Int) =
+        fun newInstance(song: SongData, position: Int, record: Record?) =
             SongLevelFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_PARAM1, song)
                     putInt(ARG_PARAM2, position)
+                    putParcelable(ARG_PARAM3, record)
                 }
             }
     }

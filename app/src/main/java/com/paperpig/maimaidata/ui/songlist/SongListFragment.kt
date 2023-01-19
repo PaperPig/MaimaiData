@@ -1,5 +1,8 @@
 package com.paperpig.maimaidata.ui.songlist
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
@@ -103,7 +106,7 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
 
     }
 
-    fun loadData(){
+    fun loadData() {
         CoroutineScope(Dispatchers.Main).launch {
             songAdapter.setData(SongListModel().getData(context)
                 .sortedByDescending { it.id.toInt() })
@@ -210,6 +213,35 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
         }
         mHandler.postDelayed(scrollRunnable, 100)
 
+        val animatorElement = arrayOf(
+            backgroundBinding.baloonLeftB,
+            backgroundBinding.baloonLeftDP,
+            backgroundBinding.baloonLeftO,
+            backgroundBinding.baloonLeftP,
+            backgroundBinding.baloonLeftW1,
+            backgroundBinding.baloonLeftW2,
+            backgroundBinding.baloonLeftY,
+            backgroundBinding.baloonRightB,
+            backgroundBinding.baloonRightW2,
+            backgroundBinding.baloonRightY,
+            backgroundBinding.swirlH1,
+            backgroundBinding.swirlO1,
+            backgroundBinding.swirlO2,
+            backgroundBinding.swirlO3,
+            backgroundBinding.swirlO4,
+            backgroundBinding.swirlB1
+        )
+        val translationAnimatorSet = AnimatorSet()
+
+        for (elem in animatorElement) {
+            val animator = ObjectAnimator.ofFloat(elem, "translationY", -20f, 20f, -20f).apply {
+                duration = (8000L..16000L).random()
+                repeatCount = ValueAnimator.INFINITE
+            }
+            translationAnimatorSet.playTogether(animator)
+        }
+
+        translationAnimatorSet.start()
     }
 
     override fun onResume() {

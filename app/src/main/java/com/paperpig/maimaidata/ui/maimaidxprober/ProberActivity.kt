@@ -1,6 +1,9 @@
 package com.paperpig.maimaidata.ui.maimaidxprober
 
 import android.Manifest
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -21,9 +24,9 @@ import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.model.SongListModel
 import com.paperpig.maimaidata.network.MaimaiDataRequests
-import com.paperpig.maimaidata.ui.nameplate.NamePlateActivity
 import com.paperpig.maimaidata.ui.songlist.DotsScrollAdapter
 import com.paperpig.maimaidata.utils.CreateBest40
+import com.paperpig.maimaidata.utils.MaimaiRecordUtils
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import kotlinx.coroutines.*
 
@@ -76,6 +79,7 @@ class ProberActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.Main).launch {
             songData = SongListModel().getData(this@ProberActivity)
+            if (songData.isEmpty()) return@launch
 
             binding.proberVp.apply {
                 proberVersionAdapter = ProberVersionAdapter(songData)
@@ -134,6 +138,11 @@ class ProberActivity : AppCompatActivity() {
 
                     val hasRecords = it.asJsonObject.has("records")
                     if (hasRecords) {
+                        MaimaiRecordUtils.saveRecord(
+                            this@ProberActivity,
+                            it.asJsonObject.get("records")
+                        )
+
                         val type = object : TypeToken<ArrayList<Record>>() {}.type
                         recordData =
                             Gson().fromJson(
@@ -215,18 +224,48 @@ class ProberActivity : AppCompatActivity() {
             adapter = DotsScrollAdapter(context, R.drawable.mmd_home_elem_dots_under)
         }
         mHandler.postDelayed(scrollRunnable, 100)
+
+        val animatorElement = arrayOf(
+            backgroundBinding.baloonLeftB,
+            backgroundBinding.baloonLeftDP,
+            backgroundBinding.baloonLeftO,
+            backgroundBinding.baloonLeftP,
+            backgroundBinding.baloonLeftW1,
+            backgroundBinding.baloonLeftW2,
+            backgroundBinding.baloonLeftY,
+            backgroundBinding.baloonRightB,
+            backgroundBinding.baloonRightW2,
+            backgroundBinding.baloonRightY,
+            backgroundBinding.swirlH1,
+            backgroundBinding.swirlO1,
+            backgroundBinding.swirlO2,
+            backgroundBinding.swirlO3,
+            backgroundBinding.swirlO4,
+            backgroundBinding.swirlB1
+        )
+        val translationAnimatorSet = AnimatorSet()
+
+        for (elem in animatorElement) {
+            val animator = ObjectAnimator.ofFloat(elem, "translationY", -20f, 20f, -20f).apply {
+                duration = (8000L..16000L).random()
+                repeatCount = ValueAnimator.INFINITE
+            }
+            translationAnimatorSet.playTogether(animator)
+        }
+
+        translationAnimatorSet.start()
     }
 
     private fun createImage() {
 
         GlobalScope.launch(Dispatchers.Main) {
             binding.loading.visibility = View.VISIBLE
-                CreateBest40.createSongInfo(
-                    this@ProberActivity,
-                    songData,
-                    oldRating,
-                    newRating
-                )
+            CreateBest40.createSongInfo(
+                this@ProberActivity,
+                songData,
+                oldRating,
+                newRating
+            )
 
             binding.loading.visibility = View.GONE
         }
