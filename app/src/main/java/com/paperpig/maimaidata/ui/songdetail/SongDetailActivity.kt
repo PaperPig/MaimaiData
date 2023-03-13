@@ -111,7 +111,7 @@ class SongDetailActivity : AppCompatActivity() {
             (1..songData.level.size).forEach { i ->
                 val position = songData.level.size - i
                 list.add(SongLevelFragment.newInstance(songData, position, record?.find {
-                    it.title == songData.basic_info.title &&
+                    it.song_id == songData.id &&
                             it.level_index == position
                 }))
             }
