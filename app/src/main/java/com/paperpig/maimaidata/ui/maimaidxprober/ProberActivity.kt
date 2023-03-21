@@ -9,12 +9,15 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.paperpig.maimaidata.R
@@ -144,28 +147,32 @@ class ProberActivity : AppCompatActivity() {
                         )
 
                         val type = object : TypeToken<ArrayList<Record>>() {}.type
-                        recordData =
-                            Gson().fromJson(
-                                it.asJsonObject.get("records").asJsonArray,
-                                type
-                            )
+                        recordData = Gson().fromJson(
+                            it.asJsonObject.get("records").asJsonArray, type
+                        )
                         proberVersionAdapter.setData(recordData)
 
-                        oldRating =
-                            recordData.sortedByDescending {
-                                it.ra
-                            }.filter {
-                                val find = songData.find { data -> data.id == it.song_id }
-                                !find!!.basic_info.is_new
-                            }.let {
-                                it.subList(0, if (it.size >= 25) 25 else it.size)
-                            }
+                        if (!proberVersionAdapter.isDataMatching()) {
+                            MaterialDialog.Builder(this@ProberActivity)
+                                .title(getString(R.string.mismatching_data_title))
+                                .content(getString(R.string.mismatching_data_content))
+                                .positiveText(R.string.common_confirm).show()
+                        }
+
+                        oldRating = recordData.sortedByDescending {
+                            it.ra
+                        }.filter {
+                            val find = songData.find { data -> data.id == it.song_id }
+                            if (find == null) false else !find.basic_info.is_new
+                        }.let {
+                            it.subList(0, if (it.size >= 25) 25 else it.size)
+                        }
                         newRating =
                             recordData.sortedByDescending {
                                 it.ra
                             }.filter {
                                 val find = songData.find { data -> data.id == it.song_id }
-                                find!!.basic_info.is_new
+                                find?.basic_info?.is_new ?: false
                             }.let {
                                 it.subList(0, if (it.size >= 15) 15 else it.size)
                             }

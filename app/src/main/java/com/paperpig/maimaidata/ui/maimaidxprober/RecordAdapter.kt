@@ -31,6 +31,7 @@ class RecordAdapter(private val songData: List<SongData>) :
     }
 
     private var versionType = 0
+    private var isMatching = true
 
     private var originList = listOf<Record>()
     private var recordList = listOf<Record>()
@@ -38,10 +39,15 @@ class RecordAdapter(private val songData: List<SongData>) :
             field = value
                 .filter {
                     val find = songData.find { data -> data.id == it.song_id }
-                    if (versionType == 0) {
-                        !find!!.basic_info.is_new
+                    if (find != null) {
+                        if (versionType == 0) {
+                            !find.basic_info.is_new
+                        } else {
+                            find.basic_info.is_new
+                        }
                     } else {
-                        find!!.basic_info.is_new
+                        isMatching = false
+                        false
                     }
                 }
                 .sortedByDescending { it.ra }
@@ -93,50 +99,65 @@ class RecordAdapter(private val songData: List<SongData>) :
             val record = recordList[getRealPosition(position)]
             viewHolder.songLevel.text = record.ds.toString()
             viewHolder.songTitle.text = record.title
-            viewHolder.songAcc.text =
-                String.format(context.getString(R.string.maimaidx_achievement_desc),
-                    record.achievements)
-            viewHolder.songRating.text = String.format(context.getString(R.string.rating_scope),
-                record.ra,
-                (record.ds * 14.07).toInt())
+            viewHolder.songAcc.text = String.format(
+                context.getString(R.string.maimaidx_achievement_desc), record.achievements
+            )
+            viewHolder.songRating.text = String.format(
+                context.getString(R.string.rating_scope), record.ra, (record.ds * 14.07).toInt()
+            )
 
             val find = songData.find { it.id == record.song_id }
             if (find != null) {
                 GlideApp.with(context)
                     .load(MaimaiDataClient.IMAGE_BASE_URL + find.basic_info.image_url)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .apply(RequestOptions.bitmapTransform(RoundedCorners(WindowsUtils.dp2px(
-                        context,
-                        5f).toInt())))
-                    .into(viewHolder.songJacket)
+                    .transition(DrawableTransitionOptions.withCrossFade()).apply(
+                        RequestOptions.bitmapTransform(
+                            RoundedCorners(
+                                WindowsUtils.dp2px(
+                                    context, 5f
+                                ).toInt()
+                            )
+                        )
+                    ).into(viewHolder.songJacket)
             }
 
 
-            (viewHolder.out.background as GradientDrawable).setColor(ContextCompat.getColor(
-                context,
-                record.getShadowColor()))
-            (viewHolder.container.background as GradientDrawable).setColor(ContextCompat.getColor(
-                context,
-                record.getBackgroundColor()))
-            (viewHolder.songJacketContainer.background as GradientDrawable).setColor(ContextCompat.getColor(
-                context,
-                record.getShadowColor()))
+            (viewHolder.out.background as GradientDrawable).setColor(
+                ContextCompat.getColor(
+                    context, record.getShadowColor()
+                )
+            )
+            (viewHolder.container.background as GradientDrawable).setColor(
+                ContextCompat.getColor(
+                    context, record.getBackgroundColor()
+                )
+            )
+            (viewHolder.songJacketContainer.background as GradientDrawable).setColor(
+                ContextCompat.getColor(
+                    context, record.getShadowColor()
+                )
+            )
 
 
             viewHolder.songFcap.setImageDrawable(
-                ContextCompat.getDrawable(context, record.getFcIcon()))
+                ContextCompat.getDrawable(context, record.getFcIcon())
+            )
 
             viewHolder.songFsfsd.setImageDrawable(
-                ContextCompat.getDrawable(context, record.getFsIcon()))
+                ContextCompat.getDrawable(context, record.getFsIcon())
+            )
 
             viewHolder.songRank.setImageDrawable(
-                ContextCompat.getDrawable(context, record.getRankIcon()))
+                ContextCompat.getDrawable(context, record.getRankIcon())
+            )
 
             viewHolder.songDiff.setBackgroundResource(
-                record.getDifficultyDiff())
+                record.getDifficultyDiff()
+            )
 
             viewHolder.songType.setImageDrawable(
-                ContextCompat.getDrawable(context, record.getTypeIcon()))
+                ContextCompat.getDrawable(context, record.getTypeIcon())
+            )
         } else if (viewHolder is DividerHolder) {
             if (versionType == 0) {
                 viewHolder.dividerText.setText(R.string.old_version_divider)
@@ -178,11 +199,13 @@ class RecordAdapter(private val songData: List<SongData>) :
         }
     }
 
-    fun setData(list: List<Record>,version: Int) {
+    fun setData(list: List<Record>, version: Int) {
         originList = list
         versionType = version
         recordList = originList
         notifyDataSetChanged()
     }
+
+    fun getMatching(): Boolean = isMatching
 
 }

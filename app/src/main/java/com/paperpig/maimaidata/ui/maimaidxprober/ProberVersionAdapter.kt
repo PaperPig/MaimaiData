@@ -6,9 +6,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 
-class ProberVersionAdapter(private val songList: List<SongData>) :
+class ProberVersionAdapter(songList: List<SongData>) :
     RecyclerView.Adapter<ProberVersionAdapter.ViewHolder>() {
     private var recordList = listOf<Record>()
+    private var isDataMatching = true
+    private var b25Adapter: RecordAdapter = RecordAdapter(songList)
+    private var b15Adapter: RecordAdapter = RecordAdapter(songList)
 
     class ViewHolder(val recyclerView: RecyclerView) : RecyclerView.ViewHolder(recyclerView)
 
@@ -23,9 +26,9 @@ class ProberVersionAdapter(private val songList: List<SongData>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.recyclerView.apply {
-            val recordAdapter = RecordAdapter(songList)
-            adapter = recordAdapter
-            recordAdapter.setData(recordList,position)
+            adapter = if (position == 0) {
+                b25Adapter
+            } else b15Adapter
             layoutManager = LinearLayoutManager(holder.itemView.context)
 
         }
@@ -37,8 +40,11 @@ class ProberVersionAdapter(private val songList: List<SongData>) :
 
     fun setData(data: List<Record>) {
         recordList = data
+        b25Adapter.setData(recordList, 0)
+        b15Adapter.setData(recordList, 1)
+        isDataMatching = b25Adapter.getMatching() && b15Adapter.getMatching()
         notifyDataSetChanged()
     }
 
-
+    fun isDataMatching(): Boolean = isDataMatching
 }

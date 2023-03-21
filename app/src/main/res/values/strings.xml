@@ -99,6 +99,8 @@
     <string name="save_best40">保存图片</string>
     <string name="name_plate_query">牌子查询</string>
     <string name="name_plate_achieved">%d/%d</string>
+    <string name="mismatching_data_title">当前数据库不匹配查分数据</string>
+    <string name="mismatching_data_content">当前数据库未包含新曲数据，显示的数据可能不准确，请等待数据库更新后再进行查分</string>
 
     <string name="maimai_data_update_title">新版本：%s</string>
     <string name="maimai_data_update_default_content">BUG修复</string>
