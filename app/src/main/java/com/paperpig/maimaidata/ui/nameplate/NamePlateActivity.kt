@@ -1,7 +1,5 @@
 package com.paperpig.maimaidata.ui.nameplate
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -25,14 +23,7 @@ class NamePlateActivity : AppCompatActivity() {
     private var recordList = ArrayList<Record>()
     private val fragmentList = ArrayList<Fragment>()
 
-    companion object {
-        fun actionStart(context: Context, record: ArrayList<Record>) {
-            val intent = Intent(context, NamePlateActivity::class.java).apply {
-                putParcelableArrayListExtra("record", record)
-            }
-            context.startActivity(intent)
-        }
-    }
+    companion object;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

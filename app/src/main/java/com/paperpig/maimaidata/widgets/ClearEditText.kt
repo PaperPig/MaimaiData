@@ -47,10 +47,6 @@ class ClearEditText(context: Context, attrs: AttributeSet?) :
     }
 
 
-    override fun performClick(): Boolean {
-        return super.performClick()
-    }
-
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
             MotionEvent.ACTION_DOWN ->

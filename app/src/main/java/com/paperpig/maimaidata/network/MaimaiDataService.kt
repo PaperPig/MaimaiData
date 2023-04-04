@@ -12,11 +12,6 @@ import retrofit2.http.*
  * @since  2021-05-13
  */
 interface MaimaiDataService {
-    /**
-     * get maimai song detail list
-     */
-    @GET("/api/maimaidxprober/music_data")
-    fun getSongList(): Observable<JsonElement>
 
     /**
      * get login info

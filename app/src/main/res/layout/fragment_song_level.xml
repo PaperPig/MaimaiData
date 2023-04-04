@@ -72,7 +72,8 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="12dp">
+            android:padding="12dp"
+            android:baselineAligned="false">
 
 
             <LinearLayout
