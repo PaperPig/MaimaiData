@@ -1,13 +1,8 @@
 package com.paperpig.maimaidata.utils
 
 import android.app.Activity
-import android.content.ContentValues
 import android.content.Context
 import android.graphics.*
-import android.media.MediaScannerConnection
-import android.os.Build
-import android.os.Environment
-import android.provider.MediaStore
 import android.text.TextPaint
 import android.text.TextUtils
 import android.widget.Toast
@@ -20,8 +15,6 @@ import com.paperpig.maimaidata.network.MaimaiDataClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -265,7 +258,7 @@ object CreateBest40 {
         dstHeight: Int
     ): Bitmap {
         var bitmap = BitmapFactory.decodeResource(context.resources, res)
-        if (dstHeight != 0 && dstHeight != 0) {
+        if (dstHeight != 0) {
             bitmap = Bitmap.createScaledBitmap(
                 bitmap,
                 dstWidth,

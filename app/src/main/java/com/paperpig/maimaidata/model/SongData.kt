@@ -46,9 +46,7 @@ data class SongData(
         var from: String,
         val genre: String,
         val is_new: Boolean,
-        var release_date: String,
         val title: String,
-        var title_kana: String,
         var image_url: String,
         var version: String
     ) : Serializable

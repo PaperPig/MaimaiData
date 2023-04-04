@@ -42,7 +42,7 @@ class ProberVersionAdapter(songList: List<SongData>) :
         recordList = data
         b25Adapter.setData(recordList, 0)
         b15Adapter.setData(recordList, 1)
-        isDataMatching = b25Adapter.getMatching() && b15Adapter.getMatching()
+        isDataMatching = b25Adapter.isMatching && b15Adapter.isMatching
         notifyDataSetChanged()
     }
 

@@ -31,7 +31,10 @@ class RecordAdapter(private val songData: List<SongData>) :
     }
 
     private var versionType = 0
-    private var isMatching = true
+    private var _isMatching = true
+    val isMatching: Boolean
+        get() = _isMatching
+
 
     private var originList = listOf<Record>()
     private var recordList = listOf<Record>()
@@ -46,7 +49,7 @@ class RecordAdapter(private val songData: List<SongData>) :
                             find.basic_info.is_new
                         }
                     } else {
-                        isMatching = false
+                        _isMatching = false
                         false
                     }
                 }
@@ -205,7 +208,5 @@ class RecordAdapter(private val songData: List<SongData>) :
         recordList = originList
         notifyDataSetChanged()
     }
-
-    fun getMatching(): Boolean = isMatching
 
 }

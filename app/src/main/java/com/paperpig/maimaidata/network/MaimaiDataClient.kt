@@ -1,6 +1,7 @@
 package com.paperpig.maimaidata.network
 
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -50,18 +51,18 @@ class MaimaiDataClient private constructor() {
                                 .addInterceptor { chain ->
                                     // interceptor: change url by header["urlName"]
                                     val originalRequest: Request = chain.request()
-                                    val oldUrl: HttpUrl = originalRequest.url()
+                                    val oldUrl: HttpUrl = originalRequest.url
                                     val builder: Request.Builder = originalRequest.newBuilder()
                                     val urlNameList: List<String> =
                                             originalRequest.headers("urlName")
                                     return@addInterceptor if (urlNameList.isNotEmpty()) {
                                         builder.removeHeader("urlName")
-                                        val baseURL: HttpUrl = HttpUrl.parse(urlNameList[0])
+                                        val baseURL: HttpUrl = urlNameList[0].toHttpUrlOrNull()
                                                 ?: return@addInterceptor chain.proceed(originalRequest)
                                         val newHttpUrl = oldUrl.newBuilder()
-                                                .scheme(baseURL.scheme())
-                                                .host(baseURL.host())
-                                                .port(baseURL.port())
+                                                .scheme(baseURL.scheme)
+                                                .host(baseURL.host)
+                                                .port(baseURL.port)
                                                 .build()
                                         val newRequest: Request = builder.url(newHttpUrl).build()
                                         chain.proceed(newRequest)

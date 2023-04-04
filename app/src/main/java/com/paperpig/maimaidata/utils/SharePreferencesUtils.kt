@@ -52,7 +52,4 @@ class SharePreferencesUtils(
         }
     }
 
-    fun clear() {
-        prefs.edit().clear().apply()
-    }
 }

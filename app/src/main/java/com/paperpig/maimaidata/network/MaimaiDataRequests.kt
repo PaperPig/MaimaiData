@@ -6,8 +6,8 @@ import com.paperpig.maimaidata.model.AppUpdateModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import okhttp3.MediaType
-import okhttp3.RequestBody
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 
@@ -21,10 +21,8 @@ object MaimaiDataRequests {
      * [MaimaiDataService.login]
      */
     fun login(userName: String, password: String): Observable<Response<ResponseBody>> {
-        val requestBody = RequestBody.create(
-            MediaType.parse("Content-Type, application/json"),
-            "{\"username\": \"$userName\", \"password\": \"$password\"}"
-        )
+        val requestBody = "{\"username\": \"$userName\", \"password\": \"$password\"}"
+            .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
         return MaimaiDataClient
             .instance
             .getService()
