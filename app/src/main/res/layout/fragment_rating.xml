@@ -193,6 +193,52 @@
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/inputSongLevel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ems="10"
+                android:importantForAutofill="no"
+                android:gravity="center"
+                android:hint="定数"
+                android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/inputSongAchievement"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:drawableEnd="@drawable/baseline_percent_24"
+                android:importantForAutofill="no"
+                android:ems="10"
+                android:gravity="center"
+                android:hint="达成率"
+                android:inputType="numberDecimal" />
+
+            <TextView
+                android:id="@+id/outputSingleRating"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="单曲rating计算" />
+
+            <Button
+                android:id="@+id/calculateSingleRating"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="计算单曲rating"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 

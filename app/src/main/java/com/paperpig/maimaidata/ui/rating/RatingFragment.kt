@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.databinding.FragmentRatingBinding
 import com.paperpig.maimaidata.model.Rating
@@ -69,12 +70,37 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
             hideKeyboard(view)
             onCalculate(binding.targetRatingEt.text.toString())
         }
+
+        binding.calculateSingleRating.setOnClickListener {
+            hideKeyboard(view)
+            if (binding.inputSongLevel.text.toString().isNotEmpty() && binding.inputSongAchievement.text.toString()
+                    .isNotEmpty())
+            {
+                binding.outputSingleRating.text = achievementToRating(
+                    (binding.inputSongLevel.text.toString().toFloat() * 10).toInt(),
+                    (binding.inputSongAchievement.text.toString().toFloat() * 10000).toInt()
+                ).toString()
+            }
+            else{
+                showToast()
+            }
+        }
+    }
+
+    private fun showToast() {
+        val text = "请输入内容!"
+        val duration = Toast.LENGTH_SHORT
+        val toast = Toast.makeText(this.context, text, duration)
+        toast.show()
     }
 
 
     private fun onCalculate(targetString: String) {
         val targetRating = targetString.getInt()
-        if (targetRating <= 0) return
+        if (targetRating <= 0){
+            showToast()
+            return
+        }
         val rating = targetRating / 40
 
         val minLv = getReachableLevel(rating)
