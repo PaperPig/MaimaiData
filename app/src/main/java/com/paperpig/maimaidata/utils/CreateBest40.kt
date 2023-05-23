@@ -159,10 +159,16 @@ object CreateBest40 {
 
 
         //绘制曲封
-
-        val jacketBitmap = GlideApp.with(context).asBitmap().override(158, 155).centerCrop()
-            .load(MaimaiDataClient.IMAGE_BASE_URL + find!!.basic_info.image_url).submit().get()
+        val jacketBitmap: Bitmap = try {
+            GlideApp.with(context).asBitmap().override(158, 155).centerCrop()
+                .load(MaimaiDataClient.IMAGE_BASE_URL + find!!.basic_info.image_url).submit()
+                .get()
+        } catch (e: Exception) {
+            GlideApp.with(context).asBitmap().override(158, 155).centerCrop()
+                .load(R.drawable.mmd_song_jacket_placeholder).submit().get()
+        }
         canvas.drawBitmap(jacketBitmap, 21f, 24f, null)
+
 
 
         //绘制难度标记
