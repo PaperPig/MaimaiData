@@ -13,12 +13,12 @@ fun List<String>.versionCheck(string: String): Boolean {
         if (i == "maimai") {
             if (string == "maimai" || string == "maimai PLUS") return true
         } else if (i == "舞萌DX") {
-            return string == "maimai でらっくす"
-        } else if (i == "舞萌DX 2021")
-            return string == "maimai でらっくす Splash"
-        else if (i == "舞萌DX 2022")
-            return string == "maimai でらっくす Splash PLUS"
-        else if(string.contains(i))
+            if (string == "maimai でらっくす") return true
+        } else if (i == "舞萌DX 2021") {
+            if (string == "maimai でらっくす Splash") return true
+        } else if (i == "舞萌DX 2022") {
+            if (string == "maimai でらっくす Splash PLUS") return true
+        } else if(string.contains(i))
         return true
     }
     return false
