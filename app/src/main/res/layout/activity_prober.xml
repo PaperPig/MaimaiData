@@ -53,7 +53,7 @@
                             android:button="@null"
                             android:checked="true"
                             android:gravity="center"
-                            android:text="@string/old_version_25"
+                            android:text="@string/old_version_35"
                             android:textColor="@color/white" />
 
                         <View

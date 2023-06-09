@@ -20,6 +20,7 @@ import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
+import com.paperpig.maimaidata.utils.MaimaiRecordUtils
 import com.paperpig.maimaidata.utils.WindowsUtils
 
 class RecordAdapter(private val songData: List<SongData>) :
@@ -106,7 +107,10 @@ class RecordAdapter(private val songData: List<SongData>) :
                 context.getString(R.string.maimaidx_achievement_desc), record.achievements
             )
             viewHolder.songRating.text = String.format(
-                context.getString(R.string.rating_scope), record.ra, (record.ds * 14.07).toInt()
+                context.getString(R.string.rating_scope), MaimaiRecordUtils.achievementToRating(
+                    (record.ds * 10).toInt(),
+                    (record.achievements * 10000).toInt()
+                ), (record.ds * 22.512).toInt()
             )
 
             val find = songData.find { it.id == record.song_id }
@@ -172,13 +176,13 @@ class RecordAdapter(private val songData: List<SongData>) :
     }
 
     override fun getItemCount(): Int {
-        return if ((versionType == 0 && recordList.size > 25) || (versionType == 1 && recordList.size > 15)) {
+        return if ((versionType == 0 && recordList.size > 35) || (versionType == 1 && recordList.size > 15)) {
             recordList.size + 1
         } else recordList.size
     }
 
     private fun getRealPosition(position: Int): Int {
-        return if ((versionType == 0 && position > 25) || (versionType == 1 && position > 15)) {
+        return if ((versionType == 0 && position > 35) || (versionType == 1 && position > 15)) {
             position - 1
         } else {
             position
@@ -187,7 +191,7 @@ class RecordAdapter(private val songData: List<SongData>) :
 
     override fun getItemViewType(position: Int): Int {
         return if (versionType == 0) {
-            if (position == 25) {
+            if (position == 35) {
                 TYPE_DIVIDER
             } else {
                 TYPE_RECORD

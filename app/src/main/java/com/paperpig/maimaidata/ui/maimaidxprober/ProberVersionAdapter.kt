@@ -10,7 +10,7 @@ class ProberVersionAdapter(songList: List<SongData>) :
     RecyclerView.Adapter<ProberVersionAdapter.ViewHolder>() {
     private var recordList = listOf<Record>()
     private var isDataMatching = true
-    private var b25Adapter: RecordAdapter = RecordAdapter(songList)
+    private var b35Adapter: RecordAdapter = RecordAdapter(songList)
     private var b15Adapter: RecordAdapter = RecordAdapter(songList)
 
     class ViewHolder(val recyclerView: RecyclerView) : RecyclerView.ViewHolder(recyclerView)
@@ -27,7 +27,7 @@ class ProberVersionAdapter(songList: List<SongData>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.recyclerView.apply {
             adapter = if (position == 0) {
-                b25Adapter
+                b35Adapter
             } else b15Adapter
             layoutManager = LinearLayoutManager(holder.itemView.context)
 
@@ -40,9 +40,9 @@ class ProberVersionAdapter(songList: List<SongData>) :
 
     fun setData(data: List<Record>) {
         recordList = data
-        b25Adapter.setData(recordList, 0)
+        b35Adapter.setData(recordList, 0)
         b15Adapter.setData(recordList, 1)
-        isDataMatching = b25Adapter.isMatching && b15Adapter.isMatching
+        isDataMatching = b35Adapter.isMatching && b15Adapter.isMatching
         notifyDataSetChanged()
     }
 

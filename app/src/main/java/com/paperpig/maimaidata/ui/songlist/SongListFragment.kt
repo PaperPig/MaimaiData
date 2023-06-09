@@ -5,11 +5,13 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.CheckBox
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.R
@@ -28,7 +30,7 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
     private lateinit var binding: FragmentSongListBinding
     private lateinit var backgroundBinding: MmdUniverseStyleBgLayoutBinding
     private lateinit var songAdapter: SongListAdapter
-    private val mHandler: Handler = Handler()
+    private val mHandler: Handler = Handler(Looper.getMainLooper())
     private val scrollRunnable: Runnable by lazy {
         object : Runnable {
             override fun run() {
@@ -101,7 +103,22 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
             }
             false
         }
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.main_menu, menu)
+            }
 
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when (menuItem.itemId) {
+                    R.id.search -> {
+                        showOrHideSearchBar()
+                        hideKeyboard(view)
+                    }
+                }
+                return true
+            }
+
+        })
         loadData()
 
     }
@@ -144,7 +161,8 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
             binding.songSearchLayout.finaleCheck,
             binding.songSearchLayout.dxCheck,
             binding.songSearchLayout.dx2021Check,
-            binding.songSearchLayout.dx2022Check
+            binding.songSearchLayout.dx2022Check,
+            binding.songSearchLayout.dx2023Check
         )
         val versionList = mutableListOf<String>()
         for (cb in checkBoxList) {
@@ -153,22 +171,6 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
         return versionList
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.search -> {
-                showOrHideSearchBar()
-                hideKeyboard(view)
-            }
-
-        }
-        return super.onOptionsItemSelected(item)
-    }
 
     private fun showOrHideSearchBar() {
         val windowWidth = WindowsUtils.getWindowWidth(context)

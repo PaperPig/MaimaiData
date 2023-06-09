@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -28,10 +29,13 @@ import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.model.SongListModel
 import com.paperpig.maimaidata.network.MaimaiDataRequests
 import com.paperpig.maimaidata.ui.songlist.DotsScrollAdapter
-import com.paperpig.maimaidata.utils.CreateBest40
+import com.paperpig.maimaidata.utils.CreateBest50
 import com.paperpig.maimaidata.utils.MaimaiRecordUtils
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.launch
 
 
 class ProberActivity : AppCompatActivity() {
@@ -44,7 +48,7 @@ class ProberActivity : AppCompatActivity() {
     private var oldRating = listOf<Record>()
     private var newRating = listOf<Record>()
 
-    private val mHandler: Handler = Handler()
+    private val mHandler: Handler = Handler(Looper.getMainLooper())
     private val scrollRunnable: Runnable by lazy {
         object : Runnable {
             override fun run() {
@@ -73,7 +77,7 @@ class ProberActivity : AppCompatActivity() {
         }
         supportActionBar?.title = getString(R.string.maimaidx_prober)
         binding.oldVersionRdoBtn.text =
-            String.format(getString(R.string.old_version_25), 0)
+            String.format(getString(R.string.old_version_35), 0)
         binding.newVersionRdoBtn.text =
             String.format(getString(R.string.new_version_15), 0)
 
@@ -165,7 +169,7 @@ class ProberActivity : AppCompatActivity() {
                             val find = songData.find { data -> data.id == it.song_id }
                             if (find == null) false else !find.basic_info.is_new
                         }.let {
-                            it.subList(0, if (it.size >= 25) 25 else it.size)
+                            it.subList(0, if (it.size >= 35) 35 else it.size)
                         }
                         newRating =
                             recordData.sortedByDescending {
@@ -178,12 +182,22 @@ class ProberActivity : AppCompatActivity() {
                             }
 
                         binding.oldVersionRdoBtn.text =
-                            String.format(getString(R.string.old_version_25),
-                                oldRating.sumOf { it.ra }
+                            String.format(getString(R.string.old_version_35),
+                                oldRating.sumOf {
+                                    MaimaiRecordUtils.achievementToRating(
+                                        (it.ds * 10).toInt(),
+                                        (it.achievements * 10000).toInt()
+                                    )
+                                }
                             )
                         binding.newVersionRdoBtn.text =
                             String.format(getString(R.string.new_version_15),
-                                newRating.sumOf { it.ra }
+                                newRating.sumOf {
+                                    MaimaiRecordUtils.achievementToRating(
+                                        (it.ds * 10).toInt(),
+                                        (it.achievements * 10000).toInt()
+                                    )
+                                }
                             )
 
                     }
@@ -264,10 +278,9 @@ class ProberActivity : AppCompatActivity() {
     }
 
     private fun createImage() {
-
-        GlobalScope.launch(Dispatchers.Main) {
+        CoroutineScope(Dispatchers.Main).launch {
             binding.loading.visibility = View.VISIBLE
-            CreateBest40.createSongInfo(
+            CreateBest50.createSongInfo(
                 this@ProberActivity,
                 songData,
                 oldRating,

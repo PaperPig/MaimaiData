@@ -81,7 +81,35 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
         val format = DecimalFormat("0.#####%")
 
         format.roundingMode = RoundingMode.DOWN
-        binding.songLevel.text = songData.ds[position].toString()
+
+        if (songData.old_ds.isNotEmpty() && position < songData.old_ds.size ) {
+            if (songData.old_ds[position] < songData.ds[position]) {
+                binding.songLevel.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.mmd_color_red
+                    )
+                )
+                binding.songLevel.text = "${songData.ds[position]}↑"
+                binding.oldLevel.text = "(${songData.old_ds[position]})"
+            } else if (songData.old_ds[position] > songData.ds[position]) {
+                binding.songLevel.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.mmd_color_green
+                    )
+                )
+                binding.songLevel.text = "${songData.ds[position]}↓"
+                binding.oldLevel.text = "(${songData.old_ds[position]})"
+            } else {
+                binding.songLevel.text = "${songData.ds[position]}"
+                binding.oldLevel.text = "(${songData.old_ds[position]})"
+            }
+        } else {
+            binding.songLevel.text = songData.ds[position].toString()
+
+        }
+
         binding.songDesign.text = songData.charts[position].charter
 
         binding.notesCount.text = (songData.charts[position].notes).sum().toString()

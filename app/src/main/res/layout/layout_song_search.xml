@@ -195,6 +195,11 @@
                 android:id="@+id/dx2022Check"
                 style="@style/SearchCheckBoxStyle"
                 android:text="@string/dx2022" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/dx2023Check"
+                style="@style/SearchCheckBoxStyle"
+                android:text="@string/dx2023" />
         </com.google.android.flexbox.FlexboxLayout>
 
         <View

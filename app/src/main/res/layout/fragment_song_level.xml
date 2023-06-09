@@ -8,78 +8,78 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".ui.songdetail.SongLevelFragment">
+        tools:context=".ui.songdetail.SongLevelFragment"
+        tools:ignore="RtlSymmetry">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:baselineAligned="false"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="12dp"
-            android:paddingTop="12dp"
-            android:paddingEnd="12dp">
+            android:paddingStart="18dp">
 
-            <LinearLayout
-                android:layout_width="0dp"
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:orientation="horizontal">
+                android:minWidth="60dp"
+                android:text="@string/level"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="60dp"
-                    android:text="@string/level"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/songLevel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:textSize="14sp" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/songLevel"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:orientation="horizontal">
+                android:layout_marginStart="18dp"
+                android:textSize="15sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="60dp"
-                    android:text="@string/design"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/songDesign"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:textSize="14sp" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/oldLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
+            android:baselineAligned="false"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="12dp"
-            android:baselineAligned="false">
+            android:paddingStart="18dp">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="60dp"
+                android:text="@string/design"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/songDesign"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:baselineAligned="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="18dp">
 
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
                 android:orientation="horizontal">
 
                 <TextView
@@ -88,23 +88,22 @@
                     android:minWidth="60dp"
                     android:text="@string/status"
                     android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/songAchievement"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:textSize="14sp" />
+                    android:layout_marginStart="18dp"
+                    android:textSize="15sp" />
 
             </LinearLayout>
 
 
             <LinearLayout
                 android:id="@+id/songLevelAchievementLayout"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:visibility="visible">
@@ -112,26 +111,26 @@
                 <ImageView
                     android:id="@+id/songRank"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp" />
+                    android:layout_height="32dp"
+                    android:layout_marginStart="24dp" />
 
                 <ImageView
                     android:id="@+id/songFcap"
                     android:layout_width="32dp"
                     android:layout_height="36dp"
-                    android:layout_marginStart="24dp" />
+                    android:layout_marginStart="18dp" />
 
                 <ImageView
                     android:id="@+id/songFsfsd"
                     android:layout_width="32dp"
                     android:layout_height="36dp"
-                    android:layout_marginStart="24dp" />
+                    android:layout_marginStart="18dp" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/songLevelNoAchievementLayout"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:visibility="gone">
@@ -155,9 +154,7 @@
             android:id="@+id/songNoteLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_margin="10dp"
             android:background="@drawable/song_note_bg"
             android:orientation="vertical">
 

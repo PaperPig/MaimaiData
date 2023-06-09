@@ -18,8 +18,9 @@ fun List<String>.versionCheck(string: String): Boolean {
             if (string == "maimai でらっくす Splash") return true
         } else if (i == "舞萌DX 2022") {
             if (string == "maimai でらっくす Splash PLUS") return true
-        } else if(string.contains(i))
-        return true
+        } else if (i == "舞萌DX 2023") {
+            if (string == "maimai でらっくす UNiVERSE PLUS") return true
+        } else if (string.contains(i)) return true
     }
     return false
 }

@@ -12,6 +12,7 @@ data class SongData(
     val basic_info: BasicInfo,
     val charts: List<Chart>,
     val ds: List<Double>,
+    var old_ds:List<Double>,
     val id: String,
     val level: List<String>,
     val title: String,

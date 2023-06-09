@@ -19,14 +19,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-object CreateBest40 {
+object CreateBest50 {
 
     private const val itemWidth = 200
     private const val itemHeight = 250
     private const val itemPadding = 10
     private const val versionPadding = 50
     private const val headerHeight = 250
-    private const val containerWidth = itemWidth * 8 + itemPadding * 8 + versionPadding
+    private const val containerWidth = itemWidth * 10 + itemPadding * 10 + versionPadding
     private const val containerHeight = itemHeight * 5 + itemPadding * 5
 
 
@@ -43,9 +43,9 @@ object CreateBest40 {
         }
         withContext(Dispatchers.IO) {
             val containerBitmap = drawableToBitmap(
-                context, R.drawable.mmd_player_best40_n, containerWidth,
+                context, R.drawable.mmd_player_best50, containerWidth,
                 containerHeight + headerHeight
-            ).copy(Bitmap.Config.ARGB_8888,true)
+            ).copy(Bitmap.Config.ARGB_8888, true)
             val containerCanvas = Canvas(containerBitmap)
             val textPaint = TextPaint()
 
@@ -68,8 +68,8 @@ object CreateBest40 {
                         )
                         canvas.drawBitmap(
                             drawBitmap!!,
-                            (i % 5 * itemWidth + i % 5 * itemPadding).toFloat(),
-                            (i / 5 * itemHeight + i / 5 * itemPadding).toFloat(),
+                            (i % 7 * itemWidth + i % 7 * itemPadding).toFloat(),
+                            (i / 7 * itemHeight + i / 7 * itemPadding).toFloat(),
                             null
                         )
                     }
@@ -81,7 +81,7 @@ object CreateBest40 {
                         val drawBitmap = drawSongItem(context, new[i], songData)
                         canvas.drawBitmap(
                             drawBitmap!!,
-                            (i % 3 * itemWidth + (itemWidth + itemPadding) * 5 + versionPadding + i % 3 * itemPadding).toFloat(),
+                            (i % 3 * itemWidth + (itemWidth + itemPadding) * 7 + versionPadding + i % 3 * itemPadding).toFloat(),
                             (i / 3 * itemHeight + i / 3 * itemPadding).toFloat(),
                             null
                         )
@@ -112,10 +112,11 @@ object CreateBest40 {
             //绘制总rating
             textPaint.apply {
                 color = Color.YELLOW
+                isFakeBoldText = true
                 textPaint.textSize = 25f
             }
             containerCanvas.drawText((old.sumOf { it.ra } + new.sumOf { it.ra }).toString(),
-                531f,
+                520f,
                 85f,
                 textPaint
             )
@@ -123,6 +124,7 @@ object CreateBest40 {
 
             //绘制分版本rating
             textPaint.apply {
+                isFakeBoldText = false
                 color = Color.BLACK
                 textSize = 14f
                 letterSpacing = 0f
@@ -170,7 +172,6 @@ object CreateBest40 {
         canvas.drawBitmap(jacketBitmap, 21f, 24f, null)
 
 
-
         //绘制难度标记
         val diffDrawable =
             ContextCompat.getDrawable(context, record.getRatingDiff())
@@ -196,7 +197,7 @@ object CreateBest40 {
 
 
         //绘制rank标记
-        val rankBitmap = trim(drawableToBitmap(context, record.getRankIcon(), 106, 36))
+        val rankBitmap = trim(drawableToBitmap(context, record.getRankIcon(), 100, 36))
         canvas.drawBitmap(rankBitmap, 22f, 145f, null)
 
 

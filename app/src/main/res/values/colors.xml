@@ -47,4 +47,7 @@
     <color name="mmd_player_rtsong_mst_dark">#671B8D</color>
     <color name="mmd_player_rtsong_rem_main">#E5DDEA</color>
     <color name="mmd_player_rtsong_rem_dark">#8C2DD5</color>
+
+    <color name="mmd_color_red">#FF4646</color>
+    <color name="mmd_color_green">#2FCA4C</color>
 </resources>
