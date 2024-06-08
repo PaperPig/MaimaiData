@@ -12,13 +12,14 @@
         android:orientation="vertical">
 
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="12dp">
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="12dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -38,11 +39,10 @@
 
                 <Button
                     android:id="@+id/loginBtn"
+                    style="@style/ButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:text="@string/login"
-                    android:textColor="@color/white" />
+                    android:text="@string/login" />
             </LinearLayout>
 
             <LinearLayout
@@ -53,32 +53,54 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:lines="1"
-                    android:ellipsize="end"
-                    android:gravity="end"
                     android:id="@+id/account"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="2dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="end"
+                    android:lines="1"
                     android:text="" />
 
                 <Button
                     android:id="@+id/queryBtn"
+                    style="@style/ButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:text="@string/query_record"
-                    android:textColor="@color/white" />
+                    android:text="@string/query_record" />
 
                 <Button
                     android:id="@+id/changeBtn"
+                    style="@style/ButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:text="@string/change_account"
-                    android:textColor="@color/white" />
+                    android:text="@string/change_account" />
             </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <Button
+                android:id="@+id/levelCheckBtn"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/level_query" />
+
+            <Button
+                android:id="@+id/versionCheckBtn"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/version_query" />
         </LinearLayout>
 
         <LinearLayout
@@ -108,11 +130,10 @@
 
             <Button
                 android:id="@+id/calculateBtn"
+                style="@style/ButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/colorPrimary"
-                android:text="@string/calculate"
-                android:textColor="@color/white" />
+                android:text="@string/calculate" />
 
 
         </LinearLayout>
@@ -188,7 +209,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="歌曲rating = 15个最高单曲rating(舞萌2023分类) + 35个最高单曲rating(舞萌2023以外分类)" />
+                android:text="歌曲rating = 15个最高单曲rating(舞萌2024分类) + 35个最高单曲rating(舞萌2024以外分类)" />
         </LinearLayout>
 
         <LinearLayout
@@ -202,9 +223,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
-                android:importantForAutofill="no"
                 android:gravity="center"
                 android:hint="定数"
+                android:importantForAutofill="no"
                 android:inputType="numberDecimal" />
 
             <EditText
@@ -213,10 +234,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:drawableEnd="@drawable/baseline_percent_24"
-                android:importantForAutofill="no"
                 android:ems="10"
                 android:gravity="center"
                 android:hint="达成率"
+                android:importantForAutofill="no"
                 android:inputType="numberDecimal" />
 
             <TextView
@@ -229,12 +250,11 @@
 
             <Button
                 android:id="@+id/calculateSingleRating"
+                style="@style/ButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:backgroundTint="@color/colorPrimary"
-                android:text="计算单曲rating"
-                android:textColor="@color/white"/>
+                android:text="计算单曲rating" />
         </LinearLayout>
 
         <LinearLayout
@@ -316,7 +336,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="4"
                     android:gravity="center"
-                    android:text="22.512"/>
+                    android:text="22.512" />
             </LinearLayout>
 
             <LinearLayout
@@ -352,6 +372,7 @@
                     android:gravity="center"
                     android:text="22.310" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
@@ -418,6 +439,7 @@
                     android:gravity="center"
                     android:text="21.399" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
@@ -496,7 +518,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="2"
                     android:gravity="center"
-                    android:text="S+"/>
+                    android:text="S+" />
 
                 <TextView
                     android:layout_width="0dp"

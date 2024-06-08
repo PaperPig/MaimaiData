@@ -21,7 +21,7 @@ data class Record(
     val title: String,
     val type: String
 
-):Parcelable {
+) : Parcelable {
     fun getFcIcon() = when (fc) {
         "fc" -> R.drawable.mmd_player_rtsong_fc
         "fcp" -> R.drawable.mmd_player_rtsong_fcp

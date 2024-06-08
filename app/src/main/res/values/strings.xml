@@ -18,11 +18,13 @@
 
 
     <!--    sort-->
-    <string name="pop">POPSアニメ</string>
-    <string name="niconico">niconicoボーカロイド</string>
-    <string name="touhou">東方Project</string>
-    <string name="game_variety">ゲームバラエティ</string>
-    <string name="ongeki_chuni">オンゲキCHUNITHM</string>
+    <string name="pop">流行&amp;动漫</string>
+    <string name="niconico">niconico &amp; VOCALOID</string>
+    <string name="touhou">东方Project</string>
+    <string name="game_variety">其他游戏</string>
+    <string name="sort_maimai">舞萌</string>
+    <string name="ongeki_chuni">音击&amp;中二节奏</string>
+    <string name="utage">宴会場</string>
 
     <!--    version-->
     <string name="maimai">maimai</string>
@@ -36,6 +38,7 @@
     <string name="dx2021">舞萌DX 2021</string>
     <string name="dx2022">舞萌DX 2022</string>
     <string name="dx2023">舞萌DX 2023</string>
+    <string name="dx2024">舞萌DX 2024</string>
 
 
     <string name="artist">ARTIST</string>
@@ -43,13 +46,16 @@
     <string name="genre">歌曲分类</string>
     <string name="add_version">添加版本</string>
 
-    <string name="maimai_achievement_desc">%.2f%%</string>
+    <string name="maimai_achievement_format">%.2f%%</string>
     <string name="maimaidx_scope_achievement_desc">%.4f%%-—%.4f%%</string>
     <string name="maimaidx_achievement_desc">%.4f%%</string>
     <string name="design">谱面作者</string>
     <string name="status">达成状态</string>
     <string name="no_record">暂无成绩</string>
     <string name="no_record_tips">尚未游玩过当前难度的谱面，或者你需要登陆本应用中的查分器来更新你的分数信息</string>
+    <string name="inner_level_up">%.1f↑</string>
+    <string name="inner_level_down">%.1f↓</string>
+    <string name="inner_level_old">(%.1f)</string>
 
 
     <string name="total">TOTAL</string>
@@ -92,13 +98,15 @@
     <string name="calculate">计算</string>
     <string name="username">用户名</string>
     <string name="password">密码</string>
-    <string name="old_version_35">旧版本：%d</string>
+    <string name="old_version_35">历史版本：%d</string>
     <string name="new_version_15">现行版本：%d</string>
     <string name="old_version_divider">best 35 分界线</string>
     <string name="new_version_divider">best 15 分界线</string>
     <string name="rating_scope">%d/%d</string>
     <string name="save_best40">保存图片</string>
-    <string name="name_plate_query">牌子查询</string>
+    <string name="version_query">版本进度</string>
+    <string name="level_query">等级表进度</string>
+    <string name="switch_display">切换显示</string>
     <string name="name_plate_achieved">%d/%d</string>
     <string name="mismatching_data_title">当前数据库不匹配查分数据</string>
     <string name="mismatching_data_content">当前数据库未包含新曲数据，显示的数据可能不准确，请等待数据库更新后再进行查分</string>
@@ -111,21 +119,4 @@
     <string name="maimai_data_download_title">正在下载</string>
     <string name="maimai_data_start_download">开始下载</string>
     <string name="maimai_data_download_error">下载出错，请重新下载</string>
-
-
-    <string-array name="maimai_version_values">
-        <item>maimai &amp; maimai PLUS</item>
-        <item>maimai GreeN</item>
-        <item>maimai GreeN PLUS</item>
-        <item>maimai ORANGE</item>
-        <item>maimai ORANGE PLUS</item>
-        <item>maimai PiNK</item>
-        <item>maimai PiNK PLUS</item>
-        <item>maimai MURASAKi</item>
-        <item>maimai MURASAKi PLUS</item>
-        <item>maimai MiLK</item>
-        <item>maimai MiLK PLUS</item>
-        <item>maimai FiNALE</item>
-        <item>maimai でらっくす</item>
-    </string-array>
 </resources>

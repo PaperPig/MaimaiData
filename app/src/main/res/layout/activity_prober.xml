@@ -18,8 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include
-            layout="@layout/mmd_universe_style_bg_layout" />
+        <include layout="@layout/mmd_main_style_bg_layout" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refreshLayout"

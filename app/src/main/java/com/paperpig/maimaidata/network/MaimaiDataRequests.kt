@@ -45,13 +45,13 @@ object MaimaiDataRequests {
      * fetch the version info for updating
      */
     fun fetchUpdateInfo(): Observable<AppUpdateModel> =
-            MaimaiDataClient
-                    .instance
-                    .getService()
-                    .getUpdateInfo()
-                    .compose(MaimaiDataTransformer.handleResult())
-                    .flatMap {
-                        val model = Gson().fromJson(it, AppUpdateModel::class.java)
-                        Observable.just(model)
-                    }
+        MaimaiDataClient
+            .instance
+            .getService()
+            .getUpdateInfo()
+            .compose(MaimaiDataTransformer.handleResult())
+            .flatMap {
+                val model = Gson().fromJson(it, AppUpdateModel::class.java)
+                Observable.just(model)
+            }
 }

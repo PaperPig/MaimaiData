@@ -121,7 +121,8 @@ class FinaleToDxFragment : BaseFragment<FragmentFinaleToDxBinding>() {
                     )
                 } else {
                     if (breakGreat > 0 || breakGood > 0 || breakMiss > 0 || breakPerfect * 2600 < breakScore || breakPerfect * 2500 > breakScore) {
-                        Toast.makeText(context, "绝赞数据错误，请重新填写", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "绝赞数据错误，请重新填写", Toast.LENGTH_SHORT)
+                            .show()
                     } else {
                         val dxBreakScore =
                             1 - 0.25 * (breakCount * 2600 - breakScore) / 50 / breakCount

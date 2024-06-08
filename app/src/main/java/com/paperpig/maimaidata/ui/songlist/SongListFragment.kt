@@ -1,12 +1,16 @@
 package com.paperpig.maimaidata.ui.songlist
 
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewAnimationUtils
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.CheckBox
 import androidx.core.animation.doOnEnd
@@ -16,8 +20,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentSongListBinding
-import com.paperpig.maimaidata.databinding.MmdUniverseStyleBgLayoutBinding
-import com.paperpig.maimaidata.model.SongListModel
+import com.paperpig.maimaidata.databinding.MmdMainStyleBgLayoutBinding
+import com.paperpig.maimaidata.repository.SongDataRepository
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.WindowsUtils
 import kotlinx.coroutines.CoroutineScope
@@ -28,14 +32,14 @@ import kotlin.math.hypot
 
 class SongListFragment : BaseFragment<FragmentSongListBinding>() {
     private lateinit var binding: FragmentSongListBinding
-    private lateinit var backgroundBinding: MmdUniverseStyleBgLayoutBinding
+    private lateinit var backgroundBinding: MmdMainStyleBgLayoutBinding
     private lateinit var songAdapter: SongListAdapter
+
     private val mHandler: Handler = Handler(Looper.getMainLooper())
     private val scrollRunnable: Runnable by lazy {
         object : Runnable {
             override fun run() {
-                backgroundBinding.dosTopRecyclerView.scrollBy(1, 0)
-                backgroundBinding.dosUnderRecyclerView.scrollBy(1, 0)
+                backgroundBinding.recy.scrollBy(1, 0)
                 mHandler.postDelayed(this, 50)
             }
         }
@@ -53,15 +57,20 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
 
     override fun getViewBinding(container: ViewGroup?): FragmentSongListBinding {
         binding = FragmentSongListBinding.inflate(layoutInflater, container, false)
-        backgroundBinding = MmdUniverseStyleBgLayoutBinding.bind(binding.root)
+        backgroundBinding = MmdMainStyleBgLayoutBinding.bind(binding.root)
         return binding
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupAnimation()
+
+        backgroundBinding.recy.apply {
+            adapter = DotsScrollAdapter(context, R.drawable.mmd_home_pattern)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            mHandler.postDelayed(scrollRunnable, 100)
+        }
 
         binding.songListRecyclerView.apply {
             songAdapter = SongListAdapter()
@@ -104,6 +113,10 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
             false
         }
         requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onPrepareMenu(menu: Menu) {
+                menu.findItem(R.id.search).isVisible = !isHidden
+            }
+
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.main_menu, menu)
             }
@@ -120,13 +133,13 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
 
         })
         loadData()
-
     }
 
     fun loadData() {
         CoroutineScope(Dispatchers.Main).launch {
-            songAdapter.setData(SongListModel().getData(context)
-                .sortedByDescending { it.id.toInt() })
+            songAdapter.setData(
+                SongDataRepository().getData(context)
+                    .sortedByDescending { it.id.toInt() })
         }
 
     }
@@ -140,7 +153,8 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
                 binding.songSearchLayout.touhouCheck,
                 binding.songSearchLayout.gameVarietyCheck,
                 binding.songSearchLayout.maimaiSortCheck,
-                binding.songSearchLayout.ongekiChuniCheck
+                binding.songSearchLayout.ongekiChuniCheck,
+                binding.songSearchLayout.utageCheck
             )
         val sortList = mutableListOf<String>()
         for (cb in checkBoxList) {
@@ -162,7 +176,8 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
             binding.songSearchLayout.dxCheck,
             binding.songSearchLayout.dx2021Check,
             binding.songSearchLayout.dx2022Check,
-            binding.songSearchLayout.dx2023Check
+            binding.songSearchLayout.dx2023Check,
+            binding.songSearchLayout.dx2024Check
         )
         val versionList = mutableListOf<String>()
         for (cb in checkBoxList) {
@@ -201,60 +216,13 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
     }
 
     private fun setupAnimation() {
-        val topLayoutManager = LinearLayoutManager(context)
-        topLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        backgroundBinding.dosTopRecyclerView.apply {
-            layoutManager = topLayoutManager
-            adapter = DotsScrollAdapter(context, R.drawable.mmd_home_elem_dots_top)
-        }
-        val underLayoutManager = LinearLayoutManager(context)
-        underLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        backgroundBinding.dosUnderRecyclerView.apply {
-            layoutManager = underLayoutManager
-            adapter = DotsScrollAdapter(context, R.drawable.mmd_home_elem_dots_under)
-        }
-        mHandler.postDelayed(scrollRunnable, 100)
-
-        val animatorElement = arrayOf(
-            backgroundBinding.baloonLeftB,
-            backgroundBinding.baloonLeftDP,
-            backgroundBinding.baloonLeftO,
-            backgroundBinding.baloonLeftP,
-            backgroundBinding.baloonLeftW1,
-            backgroundBinding.baloonLeftW2,
-            backgroundBinding.baloonLeftY,
-            backgroundBinding.baloonRightB,
-            backgroundBinding.baloonRightW2,
-            backgroundBinding.baloonRightY,
-            backgroundBinding.swirlH1,
-            backgroundBinding.swirlO1,
-            backgroundBinding.swirlO2,
-            backgroundBinding.swirlO3,
-            backgroundBinding.swirlO4,
-            backgroundBinding.swirlB1
-        )
-        val translationAnimatorSet = AnimatorSet()
-
-        for (elem in animatorElement) {
-            val animator = ObjectAnimator.ofFloat(elem, "translationY", -20f, 20f, -20f).apply {
-                duration = (8000L..16000L).random()
-                repeatCount = ValueAnimator.INFINITE
-            }
-            translationAnimatorSet.playTogether(animator)
-        }
-
-        translationAnimatorSet.start()
+        val animator =
+            ObjectAnimator.ofFloat(backgroundBinding.mainBgSpeaker, "translationY", 0f, 20f, 0f)
+                .apply {
+                    duration = 500L
+                    repeatCount = ValueAnimator.INFINITE
+                }
+        animator.start()
     }
-
-    override fun onResume() {
-        super.onResume()
-        mHandler.postDelayed(scrollRunnable, 100)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mHandler.removeCallbacks(scrollRunnable)
-    }
-
 
 }

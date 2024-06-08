@@ -1,8 +1,13 @@
 package com.paperpig.maimaidata.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Typeface
 import android.text.TextPaint
 import android.text.TextUtils
 import android.widget.Toast
@@ -13,23 +18,25 @@ import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import java.util.concurrent.Executors
 
 
 object CreateBest50 {
 
-    private const val itemWidth = 200
-    private const val itemHeight = 250
-    private const val itemPadding = 10
-    private const val versionPadding = 50
-    private const val headerHeight = 250
-    private const val containerWidth = itemWidth * 10 + itemPadding * 10 + versionPadding
-    private const val containerHeight = itemHeight * 5 + itemPadding * 5
+    private const val ITEM_WIDTH = 200
+    private const val ITEM_HEIGHT = 250
+    private const val ITEM_PADDING = 10
+    private const val VERSION_PADDING = 50
+    private const val HEADER_HEIGHT = 250
+    private const val CONTAINER_WIDTH = ITEM_WIDTH * 10 + ITEM_PADDING * 10 + VERSION_PADDING
+    private const val CONTAINER_HEIGHT = ITEM_HEIGHT * 5 + ITEM_PADDING * 5
 
 
+    @SuppressLint("DiscouragedApi")
     suspend fun createSongInfo(
         context: Activity,
         songData: List<SongData>,
@@ -43,8 +50,8 @@ object CreateBest50 {
         }
         withContext(Dispatchers.IO) {
             val containerBitmap = drawableToBitmap(
-                context, R.drawable.mmd_player_best50, containerWidth,
-                containerHeight + headerHeight
+                context, R.drawable.mmd_player_best50, CONTAINER_WIDTH,
+                CONTAINER_HEIGHT + HEADER_HEIGHT
             ).copy(Bitmap.Config.ARGB_8888, true)
             val containerCanvas = Canvas(containerBitmap)
             val textPaint = TextPaint()
@@ -53,45 +60,66 @@ object CreateBest50 {
             //绘制rating数据图
             val mainBitmap =
                 Bitmap.createBitmap(
-                    containerWidth,
-                    containerHeight,
+                    CONTAINER_WIDTH,
+                    CONTAINER_HEIGHT,
                     Bitmap.Config.ARGB_8888
                 )
             val canvas = Canvas(mainBitmap)
-            //绘制旧版本乐曲
-            val drawJacketJob = launch {
-                for (i in old.indices) {
-                    launch {
-                        val drawBitmap = drawSongItem(
-                            context,
-                            old[i], songData
-                        )
-                        canvas.drawBitmap(
-                            drawBitmap!!,
-                            (i % 7 * itemWidth + i % 7 * itemPadding).toFloat(),
-                            (i / 7 * itemHeight + i / 7 * itemPadding).toFloat(),
-                            null
-                        )
-                    }
 
-                }
-                //绘制现行版本乐曲
-                for (i in new.indices) {
-                    launch {
-                        val drawBitmap = drawSongItem(context, new[i], songData)
-                        canvas.drawBitmap(
-                            drawBitmap!!,
-                            (i % 3 * itemWidth + (itemWidth + itemPadding) * 7 + versionPadding + i % 3 * itemPadding).toFloat(),
-                            (i / 3 * itemHeight + i / 3 * itemPadding).toFloat(),
-                            null
-                        )
-                    }
-                }
+            val threadPool = Executors.newFixedThreadPool(5)
+
+            for (i in old.indices) {
+                println(Thread.currentThread().name)
+                threadPool.submit {
+                    println(Thread.currentThread().name)
+                    val drawBitmap = drawSongItem(
+                        context,
+                        old[i], songData
+                    )
+                    canvas.drawBitmap(
+                        drawBitmap,
+                        (i % 7 * ITEM_WIDTH + i % 7 * ITEM_PADDING).toFloat(),
+                        (i / 7 * ITEM_HEIGHT + i / 7 * ITEM_PADDING).toFloat(),
+                        null
+                    )
+                }.get()
+            }
+            //绘制现行版本乐曲
+            for (i in new.indices) {
+                println(Thread.currentThread().name)
+
+                threadPool.submit {
+                    val drawBitmap = drawSongItem(context, new[i], songData)
+                    canvas.drawBitmap(
+                        drawBitmap,
+                        (i % 3 * ITEM_WIDTH + (ITEM_WIDTH + ITEM_PADDING) * 7 + VERSION_PADDING + i % 3 * ITEM_PADDING).toFloat(),
+                        (i / 3 * ITEM_HEIGHT + i / 3 * ITEM_PADDING).toFloat(),
+                        null
+                    )
+                }.get()
             }
 
-            drawJacketJob.join()
+            threadPool.shutdown()
 
-            containerCanvas.drawBitmap(mainBitmap, 0f, 250f, null)
+
+
+            containerCanvas.drawBitmap(mainBitmap, 0f, HEADER_HEIGHT.toFloat(), null)
+
+            //绘制rating板
+            val ratingPlateBitmap =
+                getRatingPlate(context, (old.sumOf { it.ra } + new.sumOf { it.ra }))
+            containerCanvas.drawBitmap(ratingPlateBitmap, 432f, 49f, null)
+
+            //绘制姓名板
+            val nameBoxBitmap =
+                drawableToBitmap(context, R.drawable.mmd_player_name_box, 302, 46)
+            containerCanvas.drawBitmap(nameBoxBitmap, 432f, 110f, null)
+
+
+            //绘制rating组成板
+            val ratingBoxBitmap =
+                drawableToBitmap(context, R.drawable.mmd_player_rating_box, 302, 41)
+            containerCanvas.drawBitmap(ratingBoxBitmap, 432f, 165f, null)
 
 
             //绘制姓名
@@ -100,7 +128,7 @@ object CreateBest50 {
                 isAntiAlias = true
                 textSize = 32f
                 color = Color.BLACK
-                letterSpacing = 0.3f
+                letterSpacing = 0.2f
             }
             containerCanvas.drawText(
                 SharePreferencesUtils(context).getUserName(),
@@ -110,16 +138,23 @@ object CreateBest50 {
             )
 
             //绘制总rating
-            textPaint.apply {
-                color = Color.YELLOW
-                isFakeBoldText = true
-                textPaint.textSize = 25f
+            var rating = old.sumOf { it.ra } + new.sumOf { it.ra }
+            var index = 0
+            while (rating > 0) {
+                val digit = rating % 10
+                rating /= 10
+
+                val ratingNumBitmap = drawableToBitmap(
+                    context, context.resources.getIdentifier(
+                        "mmd_player_num_drating_$digit",
+                        "drawable",
+                        context.packageName
+                    ), 28, 34
+                )
+                containerCanvas.drawBitmap(ratingNumBitmap, 598 - 21f * index, 58f, null)
+                index++
+
             }
-            containerCanvas.drawText((old.sumOf { it.ra } + new.sumOf { it.ra }).toString(),
-                520f,
-                85f,
-                textPaint
-            )
 
 
             //绘制分版本rating
@@ -130,7 +165,7 @@ object CreateBest50 {
                 letterSpacing = 0f
             }
             containerCanvas.drawText(("旧版本：${old.sumOf { it.ra }}   现行版本：${new.sumOf { it.ra }}"),
-                470f,
+                480f,
                 190f,
                 textPaint
             )
@@ -145,17 +180,17 @@ object CreateBest50 {
         context: Context,
         record: Record,
         data: List<SongData>
-    ): Bitmap? {
+    ): Bitmap {
 
         val find = data.find { it.id == record.song_id }
         val songContainerBitmap =
-            Bitmap.createBitmap(itemWidth, itemHeight, Bitmap.Config.ARGB_8888)
+            Bitmap.createBitmap(ITEM_WIDTH, ITEM_HEIGHT, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(songContainerBitmap)
 
         //绘制歌曲背景板
         val ratingBoardBitmap = drawableToBitmap(
-            context, record.getRatingBoard(), itemWidth,
-            itemHeight
+            context, record.getRatingBoard(), ITEM_WIDTH,
+            ITEM_HEIGHT
         )
         canvas.drawBitmap(ratingBoardBitmap, 0f, 0f, null)
 
@@ -186,7 +221,7 @@ object CreateBest50 {
         diffDrawable.draw(diffCanvas)
         canvas.drawBitmap(
             diffBitmap,
-            (itemWidth - diffBitmap.width - 25).toFloat(),
+            (ITEM_WIDTH - diffBitmap.width - 25).toFloat(),
             30f,
             null
         )
@@ -229,7 +264,7 @@ object CreateBest50 {
             TextUtils.ellipsize(record.title, textPaint, 150f, TextUtils.TruncateAt.END)
                 .toString()
         val measureText = textPaint.measureText(title)
-        canvas.drawText(title, (itemWidth - measureText) / 2, 202f, textPaint)
+        canvas.drawText(title, (ITEM_WIDTH - measureText) / 2, 202f, textPaint)
 
 
         textPaint.textSize = 12f
@@ -249,7 +284,7 @@ object CreateBest50 {
         )
         canvas.drawText(
             achievement,
-            (itemWidth - textPaint.measureText(achievement)) / 2,
+            (ITEM_WIDTH - textPaint.measureText(achievement)) / 2,
             226f,
             textPaint
         )
@@ -274,6 +309,26 @@ object CreateBest50 {
             )
         }
         return bitmap
+    }
+
+    private fun getRatingPlate(context: Context, rating: Int): Bitmap {
+        val res = when (rating) {
+            in 0..999 -> R.drawable.mmd_rating_plate_normal
+            in 1000..1999 -> R.drawable.mmd_rating_plate_blue
+            in 2000..3999 -> R.drawable.mmd_rating_plate_green
+            in 4000..6999 -> R.drawable.mmd_rating_plate_orange
+            in 7000..9999 -> R.drawable.mmd_rating_plate_red
+            in 10000..11999 -> R.drawable.mmd_rating_plate_purple
+            in 12000..12999 -> R.drawable.mmd_rating_plate_bronze
+            in 13000..13999 -> R.drawable.mmd_rating_plate_silver
+            in 14000..14499 -> R.drawable.mmd_rating_plate_gold
+            in 14500..14999 -> R.drawable.mmd_rating_plate_platinum
+            else -> R.drawable.mmd_rating_plate_rainbow
+        }
+
+        return drawableToBitmap(context, res, 203, 52)
+
+
     }
 
 

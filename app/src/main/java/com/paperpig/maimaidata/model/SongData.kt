@@ -12,7 +12,7 @@ data class SongData(
     val basic_info: BasicInfo,
     val charts: List<Chart>,
     val ds: List<Double>,
-    var old_ds:List<Double>,
+    var old_ds: List<Double>,
     val id: String,
     val level: List<String>,
     val title: String,
@@ -21,35 +21,39 @@ data class SongData(
     @ColorRes
     fun getBgColor() =
         when (basic_info.genre) {
-            "POPSアニメ" -> R.color.pop
-            "niconicoボーカロイド" -> R.color.vocal
-            "東方Project" -> R.color.touhou
-            "バラエティ" -> R.color.variety
-            "ゲームバラエティ" -> R.color.variety
-            "maimai" -> R.color.maimai
+            "流行&动漫" -> R.color.pop
+            "niconico & VOCALOID" -> R.color.vocal
+            "东方Project" -> R.color.touhou
+            "其他游戏" -> R.color.variety
+            "舞萌" -> R.color.maimai
+            "宴会場" -> R.color.utage
             else -> R.color.gekichuni
         }
 
     fun getStrokeColor() =
         when (basic_info.genre) {
-            "POPSアニメ" -> R.color.pop_stroke
-            "niconicoボーカロイド" -> R.color.vocal_stroke
-            "東方Project" -> R.color.touhou_stroke
-            "バラエティ" -> R.color.variety_stroke
-            "ゲームバラエティ" -> R.color.variety_stroke
-            "maimai" -> R.color.maimai_stroke
+            "流行&动漫" -> R.color.pop_stroke
+            "niconico & VOCALOID" -> R.color.vocal_stroke
+            "东方Project" -> R.color.touhou_stroke
+            "其他游戏" -> R.color.variety_stroke
+            "舞萌" -> R.color.maimai_stroke
+            "宴会場" -> R.color.utage_stroke
             else -> R.color.gekichuni_stroke
         }
+
 
     inner class BasicInfo(
         val artist: String,
         val bpm: Int,
         var from: String,
-        val genre: String,
+        var genre: String,
         val is_new: Boolean,
         val title: String,
         var image_url: String,
-        var version: String
+        var version: String,
+        var kanji: String?,
+        var comment: String?,
+        var buddy: String?
     ) : Serializable
 
     inner class Chart(

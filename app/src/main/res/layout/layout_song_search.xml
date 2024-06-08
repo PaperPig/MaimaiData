@@ -118,12 +118,17 @@
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/maimaiSortCheck"
                 style="@style/SearchCheckBoxStyle"
-                android:text="@string/maimai" />
+                android:text="@string/sort_maimai" />
 
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/ongekiChuniCheck"
                 android:text="@string/ongeki_chuni"
+                style="@style/SearchCheckBoxStyle" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/utageCheck"
+                android:text="@string/utage"
                 style="@style/SearchCheckBoxStyle" />
 
         </com.google.android.flexbox.FlexboxLayout>
@@ -200,6 +205,11 @@
                 android:id="@+id/dx2023Check"
                 style="@style/SearchCheckBoxStyle"
                 android:text="@string/dx2023" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/dx2024Check"
+                style="@style/SearchCheckBoxStyle"
+                android:text="@string/dx2024" />
         </com.google.android.flexbox.FlexboxLayout>
 
         <View

@@ -28,12 +28,12 @@ data class AppUpdateModel(
     /**
      * json data version string
      */
-    @SerializedName("data_version")
-    var dataVersion: String? = null,
+    @SerializedName("data_version_2")
+    var dataVersion2: String? = null,
 
     /**
      * new json url
      */
-    @SerializedName("data_url")
-    var dataUrl: String? = null
+    @SerializedName("data_url_2")
+    var dataUrl2: String? = null
 )

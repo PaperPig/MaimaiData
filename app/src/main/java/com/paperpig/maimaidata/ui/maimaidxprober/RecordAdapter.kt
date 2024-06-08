@@ -20,8 +20,8 @@ import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
-import com.paperpig.maimaidata.utils.MaimaiRecordUtils
-import com.paperpig.maimaidata.utils.WindowsUtils
+import com.paperpig.maimaidata.utils.ConvertUtils
+import com.paperpig.maimaidata.utils.toDp
 
 class RecordAdapter(private val songData: List<SongData>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -107,7 +107,7 @@ class RecordAdapter(private val songData: List<SongData>) :
                 context.getString(R.string.maimaidx_achievement_desc), record.achievements
             )
             viewHolder.songRating.text = String.format(
-                context.getString(R.string.rating_scope), MaimaiRecordUtils.achievementToRating(
+                context.getString(R.string.rating_scope), ConvertUtils.achievementToRating(
                     (record.ds * 10).toInt(),
                     (record.achievements * 10000).toInt()
                 ), (record.ds * 22.512).toInt()
@@ -120,9 +120,7 @@ class RecordAdapter(private val songData: List<SongData>) :
                     .transition(DrawableTransitionOptions.withCrossFade()).apply(
                         RequestOptions.bitmapTransform(
                             RoundedCorners(
-                                WindowsUtils.dp2px(
-                                    context, 5f
-                                ).toInt()
+                                5.toDp().toInt(),
                             )
                         )
                     ).into(viewHolder.songJacket)

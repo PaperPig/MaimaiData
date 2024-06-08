@@ -24,34 +24,37 @@ object PictureUtils {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                     put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
                 }
-                val uri =
-                    context.contentResolver.insert(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        values
-                    )
+                val uri = context.contentResolver.insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values
+                )
 
 
 
                 context.contentResolver.openOutputStream(uri!!).use {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-                    it?.apply {
-                        flush()
-                        close()
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(
-                                context,
-                                "文件已保存至${savePath}目录",
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
+                    try {
+
+
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, it!!)
+                        it.apply {
+                            flush()
+                            close()
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    context, "文件已保存至${savePath}目录", Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Toast.makeText(
+                            context, "图片生成失败", Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
 
             } else {
-                val outputDir =
-                    Environment.getExternalStoragePublicDirectory(savePath)
+                val outputDir = Environment.getExternalStoragePublicDirectory(savePath)
                 val imageFile = File(
                     outputDir, "${fileName}.png"
                 )
@@ -62,17 +65,20 @@ object PictureUtils {
                         it.flush()
                         it.close()
                         MediaScannerConnection.scanFile(
-                            context, arrayOf(imageFile.path),
-                            null, null
+                            context, arrayOf(imageFile.path), null, null
                         )
                         withContext(Dispatchers.Main) {
-                            Toast.makeText(context, "文件已保存至${savePath}目录", Toast.LENGTH_SHORT)
-                                .show()
+                            Toast.makeText(
+                                context, "文件已保存至${savePath}目录", Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
 
                 } catch (e: Exception) {
                     e.printStackTrace()
+                    Toast.makeText(
+                        context, "图片生成失败", Toast.LENGTH_SHORT
+                    ).show()
                 }
 
             }

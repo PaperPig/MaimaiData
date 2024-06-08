@@ -54,7 +54,8 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
         if (record != null) {
             binding.songLevelAchievementLayout.visibility = View.VISIBLE
             binding.songLevelNoAchievementLayout.visibility = View.GONE
-            binding.songAchievement.text = record!!.achievements.toString() + "%"
+            binding.songAchievement.text =
+                getString(R.string.maimaidx_achievement_desc, record!!.achievements)
             binding.songRank.setImageDrawable(
                 ContextCompat.getDrawable(requireContext(), record!!.getRankIcon())
             )
@@ -82,7 +83,7 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
 
         format.roundingMode = RoundingMode.DOWN
 
-        if (songData.old_ds.isNotEmpty() && position < songData.old_ds.size ) {
+        if (songData.old_ds.isNotEmpty() && position < songData.old_ds.size) {
             if (songData.old_ds[position] < songData.ds[position]) {
                 binding.songLevel.setTextColor(
                     ContextCompat.getColor(
@@ -90,8 +91,9 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
                         R.color.mmd_color_red
                     )
                 )
-                binding.songLevel.text = "${songData.ds[position]}↑"
-                binding.oldLevel.text = "(${songData.old_ds[position]})"
+                binding.songLevel.text = getString(R.string.inner_level_up, songData.ds[position])
+                binding.oldLevel.text =
+                    getString(R.string.inner_level_old, songData.old_ds[position])
             } else if (songData.old_ds[position] > songData.ds[position]) {
                 binding.songLevel.setTextColor(
                     ContextCompat.getColor(
@@ -99,11 +101,13 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
                         R.color.mmd_color_green
                     )
                 )
-                binding.songLevel.text = "${songData.ds[position]}↓"
-                binding.oldLevel.text = "(${songData.old_ds[position]})"
+                binding.songLevel.text = getString(R.string.inner_level_down, songData.ds[position])
+                binding.oldLevel.text =
+                    getString(R.string.inner_level_old, songData.old_ds[position])
             } else {
                 binding.songLevel.text = "${songData.ds[position]}"
-                binding.oldLevel.text = "(${songData.old_ds[position]})"
+                binding.oldLevel.text =
+                    getString(R.string.inner_level_old, songData.old_ds[position])
             }
         } else {
             binding.songLevel.text = songData.ds[position].toString()
@@ -176,7 +180,7 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
             binding.finaleAchievementLayout.visibility = View.VISIBLE
             binding.finaleAchievement.text =
                 String.format(
-                    getString(R.string.maimai_achievement_desc), BigDecimal(
+                    getString(R.string.maimai_achievement_format), BigDecimal(
                         (note[0] * 500 + note[1] * 1000 + note[2] * 1500 + note[3] * 2600) * 1.0 /
                                 (note[0] * 500 + note[1] * 1000 + note[2] * 1500 + note[3] * 2500) * 100
                     ).setScale(2, BigDecimal.ROUND_DOWN)

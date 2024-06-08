@@ -44,8 +44,10 @@ object UnsafeOkHttpClient {
             // Create an ssl socket factory with our all-trusting manager
             val sslSocketFactory = sslContext.socketFactory
             val builder = OkHttpClient.Builder()
-            builder.sslSocketFactory(sslSocketFactory,
-                trustAllCerts[0] as X509TrustManager)
+            builder.sslSocketFactory(
+                sslSocketFactory,
+                trustAllCerts[0] as X509TrustManager
+            )
             builder.hostnameVerifier { _, _ -> true }
         } catch (e: Exception) {
             throw RuntimeException(e)

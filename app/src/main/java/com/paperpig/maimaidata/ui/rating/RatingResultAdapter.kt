@@ -22,7 +22,8 @@ class RatingResultAdapter : RecyclerView.Adapter<RatingResultAdapter.ViewHolder>
 
         return ViewHolder(
             ItemRatingReusltBinding.inflate(
-                LayoutInflater.from(parent.context), parent, false)
+                LayoutInflater.from(parent.context), parent, false
+            )
         )
     }
 

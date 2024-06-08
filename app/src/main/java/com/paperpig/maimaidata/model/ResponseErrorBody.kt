@@ -1,3 +1,3 @@
 package com.paperpig.maimaidata.model
 
-data class ResponseErrorBody(val message:String)
+data class ResponseErrorBody(val message: String)

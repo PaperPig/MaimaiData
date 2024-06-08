@@ -39,40 +39,40 @@ class MaimaiDataClient private constructor() {
             customIp
         }
         retrofit = Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .baseUrl(url)
-                .client(
-                        UnsafeOkHttpClient.unsafeOkHttpClient
-                                .retryOnConnectionFailure(true)
-                                .connectTimeout(60, TimeUnit.SECONDS)
-                                .readTimeout(60, TimeUnit.SECONDS)
-                                .writeTimeout(60, TimeUnit.SECONDS)
-                                .addInterceptor { chain ->
-                                    // interceptor: change url by header["urlName"]
-                                    val originalRequest: Request = chain.request()
-                                    val oldUrl: HttpUrl = originalRequest.url
-                                    val builder: Request.Builder = originalRequest.newBuilder()
-                                    val urlNameList: List<String> =
-                                            originalRequest.headers("urlName")
-                                    return@addInterceptor if (urlNameList.isNotEmpty()) {
-                                        builder.removeHeader("urlName")
-                                        val baseURL: HttpUrl = urlNameList[0].toHttpUrlOrNull()
-                                                ?: return@addInterceptor chain.proceed(originalRequest)
-                                        val newHttpUrl = oldUrl.newBuilder()
-                                                .scheme(baseURL.scheme)
-                                                .host(baseURL.host)
-                                                .port(baseURL.port)
-                                                .build()
-                                        val newRequest: Request = builder.url(newHttpUrl).build()
-                                        chain.proceed(newRequest)
-                                    } else {
-                                        chain.proceed(originalRequest)
-                                    }
-                                }
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .baseUrl(url)
+            .client(
+                UnsafeOkHttpClient.unsafeOkHttpClient
+                    .retryOnConnectionFailure(true)
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS)
+                    .addInterceptor { chain ->
+                        // interceptor: change url by header["urlName"]
+                        val originalRequest: Request = chain.request()
+                        val oldUrl: HttpUrl = originalRequest.url
+                        val builder: Request.Builder = originalRequest.newBuilder()
+                        val urlNameList: List<String> =
+                            originalRequest.headers("urlName")
+                        return@addInterceptor if (urlNameList.isNotEmpty()) {
+                            builder.removeHeader("urlName")
+                            val baseURL: HttpUrl = urlNameList[0].toHttpUrlOrNull()
+                                ?: return@addInterceptor chain.proceed(originalRequest)
+                            val newHttpUrl = oldUrl.newBuilder()
+                                .scheme(baseURL.scheme)
+                                .host(baseURL.host)
+                                .port(baseURL.port)
                                 .build()
-                )
-                .build()
+                            val newRequest: Request = builder.url(newHttpUrl).build()
+                            chain.proceed(newRequest)
+                        } else {
+                            chain.proceed(originalRequest)
+                        }
+                    }
+                    .build()
+            )
+            .build()
     }
 
     /**

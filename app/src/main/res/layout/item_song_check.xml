@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="64dp"
+    android:layout_height="64dp"
+    android:layout_margin="1dp">
+
+    <ImageView
+        android:id="@+id/songJacket"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="2dp" />
+
+    <ImageView
+        android:id="@+id/songType"
+        android:layout_width="38dp"
+        android:layout_height="12dp"
+        android:layout_gravity="end" />
+
+    <ImageView
+        android:scaleType="center"
+        android:id="@+id/songRecordMark"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center" />
+
+</FrameLayout>

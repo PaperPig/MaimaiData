@@ -1,5 +1,6 @@
 package com.paperpig.maimaidata.widgets
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -8,7 +9,7 @@ import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
 import com.paperpig.maimaidata.R
-import com.paperpig.maimaidata.utils.WindowsUtils
+import com.paperpig.maimaidata.utils.toDp
 
 class ClearEditText(context: Context, attrs: AttributeSet?) :
     AppCompatEditText(context, attrs) {
@@ -22,12 +23,12 @@ class ClearEditText(context: Context, attrs: AttributeSet?) :
             drawable?.setBounds(
                 0,
                 0,
-                WindowsUtils.dp2px(context, 20f).toInt(),
-                WindowsUtils.dp2px(context, 20f).toInt()
+                20.toDp().toInt(),
+                20.toDp().toInt()
             )
             drawable
         }
-}
+    }
 
 
     override fun onTextChanged(
@@ -41,23 +42,24 @@ class ClearEditText(context: Context, attrs: AttributeSet?) :
     }
 
 
-    override fun onFocusChanged(focused: Boolean, direction:  Int, previouslyFocusedRect: Rect?) {
+    override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect)
         setClearIconVisible(focused && text!!.isNotEmpty())
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         when (event?.action) {
             MotionEvent.ACTION_DOWN ->
                 performClick()
+
             MotionEvent.ACTION_UP ->
                 if (compoundDrawables[2] != null && event.x <= (width - paddingRight) && event.x >= (width - paddingRight - compoundDrawables[2].bounds.width())) {
                     setText("")
                 }
         }
         return super.onTouchEvent(event)
-
     }
 
     private fun setClearIconVisible(boolean: Boolean) {

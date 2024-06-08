@@ -9,11 +9,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.databinding.FragmentRatingBinding
 import com.paperpig.maimaidata.model.Rating
 import com.paperpig.maimaidata.ui.BaseFragment
+import com.paperpig.maimaidata.ui.checklist.LevelCheckActivity
+import com.paperpig.maimaidata.ui.checklist.VersionCheckActivity
 import com.paperpig.maimaidata.ui.maimaidxprober.LoginActivity
 import com.paperpig.maimaidata.ui.maimaidxprober.ProberActivity
-import com.paperpig.maimaidata.utils.MaimaiRecordUtils
+import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.utils.getInt
+import java.util.Locale
 import kotlin.math.floor
 
 class RatingFragment : BaseFragment<FragmentRatingBinding>() {
@@ -64,7 +67,14 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
 
         binding.changeBtn.setOnClickListener {
             startActivity(Intent(context, LoginActivity::class.java))
+        }
 
+        binding.levelCheckBtn.setOnClickListener {
+            startActivity(Intent(context, LevelCheckActivity::class.java))
+        }
+
+        binding.versionCheckBtn.setOnClickListener {
+            startActivity(Intent(context, VersionCheckActivity::class.java))
         }
 
         binding.calculateBtn.setOnClickListener {
@@ -74,15 +84,15 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
 
         binding.calculateSingleRating.setOnClickListener {
             hideKeyboard(view)
-            if (binding.inputSongLevel.text.toString().isNotEmpty() && binding.inputSongAchievement.text.toString()
-                    .isNotEmpty())
-            {
-                binding.outputSingleRating.text = MaimaiRecordUtils.achievementToRating(
+            if (binding.inputSongLevel.text.toString()
+                    .isNotEmpty() && binding.inputSongAchievement.text.toString()
+                    .isNotEmpty()
+            ) {
+                binding.outputSingleRating.text = ConvertUtils.achievementToRating(
                     (binding.inputSongLevel.text.toString().toFloat() * 10).toInt(),
                     (binding.inputSongAchievement.text.toString().toFloat() * 10000).toInt()
                 ).toString()
-            }
-            else{
+            } else {
                 showToast()
             }
         }
@@ -98,7 +108,7 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
 
     private fun onCalculate(targetString: String) {
         val targetRating = targetString.getInt()
-        if (targetRating <= 0){
+        if (targetRating <= 0) {
             showToast()
             return
         }
@@ -113,6 +123,7 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
             when (val reachableAchievement = getReachableAchievement(i, rating)) {
                 800000, 900000, 940000 ->
                     map[reachableAchievement] = i
+
                 in 970000..1010000 ->
                     map[reachableAchievement] = i
             }
@@ -122,9 +133,9 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
             list.add(
                 Rating(
                     (it.value / 10f),
-                    String.format("%.4f%%", it.key / 10000f),
-                    MaimaiRecordUtils.achievementToRating(it.value, it.key),
-                    MaimaiRecordUtils.achievementToRating(it.value, it.key) * 50
+                    String.format(Locale.getDefault(), "%.4f%%", it.key / 10000f),
+                    ConvertUtils.achievementToRating(it.value, it.key),
+                    ConvertUtils.achievementToRating(it.value, it.key) * 50
                 )
             )
         }
@@ -137,7 +148,7 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
 
 private fun getReachableLevel(rating: Int): Int {
     for (i in 10..150) {
-        if (rating < MaimaiRecordUtils.achievementToRating(i, 1005000)) {
+        if (rating < ConvertUtils.achievementToRating(i, 1005000)) {
             return i
         }
     }
@@ -150,13 +161,13 @@ private fun getReachableAchievement(level: Int, rating: Int): Int {
     var tempAchi: Int
 
 
-    if (MaimaiRecordUtils.achievementToRating(level, 1005000) < rating)
+    if (ConvertUtils.achievementToRating(level, 1005000) < rating)
         return 1010001
     for (n in 0..20) {
         if (maxAchi - minAchi >= 2) {
             tempAchi = floor((maxAchi.toDouble() + minAchi) / 2).toInt()
 
-            if (MaimaiRecordUtils.achievementToRating(level, tempAchi) < rating)
+            if (ConvertUtils.achievementToRating(level, tempAchi) < rating)
                 minAchi = tempAchi
             else maxAchi = tempAchi
         }

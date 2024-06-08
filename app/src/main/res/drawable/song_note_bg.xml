@@ -28,9 +28,7 @@
             </item>
 
 
-
-            <item
-                android:id="@+id/song_note_stroke">
+            <item android:id="@+id/song_note_stroke">
                 <shape android:shape="rectangle">
                     <corners android:radius="8dp" />
                     <stroke

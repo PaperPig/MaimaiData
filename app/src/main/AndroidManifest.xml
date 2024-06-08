@@ -9,20 +9,23 @@
 
     <application
         android:name=".MaimaiDataApplication"
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity android:name=".ui.maimaidxprober.LoginActivity" />
         <activity android:name=".ui.maimaidxprober.ProberActivity" />
         <activity android:name=".ui.songdetail.SongDetailActivity" />
-        <activity android:name=".ui.nameplate.NamePlateActivity" />
-        <activity android:name=".ui.MainActivity"
-            android:exported="true">
+        <activity android:name=".ui.checklist.VersionCheckActivity" />
+        <activity android:name=".ui.checklist.LevelCheckActivity" />
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
