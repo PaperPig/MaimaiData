@@ -103,31 +103,27 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
             if (selectDifficulty != "DEFAULT") {
                 when (selectDifficulty) {
                     "EXPERT-升序" -> field =
-                        field.sortedBy { it.ds[2] }
-                            .filter { if (isLevelBySort) return@filter it.level[2] == selectLevel else true }
+                        field.filter { it.basic_info.genre != "宴会場" && if (isLevelBySort) return@filter it.level[2] == selectLevel else true }
+                            .sortedBy { it.ds[2] }
 
                     "EXPERT-降序" -> field =
-                        field.sortedByDescending { it.ds[2] }
-                            .filter { if (isLevelBySort) return@filter it.level[2] == selectLevel else true }
+                        field.filter { it.basic_info.genre != "宴会場" && if (isLevelBySort) return@filter it.level[2] == selectLevel else true }
+                            .sortedByDescending { it.ds[2] }
 
                     "MASTER-升序" -> field =
-                        field.sortedBy { it.ds[3] }
-                            .filter { if (isLevelBySort) return@filter it.level[3] == selectLevel else true }
+                        field.filter { it.basic_info.genre != "宴会場" && if (isLevelBySort) return@filter it.level[3] == selectLevel else true }
+                            .sortedBy { it.ds[3] }
 
                     "MASTER-降序" -> field =
-                        field.sortedByDescending { it.ds[3] }
-                            .filter { if (isLevelBySort) return@filter it.level[3] == selectLevel else true }
+                        field.filter { it.basic_info.genre != "宴会場" && if (isLevelBySort) return@filter it.level[3] == selectLevel else true }
+                            .sortedByDescending { it.ds[3] }
 
                     "RE:MASTER-升序" -> field =
-                        field.sortedWith(remasterAscComparator).sortedWith(
-                            remasterAscComparator
-                        )
+                        field.sortedWith(remasterAscComparator)
                             .filter { if (isLevelBySort && it.level.size == 5) return@filter it.level[4] == selectLevel else true }
 
                     "RE:MASTER-降序" -> field =
-                        field.sortedWith(remasterDescComparator).sortedWith(
-                            remasterDescComparator
-                        )
+                        field.sortedWith(remasterDescComparator)
                             .filter { if (isLevelBySort && it.level.size == 5) return@filter it.level[4] == selectLevel else true }
 
                     else -> return
