@@ -18,7 +18,6 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.materialdialogs.MaterialDialog
-import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.paperpig.maimaidata.R
@@ -52,7 +51,7 @@ class ProberActivity : AppCompatActivity() {
     private val scrollRunnable: Runnable by lazy {
         object : Runnable {
             override fun run() {
-                backgroundBinding.recy.scrollBy(1, 0)
+                backgroundBinding.loopBgRecyclerView.scrollBy(1, 0)
                 mHandler.postDelayed(this, 50)
             }
         }
@@ -81,9 +80,9 @@ class ProberActivity : AppCompatActivity() {
             String.format(getString(R.string.new_version_15), 0)
         setupAnimation()
 
-        backgroundBinding.recy.apply {
-            adapter = DotsScrollAdapter(context,R.drawable.mmd_home_pattern)
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false)
+        backgroundBinding.loopBgRecyclerView.apply {
+            adapter = DotsScrollAdapter(context, R.drawable.mmd_home_pattern)
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             mHandler.postDelayed(scrollRunnable, 100)
         }
 
@@ -302,5 +301,16 @@ class ProberActivity : AppCompatActivity() {
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mHandler.postDelayed(scrollRunnable, 50)
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mHandler.removeCallbacks(scrollRunnable)
     }
 }

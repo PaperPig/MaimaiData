@@ -3,12 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-<androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/recy"
+    <androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/loopBgRecyclerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>
 
@@ -49,7 +45,6 @@
         android:src="@drawable/mmd_chara_sp" />
 
     <com.paperpig.maimaidata.widgets.RaysView
-        android:id="@+id/rayview"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_gravity="bottom" />

@@ -39,11 +39,14 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
     private val scrollRunnable: Runnable by lazy {
         object : Runnable {
             override fun run() {
-                backgroundBinding.recy.scrollBy(1, 0)
-                mHandler.postDelayed(this, 50)
+                if (isVisible) {
+                    backgroundBinding.loopBgRecyclerView.scrollBy(1, 0)
+                    mHandler.postDelayed(this, 50)
+                }
             }
         }
     }
+
 
     companion object {
 
@@ -64,12 +67,10 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupAnimation()
 
-        backgroundBinding.recy.apply {
+        backgroundBinding.loopBgRecyclerView.apply {
             adapter = DotsScrollAdapter(context, R.drawable.mmd_home_pattern)
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            mHandler.postDelayed(scrollRunnable, 100)
         }
 
         binding.songListRecyclerView.apply {
@@ -77,6 +78,8 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
             adapter = songAdapter
             layoutManager = LinearLayoutManager(context)
         }
+
+        setupAnimation()
 
         binding.songSearchLayout.closeLayout.setOnClickListener {
             showOrHideSearchBar()
@@ -216,6 +219,8 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
     }
 
     private fun setupAnimation() {
+        mHandler.postDelayed(scrollRunnable, 100)
+
         val animator =
             ObjectAnimator.ofFloat(backgroundBinding.mainBgSpeaker, "translationY", 0f, 20f, 0f)
                 .apply {
@@ -225,4 +230,22 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
         animator.start()
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden){
+            mHandler.postDelayed(scrollRunnable, 50)
+        }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        mHandler.postDelayed(scrollRunnable, 50)
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mHandler.removeCallbacks(scrollRunnable)
+    }
 }
