@@ -85,7 +85,7 @@ object ConvertUtils {
             "LEVEL 5" -> return "5"
             "LEVEL 6" -> return "6"
             "LEVEL 7" -> return "7"
-            "LEVEL 7+" -> return "8+"
+            "LEVEL 7+" -> return "7+"
             "LEVEL 8" -> return "8"
             "LEVEL 8+" -> return "8+"
             "LEVEL 9" -> return "9"
