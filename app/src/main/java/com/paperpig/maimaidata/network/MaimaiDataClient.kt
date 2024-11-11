@@ -19,7 +19,7 @@ class MaimaiDataClient private constructor() {
             MaimaiDataClient()
         }
 
-        const val BASE_URL = "https://www.diving-fish.com"
+        const val BASE_URL = "http://43.154.149.78:8392"
         const val IMAGE_BASE_URL = "https://maimaidx.jp/maimai-mobile/img/Music/"
 
     }
