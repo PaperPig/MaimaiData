@@ -1,51 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/mmd_main_bg_gradient">
 
-    <androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/loopBgRecyclerView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
 
     <ImageView
-        android:id="@+id/mainBgLine"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/mmd_home_line" />
+        android:id="@+id/aurora_back_View"
+        android:layout_width="1010dp"
+        android:layout_height="168dp"
+        android:layout_marginTop="-66dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/mmd_main_bg_aurora"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
+        android:id="@+id/aurora_front_view"
+        android:layout_width="1010dp"
+        android:layout_height="168dp"
+        android:layout_marginTop="-66dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/mmd_main_bg_aurora"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.paperpig.maimaidata.widgets.TilingImageView
+        android:id="@+id/tiling_imageview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/mmd_home_mirror_ball" />
+        android:layout_height="match_parent" />
 
     <ImageView
-        android:id="@+id/main_bg_speaker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="100dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/mmd_home_speaker" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom"
-        android:background="#0E325D" />
+        android:id="@+id/cloud_back_left_view"
+        android:layout_width="253dp"
+        android:layout_height="132dp"
+        android:layout_marginStart="-82dp"
+        android:src="@drawable/mmd_main_bg_back_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
+        android:id="@+id/cloud_back_right_view"
+        android:layout_width="185dp"
+        android:layout_height="97dp"
+        android:layout_marginTop="164dp"
+        android:layout_marginEnd="50dp"
+        android:src="@drawable/mmd_main_bg_back_right"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/cloud_back_center_view"
+        android:layout_width="115dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="324dp"
+        android:src="@drawable/mmd_main_bg_back_center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/cloud_front_left_view"
+        android:layout_width="148dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="268dp"
+        android:src="@drawable/mmd_main_bg_front_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/cloud_front_right_view"
+        android:layout_width="178dp"
+        android:layout_height="82dp"
+        android:layout_marginTop="146dp"
+        android:src="@drawable/mmd_main_bg_front_right"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/cloud_front_center_view"
+        android:layout_width="127dp"
+        android:layout_height="61dp"
+        android:layout_marginTop="360dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/mmd_main_bg_front_center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/moon_image_view"
+        android:layout_width="99dp"
+        android:layout_height="99dp"
+        android:layout_margin="16dp"
+        android:src="@drawable/mmd_main_bg_moon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/star_yellow_left_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="12dp"
+        android:src="@drawable/mmd_main_bg_star_yellow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/moon_image_view" />
+
+    <ImageView
+        android:id="@+id/star_yellow_right_view"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/mmd_main_bg_star_yellow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/star_white_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/mmd_main_bg_star_white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.paperpig.maimaidata.widgets.ShootingStarView
+        android:id="@+id/shooting_star_view1"
+        android:layout_width="77dp"
+        android:layout_height="77dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="-46dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.paperpig.maimaidata.widgets.ShootingStarView
+        android:id="@+id/shooting_star_view2"
+        android:layout_width="77dp"
+        android:layout_height="77dp"
+        android:layout_marginTop="-44dp"
+        android:layout_marginEnd="-30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.paperpig.maimaidata.widgets.ShootingStarView
+        android:id="@+id/shooting_star_view3"
+        android:layout_width="154dp"
+        android:layout_height="154dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="46dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.paperpig.maimaidata.widgets.ShootingStarView
+        android:id="@+id/shooting_star_view4"
+        android:layout_width="232dp"
+        android:layout_height="232dp"
+        android:layout_marginTop="256dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:scaleType="centerCrop"
-        android:src="@drawable/mmd_chara_sp" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.9" />
 
-    <com.paperpig.maimaidata.widgets.RaysView
+    <ImageView
+        android:id="@+id/rainbow_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-30dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/mmd_main_bg_rainbow"
+        app:layout_constraintBottom_toTopOf="@+id/rainbow_bottom_view"
+        app:layout_constraintEnd_toEndOf="@+id/rainbow_bottom_view"
+        app:layout_constraintStart_toStartOf="@+id/rainbow_bottom_view" />
+
+    <ImageView
+        android:id="@+id/rainbow_bottom_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/mmd_main_bg_rainbow_bottom"
+        app:layout_constraintBottom_toTopOf="@id/guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <ImageView
+        android:id="@+id/shines_image_view"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_gravity="bottom" />
-</merge>
+        android:layout_height="match_parent"
+        android:src="@drawable/mmd_main_bg_shines"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/chara_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/mmd_chara_sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tiling_imageview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.8" />
+
+    <ImageView
+        android:id="@+id/laundry_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/mmd_laundry"
+        app:layout_constraintBottom_toBottomOf="@+id/chara_view"
+        app:layout_constraintEnd_toEndOf="@+id/chara_view" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,34 +1,28 @@
 package com.paperpig.maimaidata.ui.maimaidxprober
 
 import android.Manifest
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityProberBinding
-import com.paperpig.maimaidata.databinding.MmdMainStyleBgLayoutBinding
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataRequests
 import com.paperpig.maimaidata.repository.RecordRepository
 import com.paperpig.maimaidata.repository.SongDataRepository
-import com.paperpig.maimaidata.ui.songlist.DotsScrollAdapter
+import com.paperpig.maimaidata.ui.animation.AnimationHelper
 import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.CreateBest50
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
@@ -39,7 +33,6 @@ import kotlinx.coroutines.launch
 
 class ProberActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProberBinding
-    private lateinit var backgroundBinding: MmdMainStyleBgLayoutBinding
 
     private lateinit var proberVersionAdapter: ProberVersionAdapter
     private var songData = listOf<SongData>()
@@ -47,15 +40,7 @@ class ProberActivity : AppCompatActivity() {
     private var oldRating = listOf<Record>()
     private var newRating = listOf<Record>()
 
-    private val mHandler: Handler = Handler(Looper.getMainLooper())
-    private val scrollRunnable: Runnable by lazy {
-        object : Runnable {
-            override fun run() {
-                backgroundBinding.loopBgRecyclerView.scrollBy(1, 0)
-                mHandler.postDelayed(this, 50)
-            }
-        }
-    }
+    private lateinit var animationHelper: AnimationHelper
 
 
     companion object {
@@ -65,8 +50,11 @@ class ProberActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProberBinding.inflate(layoutInflater)
-        backgroundBinding = MmdMainStyleBgLayoutBinding.bind(binding.root)
         setContentView(binding.root)
+
+        animationHelper = AnimationHelper(layoutInflater)
+        binding.proberContainerLayout.addView(animationHelper.loadLayout(), 0)
+        animationHelper.startAnimation()
 
         setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.apply {
@@ -78,13 +66,7 @@ class ProberActivity : AppCompatActivity() {
             String.format(getString(R.string.old_version_35), 0)
         binding.newVersionRdoBtn.text =
             String.format(getString(R.string.new_version_15), 0)
-        setupAnimation()
 
-        backgroundBinding.loopBgRecyclerView.apply {
-            adapter = DotsScrollAdapter(context, R.drawable.mmd_home_pattern)
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            mHandler.postDelayed(scrollRunnable, 100)
-        }
 
         CoroutineScope(Dispatchers.Main).launch {
             songData = SongDataRepository().getData(this@ProberActivity)
@@ -111,13 +93,13 @@ class ProberActivity : AppCompatActivity() {
 
             binding.versionGroup.setOnCheckedChangeListener { _, i ->
                 when (i) {
-                    R.id.oldVersionRdoBtn -> {
+                    R.id.old_version_rdo_btn -> {
                         binding.proberVp.currentItem = 0
                         binding.oldVersionIndicator.visibility = View.VISIBLE
                         binding.newVersionIndicator.visibility = View.GONE
                     }
 
-                    R.id.newVersionRdoBtn -> {
+                    R.id.new_version_rdo_btn -> {
                         binding.proberVp.currentItem = 1
                         binding.oldVersionIndicator.visibility = View.GONE
                         binding.newVersionIndicator.visibility = View.VISIBLE
@@ -241,16 +223,6 @@ class ProberActivity : AppCompatActivity() {
     }
 
 
-    private fun setupAnimation() {
-        val animator =
-            ObjectAnimator.ofFloat(backgroundBinding.mainBgSpeaker, "translationY", 0f, 20f, 0f)
-                .apply {
-                    duration = 500L
-                    repeatCount = ValueAnimator.INFINITE
-                }
-        animator.start()
-    }
-
     private fun createImage() {
         CoroutineScope(Dispatchers.Main).launch {
             binding.loading.visibility = View.VISIBLE
@@ -303,14 +275,21 @@ class ProberActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
+
     override fun onResume() {
         super.onResume()
-        mHandler.postDelayed(scrollRunnable, 50)
-
+        animationHelper.resumeAnimation()
     }
 
     override fun onPause() {
         super.onPause()
-        mHandler.removeCallbacks(scrollRunnable)
+        animationHelper.pauseAnimation()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        animationHelper.stopAnimation()
+    }
+
+
 }

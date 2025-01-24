@@ -1,10 +1,6 @@
 package com.paperpig.maimaidata.ui.songlist
 
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -20,9 +16,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentSongListBinding
-import com.paperpig.maimaidata.databinding.MmdMainStyleBgLayoutBinding
 import com.paperpig.maimaidata.repository.SongDataRepository
 import com.paperpig.maimaidata.ui.BaseFragment
+import com.paperpig.maimaidata.ui.animation.AnimationHelper
 import com.paperpig.maimaidata.utils.WindowsUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,21 +28,8 @@ import kotlin.math.hypot
 
 class SongListFragment : BaseFragment<FragmentSongListBinding>() {
     private lateinit var binding: FragmentSongListBinding
-    private lateinit var backgroundBinding: MmdMainStyleBgLayoutBinding
     private lateinit var songAdapter: SongListAdapter
-
-    private val mHandler: Handler = Handler(Looper.getMainLooper())
-    private val scrollRunnable: Runnable by lazy {
-        object : Runnable {
-            override fun run() {
-                if (isVisible) {
-                    backgroundBinding.loopBgRecyclerView.scrollBy(1, 0)
-                    mHandler.postDelayed(this, 50)
-                }
-            }
-        }
-    }
-
+    private lateinit var animationHelper:AnimationHelper
 
     companion object {
 
@@ -60,7 +43,6 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
 
     override fun getViewBinding(container: ViewGroup?): FragmentSongListBinding {
         binding = FragmentSongListBinding.inflate(layoutInflater, container, false)
-        backgroundBinding = MmdMainStyleBgLayoutBinding.bind(binding.root)
         return binding
     }
 
@@ -68,18 +50,15 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        backgroundBinding.loopBgRecyclerView.apply {
-            adapter = DotsScrollAdapter(context, R.drawable.mmd_home_pattern)
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        }
+        animationHelper = AnimationHelper(layoutInflater)
+        binding.root.addView(animationHelper.loadLayout(),0)
+        animationHelper.startAnimation()
 
         binding.songListRecyclerView.apply {
             songAdapter = SongListAdapter()
             adapter = songAdapter
             layoutManager = LinearLayoutManager(context)
         }
-
-        setupAnimation()
 
         binding.songSearchLayout.closeLayout.setOnClickListener {
             showOrHideSearchBar()
@@ -218,34 +197,20 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
         }
     }
 
-    private fun setupAnimation() {
-        mHandler.postDelayed(scrollRunnable, 100)
-
-        val animator =
-            ObjectAnimator.ofFloat(backgroundBinding.mainBgSpeaker, "translationY", 0f, 20f, 0f)
-                .apply {
-                    duration = 500L
-                    repeatCount = ValueAnimator.INFINITE
-                }
-        animator.start()
-    }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (!hidden){
-            mHandler.postDelayed(scrollRunnable, 50)
-        }
-    }
-
 
     override fun onResume() {
         super.onResume()
-        mHandler.postDelayed(scrollRunnable, 50)
-
+        animationHelper.resumeAnimation()
     }
 
     override fun onPause() {
         super.onPause()
-        mHandler.removeCallbacks(scrollRunnable)
+        animationHelper.pauseAnimation()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        animationHelper.stopAnimation()
+    }
+
 }
