@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -21,12 +21,13 @@
 
     <style name="SearchCheckBoxStyle">
         <item name="android:button">@null</item>
-        <item name="android:background">@drawable/search_checkbox_selector</item>
-        <item name="android:padding">8dp</item>
+        <item name="android:background">@drawable/mmd_checkbox_version_selector</item>
+        <item name="android:padding">6dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">0dp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_margin">6dp</item>
     </style>
 
     <style name="ButtonStyle">

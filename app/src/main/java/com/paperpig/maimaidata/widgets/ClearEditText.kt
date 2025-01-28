@@ -13,11 +13,12 @@ import com.paperpig.maimaidata.utils.toDp
 
 class ClearEditText(context: Context, attrs: AttributeSet?) :
     AppCompatEditText(context, attrs) {
-    private var mDrawable: Drawable? = null
+    private var clearTextDrawable: Drawable? = null
+    private var searchLensDrawable: Drawable? = null
 
 
     init {
-        mDrawable = context.let {
+        clearTextDrawable = context.let {
             val drawable =
                 ContextCompat.getDrawable(it, R.drawable.ic_delete)
             drawable?.setBounds(
@@ -28,7 +29,25 @@ class ClearEditText(context: Context, attrs: AttributeSet?) :
             )
             drawable
         }
+        searchLensDrawable = context.let {
+            val drawable =
+                ContextCompat.getDrawable(it, R.drawable.mmd_search_lens)
+            drawable?.setBounds(
+                0,
+                0,
+                20.toDp().toInt(),
+                20.toDp().toInt()
+            )
+            drawable
+        }
+        setCompoundDrawables(
+            searchLensDrawable,
+            compoundDrawables[1],
+            compoundDrawables[2],
+            compoundDrawables[3]
+        )
     }
+
 
 
     override fun onTextChanged(
@@ -66,7 +85,7 @@ class ClearEditText(context: Context, attrs: AttributeSet?) :
         setCompoundDrawables(
             compoundDrawables[0],
             compoundDrawables[1],
-            if (boolean) mDrawable else null,
+            if (boolean) clearTextDrawable else null,
             compoundDrawables[3]
         )
     }

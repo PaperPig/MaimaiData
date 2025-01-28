@@ -5,7 +5,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ItemNormalSongBinding
 import com.paperpig.maimaidata.databinding.ItemUtageSongBinding
@@ -24,115 +22,17 @@ import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
-import com.paperpig.maimaidata.utils.ConvertUtils
-import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.utils.toDp
-import com.paperpig.maimaidata.utils.versionCheck
-import java.util.Locale
 
 
 class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
-    private val spUtils = SharePreferencesUtils(MaimaiDataApplication.instance, "songInfo")
-    private val remasterAscComparator: java.util.Comparator<SongData> = Comparator { a1, a2 ->
-
-        if (a1.ds.size < 5 && a2.ds.size < 5) {
-            0
-        } else if (a1.ds.size < 5)
-            1
-        else if (a2.ds.size < 5) {
-            -1
-        } else a1.ds[4].compareTo(a2.ds[4])
-    }
-
-    private val remasterDescComparator: java.util.Comparator<SongData> = Comparator { a1, a2 ->
-
-        if (a1.ds.size < 5 && a2.ds.size < 5) {
-            0
-        } else if (a1.ds.size < 5)
-            1
-        else if (a2.ds.size < 5) {
-            -1
-        } else a2.ds[4].compareTo(a1.ds[4])
-    }
-
     companion object {
         const val TYPE_NORMAL = 0
         const val TYPE_UTAGE = 1
     }
 
 
-    private var isLevelBySort = false
-    private var selectLevel = ""
-    private var selectDifficulty = "DEFAULT"
-    private var searchText = ""
-    private var isShowFavoriteSong = false
-    private var originList = listOf<SongData>()
-    private var versionList = listOf<String>()
-    private var sortList = listOf<String>()
-
     private var songList = listOf<SongData>()
-        set(value) {
-            originList = value
-            field = value.filter {
-                if (searchText.isEmpty() || TextUtils.isEmpty(it.title)) {
-                    return@filter true
-                }
-                return@filter it.title.lowercase(Locale.ROOT)
-                    .contains(searchText.lowercase(Locale.ROOT))
-            }.filter {
-                if (sortList.isNotEmpty()) {
-                    return@filter sortList.contains(it.basic_info.genre)
-                } else
-                    return@filter true
-            }.filter {
-                if (versionList.isNotEmpty()) {
-                    return@filter versionList.versionCheck(it.basic_info.from)
-                } else return@filter true
-            }.filter {
-                if (isShowFavoriteSong) {
-                    spUtils.isFavorite(it.id)
-                } else {
-                    true
-                }
-            }
-            if (isLevelBySort) {
-                field = field.filter {
-                    it.level.contains(selectLevel)
-                }
-            }
-            if (selectDifficulty != "DEFAULT") {
-                when (selectDifficulty) {
-                    "EXPERT-升序" -> field =
-                        field.filter { it.basic_info.genre != "宴会場" && if (isLevelBySort) return@filter it.level[2] == selectLevel else true }
-                            .sortedBy { it.ds[2] }
-
-                    "EXPERT-降序" -> field =
-                        field.filter { it.basic_info.genre != "宴会場" && if (isLevelBySort) return@filter it.level[2] == selectLevel else true }
-                            .sortedByDescending { it.ds[2] }
-
-                    "MASTER-升序" -> field =
-                        field.filter { it.basic_info.genre != "宴会場" && if (isLevelBySort) return@filter it.level[3] == selectLevel else true }
-                            .sortedBy { it.ds[3] }
-
-                    "MASTER-降序" -> field =
-                        field.filter { it.basic_info.genre != "宴会場" && if (isLevelBySort) return@filter it.level[3] == selectLevel else true }
-                            .sortedByDescending { it.ds[3] }
-
-                    "RE:MASTER-升序" -> field =
-                        field.sortedWith(remasterAscComparator)
-                            .filter { if (isLevelBySort && it.level.size == 5) return@filter it.level[4] == selectLevel else true }
-
-                    "RE:MASTER-降序" -> field =
-                        field.sortedWith(remasterDescComparator)
-                            .filter { if (isLevelBySort && it.level.size == 5) return@filter it.level[4] == selectLevel else true }
-
-                    else -> return
-                }
-            }
-
-
-        }
-
 
     inner class NormalViewHolder(binding: ItemNormalSongBinding) :
         ViewHolder(binding.root) {
@@ -299,28 +199,6 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
 
     }
 
-
-    fun search(
-        str: String,
-        list1: List<String>,
-        list2: List<String>,
-        level: String,
-        sequencing: String,
-        isShowFavor: Boolean
-    ) {
-        searchText = str
-        sortList = list1
-        versionList = list2
-        if (level == "ALL") isLevelBySort = false
-        else {
-            isLevelBySort = true
-            selectLevel = ConvertUtils.getLevel(level)
-        }
-        isShowFavoriteSong = isShowFavor
-        selectDifficulty = sequencing
-        songList = originList
-        notifyDataSetChanged()
-    }
 
     fun setData(list: List<SongData>) {
         songList = list

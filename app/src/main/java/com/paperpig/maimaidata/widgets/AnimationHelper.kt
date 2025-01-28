@@ -1,4 +1,4 @@
-package com.paperpig.maimaidata.ui.animation
+package com.paperpig.maimaidata.widgets
 
 import android.animation.Animator
 import android.animation.AnimatorSet

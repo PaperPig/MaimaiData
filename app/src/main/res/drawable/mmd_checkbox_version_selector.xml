@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" android:exitFadeDuration="150">
+    <item android:drawable="@drawable/mmd_checkbox_version_checked_bg" android:state_checked="true" />
+    <item android:drawable="@drawable/mmd_checkbox_unchecked_bg" android:state_checked="false" />
+</selector>

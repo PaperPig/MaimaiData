@@ -22,7 +22,7 @@ import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataRequests
 import com.paperpig.maimaidata.repository.RecordRepository
 import com.paperpig.maimaidata.repository.SongDataRepository
-import com.paperpig.maimaidata.ui.animation.AnimationHelper
+import com.paperpig.maimaidata.widgets.AnimationHelper
 import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.CreateBest50
 import com.paperpig.maimaidata.utils.SharePreferencesUtils

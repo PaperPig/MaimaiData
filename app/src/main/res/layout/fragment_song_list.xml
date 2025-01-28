@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/songListRecyclerView"
+        android:id="@+id/song_list_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
         android:clipToPadding="false" />
 
+        <com.paperpig.maimaidata.widgets.SearchLayout
+            android:id="@+id/search_layout"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <include
-        android:id="@+id/songSearchLayout"
-        layout="@layout/layout_song_search" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
