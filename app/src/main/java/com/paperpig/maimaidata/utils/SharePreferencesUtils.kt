@@ -69,4 +69,11 @@ class SharePreferencesUtils(
         return Gson().fromJson(json, type)
     }
 
+    fun removeAccount(username: String) {
+        val history = getAccountHistory().toMutableList()
+        history.removeAll { it.first == username }
+        prefs.edit().putString("account_history", Gson().toJson(history)).apply()
+    }
+
+
 }

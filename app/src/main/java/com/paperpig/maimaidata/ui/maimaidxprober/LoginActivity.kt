@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
@@ -18,11 +19,11 @@ import com.paperpig.maimaidata.utils.SharePreferencesUtils
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var sharedPrefs: SharePreferencesUtils
-    private lateinit var accountList: List<Pair<String, String>>
+    private lateinit var accountList: MutableList<Pair<String, String>>
+    private lateinit var spinnerAdapter: ArrayAdapter<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbarLayout.toolbar)
@@ -57,6 +58,7 @@ class LoginActivity : AppCompatActivity() {
                         val cookie = it.headers()["set-cookie"] ?: ""
                         if (cookie.isNotBlank()) {
                             sharedPrefs.putLoginInfo(username, password, cookie)
+                            setupAccountSpinner()
                             startActivity(Intent(this, ProberActivity::class.java))
                             finish()
                         }
@@ -72,25 +74,50 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupAccountSpinner() {
-        accountList = sharedPrefs.getAccountHistory()
-        val accountNames = accountList.map { it.first }.toMutableList()
-        accountNames.add(0, "选择历史账号")  // 添加默认提示
+    private var isSpinnerInitialized = false  // 标志位，避免默认触发
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, accountNames)
-        binding.accountSpinner.adapter = adapter
+    private fun setupAccountSpinner() {
+        accountList = sharedPrefs.getAccountHistory().toMutableList()
+        val usernames = accountList.map { it.first }  // 只显示真实账号列表
+
+        spinnerAdapter = ArrayAdapter(
+            this, android.R.layout.simple_spinner_dropdown_item, usernames
+        )
+
+        binding.accountSpinner.adapter = spinnerAdapter
 
         binding.accountSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (position > 0) { // 避免选中 "选择历史账号"
-                    val (username, password) = accountList[position - 1]
-                    binding.username.setText(username)
-                    binding.password.setText(password)
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (isSpinnerInitialized) {
+                    showPopupMenu(view!!, position)
+                } else {
+                    isSpinnerInitialized = true  // 只在初始化时跳过一次
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+    }
+
+    private fun showPopupMenu(view: View, position: Int) {
+        val popup = PopupMenu(this, view)
+        popup.menuInflater.inflate(R.menu.account_menu, popup.menu)
+
+        popup.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.select_account -> {
+                    val (username, password) = accountList[position]
+                    binding.username.setText(username)
+                    binding.password.setText(password)
+                }
+                R.id.delete_account -> {
+                    sharedPrefs.removeAccount(accountList[position].first)
+                    setupAccountSpinner()  // 重新加载列表
+                }
+            }
+            true
+        }
+        popup.show()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -98,4 +125,3 @@ class LoginActivity : AppCompatActivity() {
         return true
     }
 }
-
