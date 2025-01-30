@@ -35,9 +35,70 @@ object SongDataManager {
 
     var list = emptyList<SongData>()
 
+    private var maxTotal = 0
+    private var maxTap = 0
+    private var maxHold = 0
+    private var maxSlide = 0
+    private var maxTouch = 0
+    private var maxBreak = 0
+
 
     suspend fun loadData() {
-        list = SongDataRepository().getData(MaimaiDataApplication.instance).sortedByDescending { it.id.toInt() }
+        list = SongDataRepository().getData(MaimaiDataApplication.instance)
+            .sortedByDescending { it.id.toInt() }
+        // 获取所有 charts 的 notes 列表
+        maxTotal = list.flatMap { it.charts.map { chart -> chart.notes } }
+            .maxOfOrNull { notes -> notes.sum() } ?: 0
+
+        // 遍历每个 SongData
+        for (songData in list) {
+            if (songData.basic_info.genre == "宴会場")
+                continue
+            // 遍历每个 Chart
+            for (chart in songData.charts) {
+                val notes = chart.notes
+
+                // 计算 maxTap（第一个值）
+                if (notes.isNotEmpty()) {
+                    maxTap = maxOf(maxTap, notes[0])
+                }
+
+                // 计算 maxHold（第二个值）
+                if (notes.size > 1) {
+                    maxHold = maxOf(maxHold, notes[1])
+                }
+
+                // 计算 maxSlide（第三个值）
+                if (notes.size > 2) {
+                    maxSlide = maxOf(maxSlide, notes[2])
+                }
+
+                // 计算 maxTouch（当 type 为 "DX" 时的第四个值）
+                if (songData.type == "DX" && notes.size > 3) {
+                    maxTouch = maxOf(maxTouch, notes[3])
+                }
+
+                // 计算 maxBreak
+                if (songData.type == "DX" && notes.size > 4) {
+                    // DX 类型的第五个值
+                    maxBreak = maxOf(maxBreak, notes[4])
+                } else if (songData.type == "SD" && notes.size > 3) {
+                    // SD 类型的第四个值
+                    maxBreak = maxOf(maxBreak, notes[3])
+                }
+            }
+        }
+    }
+
+    fun getMaxNotesList(): List<Int> {
+        return listOf(
+            maxTotal,
+            maxTap,
+            maxHold,
+            maxSlide,
+            maxTouch,
+            maxBreak
+        )
     }
 
     fun search(

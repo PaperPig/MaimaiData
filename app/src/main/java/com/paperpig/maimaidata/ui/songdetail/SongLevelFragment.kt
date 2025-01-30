@@ -12,7 +12,9 @@ import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentSongLevelBinding
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
+import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.ui.BaseFragment
+import com.paperpig.maimaidata.utils.toDp
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -114,19 +116,20 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
 
         }
 
-        binding.songDesign.text = songData.charts[position].charter
+        binding.chartDesigner.text = songData.charts[position].charter
 
-        binding.notesCount.text = (songData.charts[position].notes).sum().toString()
-        binding.tapCount.text = songData.charts[position].notes[0].toString()
-        binding.holdCount.text = songData.charts[position].notes[1].toString()
-        binding.slideCount.text = songData.charts[position].notes[2].toString()
-        if (songData.type == "DX") {
-            binding.touchCount.text = songData.charts[position].notes[3].toString()
-            binding.breakCount.text = songData.charts[position].notes[4].toString()
-        } else {
-            binding.touchCount.text = "0"
-            binding.breakCount.text = songData.charts[position].notes[3].toString()
-        }
+
+        binding.chartView.setMaxValues(SongDataManager.getMaxNotesList())
+        val noteValueList = listOf(
+            (songData.charts[position].notes).sum(),
+            songData.charts[position].notes[0],
+            songData.charts[position].notes[1],
+            songData.charts[position].notes[2],
+            if (songData.type == "DX") songData.charts[position].notes[3] else 0,
+            if (songData.type == "DX") songData.charts[position].notes[4] else songData.charts[position].notes[3]
+        )
+        binding.chartView.setValues(noteValueList)
+        binding.chartView.setBarColor(songData.getBgColor())
 
         binding.tapGreatScore.text = format.format(1f / totalScore * 0.2)
         binding.tapGoodScore.text = format.format(1f / totalScore * 0.5)
@@ -149,35 +152,32 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
         binding.break50Score.text = format.format(0.01 / breakTotal * 0.25)
         binding.break100Score.text = (format.format((0.01 / breakTotal) * 0.5))
 
-        val bgColor =
-            ((binding.songNoteLayout.background as LayerDrawable).getDrawable(0) as LayerDrawable).findDrawableByLayerId(
-                R.id.song_note_bg
+
+        val notesAchievementStoke =
+            (binding.noteAchievementLayout.background as LayerDrawable).findDrawableByLayerId(
+                R.id.note_achievement_stroke
+            ) as GradientDrawable
+        val notesAchievementInnerStoke =
+            (binding.noteAchievementLayout.background as LayerDrawable).findDrawableByLayerId(
+                R.id.note_achievement_inner_stroke
             ) as GradientDrawable
 
-        val bgStroke =
-            ((binding.songNoteLayout.background as LayerDrawable).getDrawable(0) as LayerDrawable).findDrawableByLayerId(
-                R.id.song_note_stroke
-            ) as GradientDrawable
-        bgColor.setColor(ContextCompat.getColor(requireContext(), songData.getBgColor()))
-        bgStroke.setStroke(
-            5,
-            ContextCompat.getColor(requireContext(), songData.getBgColor())
+        notesAchievementStoke.setStroke(
+            4.toDp().toInt(),
+            ContextCompat.getColor(requireContext(), songData.getStrokeColor())
         )
 
-        val noteAchievementBg =
-            ((binding.noteAchievementLayout.background as LayerDrawable).getDrawable(0) as LayerDrawable).findDrawableByLayerId(
-                R.id.note_achievement_bg
-            ) as GradientDrawable
-
-        noteAchievementBg.setStroke(
-            5,
-            ContextCompat.getColor(requireContext(), songData.getBgColor())
+        notesAchievementInnerStoke.setStroke(
+            3.toDp().toInt(), ContextCompat.getColor(
+                requireContext(),
+                songData.getBgColor()
+            )
         )
 
         if (songData.type == "DX") {
-            binding.finaleAchievementLayout.visibility = View.GONE
+            binding.finaleGroup.visibility = View.GONE
         } else {
-            binding.finaleAchievementLayout.visibility = View.VISIBLE
+            binding.finaleGroup.visibility = View.VISIBLE
             binding.finaleAchievement.text =
                 String.format(
                     getString(R.string.maimai_achievement_format), BigDecimal(

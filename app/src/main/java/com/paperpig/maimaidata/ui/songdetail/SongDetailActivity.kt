@@ -64,12 +64,25 @@ class SongDetailActivity : AppCompatActivity() {
                         songData.getBgColor()
                     )
                 )
-                tabLayout.setSelectedTabIndicatorColor(
-                    ContextCompat.getColor(
-                        this@SongDetailActivity,
-                        songData.getBgColor()
+                tabLayout.apply {
+                    setSelectedTabIndicatorColor(
+                        ContextCompat.getColor(
+                            this@SongDetailActivity,
+                            songData.getBgColor()
+                        )
                     )
-                )
+                    setTabTextColors(
+                        Color.BLACK, ContextCompat.getColor(
+                            this@SongDetailActivity,
+                            songData.getBgColor()
+                        )
+                    )
+
+
+                }
+
+
+
                 toolbarLayout.setContentScrimResource(songData.getBgColor())
 
                 GlideApp.with(this@SongDetailActivity)
@@ -105,12 +118,6 @@ class SongDetailActivity : AppCompatActivity() {
                     }
                 }
 
-                tabLayout.setSelectedTabIndicatorColor(
-                    ContextCompat.getColor(
-                        this@SongDetailActivity,
-                        songData.getBgColor()
-                    )
-                )
 
                 val list = ArrayList<Fragment>()
 

@@ -6,22 +6,24 @@
     android:orientation="vertical">
 
     <include
-        android:id="@+id/toolbarLayout"
+        android:id="@+id/toolbar_layout"
         layout="@layout/title" />
 
     <FrameLayout
-        android:id="@+id/fragmentContent"
+        android:id="@+id/fragment_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/mainBottomNaviView"
+        android:id="@+id/main_bottom_navi_view"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="64dp"
         android:layout_gravity="start"
         android:background="@color/white"
+        app:itemIconSize="24dp"
+        app:itemPaddingBottom="8dp"
         app:itemTextColor="@drawable/nav_bar_text_color_selector"
         app:menu="@menu/nav_menu" />
 </LinearLayout>

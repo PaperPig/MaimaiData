@@ -230,7 +230,7 @@ class MainActivity : AppCompatActivity() {
                 supportActionBar?.setTitle(R.string.dx_score_transform)
                 if (!::finaleToDxFragment.isInitialized) {
                     finaleToDxFragment = FinaleToDxFragment.newInstance()
-                    ft.add(R.id.fragmentContent, finaleToDxFragment, FinaleToDxFragment.TAG)
+                    ft.add(R.id.fragment_content, finaleToDxFragment, FinaleToDxFragment.TAG)
                 } else {
                     ft.show(finaleToDxFragment)
                 }
@@ -240,7 +240,7 @@ class MainActivity : AppCompatActivity() {
                 supportActionBar?.setTitle(R.string.dx_rating_correlation)
                 if (!::ratingFragment.isInitialized) {
                     ratingFragment = RatingFragment.newInstance()
-                    ft.add(R.id.fragmentContent, ratingFragment, RatingFragment.TAG)
+                    ft.add(R.id.fragment_content, ratingFragment, RatingFragment.TAG)
                 } else {
                     ft.show(ratingFragment)
                 }
@@ -250,7 +250,7 @@ class MainActivity : AppCompatActivity() {
                 supportActionBar?.setTitle(R.string.dx_song_list)
                 if (!::songListFragment.isInitialized) {
                     songListFragment = SongListFragment.newInstance()
-                    ft.add(R.id.fragmentContent, songListFragment, SongListFragment.TAG)
+                    ft.add(R.id.fragment_content, songListFragment, SongListFragment.TAG)
                 } else {
                     ft.show(songListFragment)
                 }

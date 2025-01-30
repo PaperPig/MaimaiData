@@ -38,6 +38,7 @@
     <color name="great">#F75EA3</color>
     <color name="good">#2FCA4C</color>
     <color name="miss">#868686</color>
+    <color name="notes_type_bg_color">#0B3871</color>
 
     <color name="mmd_player_rtsong_bsc_main">#6FE163</color>
     <color name="mmd_player_rtsong_bsc_dark">#025235</color>
