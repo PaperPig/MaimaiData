@@ -9,9 +9,5 @@
             android:id="@+id/navDxTarget"
             android:icon="@drawable/ic_rating"
             android:title="@string/dx_rating_correlation" />
-        <item
-            android:id="@+id/navDXScoreTransform"
-            android:icon="@drawable/ic_transform"
-            android:title="@string/dx_score_transform" />
     </group>
 </menu>

@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentRatingBinding
 import com.paperpig.maimaidata.model.Rating
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.ui.checklist.LevelCheckActivity
 import com.paperpig.maimaidata.ui.checklist.VersionCheckActivity
+import com.paperpig.maimaidata.ui.finaletodx.FinaleToDxActivity
 import com.paperpig.maimaidata.ui.maimaidxprober.LoginActivity
 import com.paperpig.maimaidata.ui.maimaidxprober.ProberActivity
 import com.paperpig.maimaidata.utils.ConvertUtils
@@ -39,47 +41,53 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
     override fun onResume() {
         super.onResume()
         if (SharePreferencesUtils(requireContext()).getUserName().isEmpty()) {
-            binding.loginLayout.visibility = View.VISIBLE
-            binding.loggedLayout.visibility = View.GONE
+            binding.accountText.setText(R.string.no_logged_in)
+            binding.proberQueryBtn.visibility = View.GONE
+            binding.proberLoginBtn.setText(R.string.login)
         } else {
-            binding.account.text = SharePreferencesUtils(requireContext()).getUserName()
-            binding.loginLayout.visibility = View.GONE
-            binding.loggedLayout.visibility = View.VISIBLE
+            binding.accountText.text = SharePreferencesUtils(requireContext()).getUserName()
+            binding.proberQueryBtn.visibility = View.VISIBLE
+            binding.proberLoginBtn.setText(R.string.change_account)
+
         }
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.ratingResultRecyclerView.apply {
+        binding.ratingResultRecycler.apply {
             resultAdapter = RatingResultAdapter()
             layoutManager = LinearLayoutManager(context)
             adapter = resultAdapter
         }
 
-        binding.loginBtn.setOnClickListener {
+        binding.proberLoginBtn.setOnClickListener {
             startActivity(Intent(context, LoginActivity::class.java))
         }
 
-        binding.queryBtn.setOnClickListener {
+        binding.proberQueryBtn.setOnClickListener {
             startActivity(Intent(context, ProberActivity::class.java))
         }
 
-        binding.changeBtn.setOnClickListener {
+        binding.proberLoginBtn.setOnClickListener {
             startActivity(Intent(context, LoginActivity::class.java))
         }
 
-        binding.levelCheckBtn.setOnClickListener {
+        binding.proberLevelCheckBtn.setOnClickListener {
             startActivity(Intent(context, LevelCheckActivity::class.java))
         }
 
-        binding.versionCheckBtn.setOnClickListener {
+        binding.proberVersionCheckBtn.setOnClickListener {
             startActivity(Intent(context, VersionCheckActivity::class.java))
+        }
+
+        binding.proberFinaleToDxBtn.setOnClickListener {
+            startActivity(Intent(context, FinaleToDxActivity::class.java))
         }
 
         binding.calculateBtn.setOnClickListener {
             hideKeyboard(view)
-            onCalculate(binding.targetRatingEt.text.toString())
+            onCalculate(binding.targetRatingEdit.text.toString())
         }
 
         binding.calculateSingleRating.setOnClickListener {

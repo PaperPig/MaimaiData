@@ -6,6 +6,9 @@
     android:orientation="vertical"
     tools:context=".ui.MainActivity"
     tools:ignore="LabelFor,Autofill">
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/title" />
 
 
     <LinearLayout

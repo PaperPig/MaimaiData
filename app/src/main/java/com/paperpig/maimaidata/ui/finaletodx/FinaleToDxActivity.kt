@@ -1,17 +1,15 @@
 package com.paperpig.maimaidata.ui.finaletodx
 
 import android.os.Bundle
-import android.view.View
-import android.view.ViewGroup
+import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.paperpig.maimaidata.R
-import com.paperpig.maimaidata.databinding.FragmentFinaleToDxBinding
-import com.paperpig.maimaidata.ui.BaseFragment
+import com.paperpig.maimaidata.databinding.ActivityFinaleToDxBinding
 import com.paperpig.maimaidata.utils.getInt
 
-
-class FinaleToDxFragment : BaseFragment<FragmentFinaleToDxBinding>() {
-    private lateinit var binding: FragmentFinaleToDxBinding
+class FinaleToDxActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityFinaleToDxBinding
 
 
     private var tapCount = 0
@@ -45,29 +43,20 @@ class FinaleToDxFragment : BaseFragment<FragmentFinaleToDxBinding>() {
     private var breakGood = 0
     private var breakMiss = 0
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityFinaleToDxBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-    companion object {
-        @JvmStatic
-        fun newInstance() =
-            FinaleToDxFragment()
-
-        const val TAG = "DXTransformFragment"
-    }
-
-
-    override fun getViewBinding(container: ViewGroup?): FragmentFinaleToDxBinding {
-        binding = FragmentFinaleToDxBinding.inflate(layoutInflater, container, false)
-        return binding
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-
+        setSupportActionBar(binding.toolbarLayout.toolbar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+            setTitle(R.string.dx_score_transform)
+        }
 
         with(binding) {
             calculate.setOnClickListener {
-                hideKeyboard(view)
 
                 tapPerfect = tapPerfectEt.text.toString().getInt()
                 tapGreat = tapGreatEt.text.toString().getInt()
@@ -121,7 +110,11 @@ class FinaleToDxFragment : BaseFragment<FragmentFinaleToDxBinding>() {
                     )
                 } else {
                     if (breakGreat > 0 || breakGood > 0 || breakMiss > 0 || breakPerfect * 2600 < breakScore || breakPerfect * 2500 > breakScore) {
-                        Toast.makeText(context, "绝赞数据错误，请重新填写", Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                            this@FinaleToDxActivity,
+                            "绝赞数据错误，请重新填写",
+                            Toast.LENGTH_SHORT
+                        )
                             .show()
                     } else {
                         val dxBreakScore =
@@ -136,13 +129,18 @@ class FinaleToDxFragment : BaseFragment<FragmentFinaleToDxBinding>() {
                             )
 
                     }
+
                 }
 
             }
         }
 
     }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home ->
+                finish()
+        }
+        return true
+    }
 }
-
-
-

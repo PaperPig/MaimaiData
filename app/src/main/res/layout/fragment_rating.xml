@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,97 +12,97 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="12dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="12dp">
+            android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/prober_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="12dp"
                 android:text="@string/maimaidx_prober"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout
-                android:id="@+id/loginLayout"
-                android:layout_width="match_parent"
+
+            <TextView
+                android:id="@+id/account_label"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center|end"
-                android:orientation="horizontal"
-                android:visibility="gone">
+                android:layout_marginTop="12dp"
+                android:text="@string/current_user"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/prober_level_check_btn"
+                app:layout_constraintStart_toStartOf="@+id/prober_label"
+                app:layout_constraintTop_toBottomOf="@id/prober_label" />
 
-                <Button
-                    android:id="@+id/loginBtn"
-                    style="@style/ButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/login" />
-            </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/loggedLayout"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/account_text"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center|end"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/account"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="2dp"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:gravity="end"
-                    android:lines="1"
-                    android:text="" />
-
-                <Button
-                    android:id="@+id/queryBtn"
-                    style="@style/ButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/query_record" />
-
-                <Button
-                    android:id="@+id/changeBtn"
-                    style="@style/ButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/change_account" />
-            </LinearLayout>
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp">
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/prober_label"
+                app:layout_constraintTop_toBottomOf="@id/account_label" />
 
             <Button
-                android:id="@+id/levelCheckBtn"
+                android:id="@+id/prober_login_btn"
                 style="@style/ButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/level_query" />
+                android:layout_marginEnd="12dp"
+                android:text="@string/change_account"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/prober_label" />
 
             <Button
-                android:id="@+id/versionCheckBtn"
+                android:id="@+id/prober_query_btn"
                 style="@style/ButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/version_query" />
-        </LinearLayout>
+                android:layout_marginEnd="12dp"
+                android:text="@string/query_record"
+                app:layout_constraintBottom_toBottomOf="@id/prober_login_btn"
+                app:layout_constraintEnd_toStartOf="@id/prober_login_btn"
+                app:layout_constraintTop_toTopOf="@id/prober_login_btn" />
+
+
+            <Button
+                android:id="@+id/prober_level_check_btn"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:text="@string/level_query"
+                app:layout_constraintBottom_toBottomOf="@id/prober_version_check_btn"
+                app:layout_constraintEnd_toStartOf="@id/prober_version_check_btn"
+                app:layout_constraintTop_toTopOf="@id/prober_version_check_btn" />
+
+            <Button
+                android:id="@+id/prober_version_check_btn"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/version_query"
+                app:layout_constraintEnd_toEndOf="@id/prober_login_btn"
+                app:layout_constraintTop_toBottomOf="@id/prober_login_btn" />
+
+            <Button
+                android:id="@+id/prober_finale_to_dx_btn"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dx_score_transform"
+                app:layout_constraintEnd_toEndOf="@id/prober_version_check_btn"
+                app:layout_constraintTop_toBottomOf="@id/prober_version_check_btn" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -118,7 +119,7 @@
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/targetRatingEt"
+                android:id="@+id/target_rating_edit"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -129,7 +130,7 @@
                 tools:ignore="LabelFor" />
 
             <Button
-                android:id="@+id/calculateBtn"
+                android:id="@+id/calculate_btn"
                 style="@style/ButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -182,7 +183,7 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/ratingResultRecyclerView"
+            android:id="@+id/rating_result_recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:overScrollMode="never" />
@@ -218,7 +219,7 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/inputSongLevel"
+                android:id="@+id/input_song_level"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -229,7 +230,7 @@
                 android:inputType="numberDecimal" />
 
             <EditText
-                android:id="@+id/inputSongAchievement"
+                android:id="@+id/input_song_achievement"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -241,7 +242,7 @@
                 android:inputType="numberDecimal" />
 
             <TextView
-                android:id="@+id/outputSingleRating"
+                android:id="@+id/output_single_rating"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -249,7 +250,8 @@
                 android:text="单曲rating计算" />
 
             <Button
-                android:id="@+id/calculateSingleRating"
+                android:layout_marginEnd="12dp"
+                android:id="@+id/calculate_single_rating"
                 style="@style/ButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -260,6 +262,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:orientation="vertical">
 
             <LinearLayout

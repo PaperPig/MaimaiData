@@ -16,7 +16,6 @@ import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityMainBinding
 import com.paperpig.maimaidata.model.AppUpdateModel
 import com.paperpig.maimaidata.network.MaimaiDataRequests
-import com.paperpig.maimaidata.ui.finaletodx.FinaleToDxFragment
 import com.paperpig.maimaidata.ui.rating.RatingFragment
 import com.paperpig.maimaidata.ui.songlist.SongListFragment
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
@@ -25,7 +24,6 @@ import io.reactivex.disposables.Disposable
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var finaleToDxFragment: FinaleToDxFragment
     private lateinit var ratingFragment: RatingFragment
     private lateinit var songListFragment: SongListFragment
     private var updateDisposable: Disposable? = null
@@ -39,15 +37,8 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbarLayout.toolbar)
 
-
         if (savedInstanceState != null) {
             supportActionBar?.title = savedInstanceState.getString("TOOLBAR_TITLE")
-
-            supportFragmentManager.getFragment(
-                savedInstanceState, FinaleToDxFragment.TAG
-            )?.apply {
-                finaleToDxFragment = this as FinaleToDxFragment
-            }
 
             supportFragmentManager.getFragment(
                 savedInstanceState, SongListFragment.TAG
@@ -76,11 +67,6 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
 
-                R.id.navDXScoreTransform -> {
-                    showFragment(R.id.navDXScoreTransform)
-                    true
-                }
-
                 else -> {
                     true
                 }
@@ -92,9 +78,6 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString("TOOLBAR_TITLE", supportActionBar?.title.toString())
-        if (::finaleToDxFragment.isInitialized) supportFragmentManager.putFragment(
-            outState, FinaleToDxFragment.TAG, finaleToDxFragment
-        )
         if (::songListFragment.isInitialized) supportFragmentManager.putFragment(
             outState, SongListFragment.TAG, songListFragment
         )
@@ -226,15 +209,6 @@ class MainActivity : AppCompatActivity() {
         val ft = supportFragmentManager.beginTransaction()
         hideAllFragment(ft)
         when (int) {
-            R.id.navDXScoreTransform -> {
-                supportActionBar?.setTitle(R.string.dx_score_transform)
-                if (!::finaleToDxFragment.isInitialized) {
-                    finaleToDxFragment = FinaleToDxFragment.newInstance()
-                    ft.add(R.id.fragment_content, finaleToDxFragment, FinaleToDxFragment.TAG)
-                } else {
-                    ft.show(finaleToDxFragment)
-                }
-            }
 
             R.id.navDxTarget -> {
                 supportActionBar?.setTitle(R.string.dx_rating_correlation)
@@ -262,9 +236,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun hideAllFragment(ft: FragmentTransaction) {
         ft.apply {
-            if (::finaleToDxFragment.isInitialized) {
-                hide(finaleToDxFragment)
-            }
             if (::ratingFragment.isInitialized) {
                 hide(ratingFragment)
             }
