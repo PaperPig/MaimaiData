@@ -7,13 +7,13 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/topLayout"
+        android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/toolbarLayout"
+            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
@@ -21,6 +21,7 @@
             app:titleEnabled="false">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -40,7 +41,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/song_bpm_text"
+                    android:id="@+id/song_bpm_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
@@ -56,18 +57,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    app:layout_constraintStart_toEndOf="@+id/song_bpm_text"
-                    app:layout_constraintTop_toTopOf="@+id/song_bpm_text" />
+                    app:layout_constraintStart_toEndOf="@+id/song_bpm_label"
+                    app:layout_constraintTop_toTopOf="@+id/song_bpm_label" />
 
                 <TextView
-                    android:id="@+id/song_genre_text"
+                    android:id="@+id/song_genre_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:minWidth="72dp"
                     android:text="@string/genre"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="@+id/song_jacket"
-                    app:layout_constraintStart_toStartOf="@+id/song_bpm_text"
+                    app:layout_constraintStart_toStartOf="@+id/song_bpm_label"
                     app:layout_constraintTop_toTopOf="@+id/song_jacket" />
 
                 <TextView
@@ -75,11 +76,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    app:layout_constraintStart_toEndOf="@+id/song_genre_text"
-                    app:layout_constraintTop_toTopOf="@+id/song_genre_text" />
+                    app:layout_constraintStart_toEndOf="@+id/song_genre_label"
+                    app:layout_constraintTop_toTopOf="@+id/song_genre_label" />
 
                 <TextView
-                    android:id="@+id/song_add_version_text"
+                    android:id="@+id/song_add_version_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
@@ -87,18 +88,46 @@
                     android:text="@string/add_version"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="@+id/song_jacket"
-                    app:layout_constraintStart_toStartOf="@+id/song_bpm_text" />
+                    app:layout_constraintStart_toStartOf="@+id/song_bpm_label" />
 
                 <ImageView
                     android:id="@+id/song_add_version"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
+                    android:maxHeight="50dp"
                     android:scaleType="fitStart"
-                    app:layout_constraintBottom_toBottomOf="@+id/song_add_version_text"
-                    app:layout_constraintStart_toEndOf="@+id/song_add_version_text"
-                    app:layout_constraintTop_toTopOf="@+id/song_add_version_text" />
+                    app:layout_constraintBottom_toBottomOf="@+id/song_add_version_label"
+                    app:layout_constraintStart_toEndOf="@+id/song_add_version_label"
+                    app:layout_constraintTop_toTopOf="@+id/song_add_version_label" />
 
+
+                <TextView
+                    android:id="@+id/alias_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="@string/song_alias"
+                    android:textColor="@color/white"
+                    app:layout_constraintStart_toStartOf="@id/song_jacket"
+                    app:layout_constraintTop_toBottomOf="@id/song_jacket" />
+
+                <androidx.constraintlayout.helper.widget.Flow
+                    android:id="@+id/song_alias_flow"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal"
+                    app:constraint_referenced_ids="alias_label"
+                    app:flow_horizontalBias="0"
+                    app:flow_horizontalGap="4dp"
+                    app:flow_horizontalStyle="packed"
+                    app:flow_verticalGap="4dp"
+                    app:flow_wrapMode="chain"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/song_jacket" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -157,10 +186,10 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
         <com.google.android.material.tabs.TabLayout
-            app:tabRippleColor="@color/white"
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            app:tabRippleColor="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
 

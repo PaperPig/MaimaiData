@@ -5,9 +5,12 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -22,6 +25,7 @@ import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.repository.RecordRepository
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import com.paperpig.maimaidata.utils.toDp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,7 +62,7 @@ class SongDetailActivity : AppCompatActivity() {
 
                 val record = RecordRepository().getRecord(this@SongDetailActivity)
 
-                topLayout.setBackgroundColor(
+                appbarLayout.setBackgroundColor(
                     ContextCompat.getColor(
                         this@SongDetailActivity,
                         songData.getBgColor()
@@ -77,11 +81,7 @@ class SongDetailActivity : AppCompatActivity() {
                             songData.getBgColor()
                         )
                     )
-
-
                 }
-
-
 
                 toolbarLayout.setContentScrimResource(songData.getBgColor())
 
@@ -117,6 +117,32 @@ class SongDetailActivity : AppCompatActivity() {
                         setColorFilter(colorFilter.invoke(!isFavor))
                     }
                 }
+
+                //对添加的别名进行flow约束
+                val aliasViewIds = songAliasFlow.referencedIds.toMutableList()
+                songData.alias?.forEachIndexed { _, item ->
+                    val textView = TextView(this@SongDetailActivity).apply {
+                        text = item
+                        id = View.generateViewId()
+                        aliasViewIds.add(id)
+                        val padding = 5.toDp().toInt()
+                        setPadding(padding, padding, padding, padding)
+                        setBackgroundResource(R.drawable.mmd_song_alias_info_bg)
+                        setTextColor(
+                            ContextCompat.getColor(
+                                this@SongDetailActivity,
+                                songData.getBgColor()
+                            )
+                        )
+                        layoutParams = ConstraintLayout.LayoutParams(
+                            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                            ConstraintLayout.LayoutParams.WRAP_CONTENT
+                        )
+                    }
+                    binding.constraintLayout.addView(textView)
+                }
+
+                songAliasFlow.referencedIds = aliasViewIds.toIntArray()
 
 
                 val list = ArrayList<Fragment>()

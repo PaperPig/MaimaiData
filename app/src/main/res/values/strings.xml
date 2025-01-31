@@ -45,7 +45,7 @@
     <string name="dx2023">舞萌DX 2023</string>
     <string name="dx2024">舞萌DX 2024</string>
 
-
+    <string name="song_alias">歌曲别名</string>
     <string name="artist">ARTIST</string>
     <string name="bpm">BPM</string>
     <string name="genre">歌曲分类</string>

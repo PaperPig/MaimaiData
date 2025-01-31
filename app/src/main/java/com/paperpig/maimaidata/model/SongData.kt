@@ -16,7 +16,8 @@ data class SongData(
     val id: String,
     val level: List<String>,
     val title: String,
-    val type: String
+    val type: String,
+    var alias: List<String>?,
 ) : Parcelable {
     @ColorRes
     fun getBgColor() =
