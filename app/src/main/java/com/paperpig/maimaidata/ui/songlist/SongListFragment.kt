@@ -130,7 +130,8 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
     fun loadData() {
         CoroutineScope(Dispatchers.Main).launch {
             SongDataManager.loadData()
-            songAdapter.setData(SongDataManager.list)
+            //默认不显示宴会场数据
+            songAdapter.setData(SongDataManager.list.filterNot { it.basic_info.genre == "宴会場" })
         }
     }
 

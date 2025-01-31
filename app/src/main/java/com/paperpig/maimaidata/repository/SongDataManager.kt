@@ -1,36 +1,26 @@
 package com.paperpig.maimaidata.repository
 
-import android.text.TextUtils
 import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.utils.versionCheck
-import java.util.Locale
 
 object SongDataManager {
+    private const val LABEL_GENERA_UTAGE = "宴会場"
+
     private val spUtils = SharePreferencesUtils(MaimaiDataApplication.instance, "songInfo")
 
-    private val remasterAscComparator: java.util.Comparator<SongData> = Comparator { a1, a2 ->
-
-        if (a1.ds.size < 5 && a2.ds.size < 5) {
-            0
-        } else if (a1.ds.size < 5)
-            1
-        else if (a2.ds.size < 5) {
-            -1
-        } else a1.ds[4].compareTo(a2.ds[4])
+    private val remasterComparator = Comparator<SongData> { a, b ->
+        when {
+            a.ds.size < 5 && b.ds.size < 5 -> 0
+            a.ds.size < 5 -> 1
+            b.ds.size < 5 -> -1
+            else -> 0
+        }
     }
 
-    private val remasterDescComparator: java.util.Comparator<SongData> = Comparator { a1, a2 ->
-
-        if (a1.ds.size < 5 && a2.ds.size < 5) {
-            0
-        } else if (a1.ds.size < 5)
-            1
-        else if (a2.ds.size < 5) {
-            -1
-        } else a2.ds[4].compareTo(a1.ds[4])
-    }
+    private val remasterAscComparator = remasterComparator.thenBy { it.ds.getOrNull(4) }
+    private val remasterDescComparator = remasterComparator.thenByDescending { it.ds.getOrNull(4) }
 
 
     var list = emptyList<SongData>()
@@ -101,94 +91,65 @@ object SongDataManager {
         )
     }
 
-    fun search(
-        searchText: String,
-        genreSortList: List<String>,
-        versionSortList: List<String>,
-        selectLevel: String,
-        sequencing: String,
-        isShowFavor: Boolean
-    ): List<SongData> {
-        var searchList = search(searchText, genreSortList, versionSortList, isShowFavor)
-        var isLevelBySort = true
-        if (selectLevel == "ALL") isLevelBySort = false
-        if (isLevelBySort) {
-            searchList = searchList.filter {
-                it.level.contains(selectLevel)
-            }
-        }
-        if (sequencing != "默认排序") {
-            searchList = when (sequencing) {
-                "EXPERT-升序" ->
-                    searchList.filter { it.basic_info.genre != "宴会場" && if (isLevelBySort) return@filter it.level[2] == selectLevel else true }
-                        .sortedBy { it.ds[2] }
-
-                "EXPERT-降序" -> searchList.filter { it.basic_info.genre != "宴会場" && if (isLevelBySort) return@filter it.level[2] == selectLevel else true }
-                    .sortedByDescending { it.ds[2] }
-
-                "MASTER-升序" -> searchList.filter { it.basic_info.genre != "宴会場" && if (isLevelBySort) return@filter it.level[3] == selectLevel else true }
-                    .sortedBy { it.ds[3] }
-
-                "MASTER-降序" -> searchList.filter { it.basic_info.genre != "宴会場" && if (isLevelBySort) return@filter it.level[3] == selectLevel else true }
-                    .sortedByDescending { it.ds[3] }
-
-                "RE:MASTER-升序" -> searchList.sortedWith(remasterAscComparator)
-                    .filter { if (isLevelBySort && it.level.size == 5) return@filter it.level[4] == selectLevel else true }
-
-                "RE:MASTER-降序" -> searchList.sortedWith(remasterDescComparator)
-                    .filter { if (isLevelBySort && it.level.size == 5) return@filter it.level[4] == selectLevel else true }
-
-                else -> searchList
-            }
-        }
-        return searchList
-
-    }
 
     fun search(
-        searchText: String,
-        genreSortList: List<String>,
-        versionSortList: List<String>,
-        levelDs: Double,
-        isShowFavor: Boolean
+        searchText: String = "",
+        genreSortList: List<String> = emptyList(),
+        versionSortList: List<String> = emptyList(),
+        selectLevel: String? = null,
+        levelDs: Double? = null,
+        sequencing: String? = null,
+        isShowFavor: Boolean = false
     ): List<SongData> {
-        var searchList = search(searchText, genreSortList, versionSortList, isShowFavor)
-        searchList = searchList.filter {
-            it.ds.contains(levelDs)
-        }
-        return searchList
-    }
-
-    private fun search(
-        searchText: String,
-        genreSortList: List<String>,
-        versionSortList: List<String>,
-        isShowFavor: Boolean
-    ): List<SongData> {
-        val searchList = list.filter {
-            if (searchText.isEmpty() || TextUtils.isEmpty(it.title)) {
-                return@filter true
+        return list.filter { song ->
+            // 歌曲名匹配
+            val matchesSearch = when {
+                searchText.isEmpty() || song.title.isEmpty() -> true
+                else -> song.title.contains(searchText, true)
             }
-            return@filter it.title.lowercase(Locale.ROOT)
-                .contains(searchText.lowercase(Locale.ROOT))
-        }.filter {
-            if (genreSortList.isNotEmpty()) {
-                return@filter genreSortList.contains(it.basic_info.genre)
-            } else
-                return@filter true
-        }.filter {
-            if (versionSortList.isNotEmpty()) {
-                return@filter versionSortList.versionCheck(it.basic_info.from)
-            } else return@filter true
-        }.filter {
-            if (isShowFavor) {
-                spUtils.isFavorite(it.id)
-            } else {
-                true
+
+            // 流派匹配，默认不显示宴会场
+            val matchesGenre = when {
+                genreSortList.isNotEmpty() -> song.basic_info.genre in genreSortList
+                else -> song.basic_info.genre != LABEL_GENERA_UTAGE
+            }
+
+            // 版本匹配
+            val matchesVersion = when {
+                versionSortList.isNotEmpty() -> versionSortList.versionCheck(song.basic_info.from)
+                else -> true
+            }
+
+            // 等级匹配
+            val matchesLevel = selectLevel?.let { level ->
+                when {
+                    level == "ALL" -> true
+                    // 根据sequencing确定检查的等级位置
+                    sequencing?.startsWith("EXPERT") == true -> song.level.getOrNull(2) == level
+                    sequencing?.startsWith("MASTER") == true -> song.level.getOrNull(3) == level
+                    sequencing?.startsWith("RE:MASTER") == true -> song.level.getOrNull(4) == level
+                    else -> song.level.contains(level)
+                }
+            } ?: true
+
+            // 定数匹配
+            val matchesDs = levelDs?.let { ds -> song.ds.contains(ds) } ?: true
+
+            // 是否收藏
+            val matchesFavorite = !isShowFavor || spUtils.isFavorite(song.id)
+
+            matchesSearch && matchesGenre && matchesVersion && matchesLevel && matchesDs && matchesFavorite
+        }.let { filteredList ->
+            when (sequencing) {
+                "EXPERT-升序" -> filteredList.sortedBy { it.ds.getOrNull(2) }
+                "EXPERT-降序" -> filteredList.sortedByDescending { it.ds.getOrNull(2) }
+                "MASTER-升序" -> filteredList.sortedBy { it.ds.getOrNull(3) }
+                "MASTER-降序" -> filteredList.sortedByDescending { it.ds.getOrNull(3) }
+                "RE:MASTER-升序" -> filteredList.sortedWith(remasterAscComparator)
+                "RE:MASTER-降序" -> filteredList.sortedWith(remasterDescComparator)
+                else -> filteredList.toList()
             }
         }
-        return searchList
+
     }
-
-
 }

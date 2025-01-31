@@ -117,9 +117,10 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
                     binding.searchEditText.text.toString(),
                     getSortCheck(),
                     getVersionCheck(),
+                    null,
                     BigDecimal(searchLevelDs.toDouble()).setScale(1, RoundingMode.HALF_UP)
                         .toDouble(),
-                    false
+                    null, binding.favorCheckbox.isChecked
                 )
             } else {
                 SongDataManager.search(
@@ -127,8 +128,9 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
                     getSortCheck(),
                     getVersionCheck(),
                     searchLevelString,
+                    null,
                     binding.levelSortSpinner.selectedItem.toString(),
-                    false
+                    binding.favorCheckbox.isChecked
                 )
             }
         )
