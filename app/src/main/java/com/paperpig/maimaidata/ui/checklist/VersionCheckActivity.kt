@@ -15,6 +15,7 @@ import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.model.Version
 import com.paperpig.maimaidata.repository.RecordRepository
+import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.repository.SongDataRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +54,7 @@ class VersionCheckActivity : AppCompatActivity() {
                     //只获取master难度分数记录
                     .filter { it.level_index == 3 }
 
-            dataList = SongDataRepository().getData(this@VersionCheckActivity)
+            dataList = SongDataManager.list
 
             binding.versionSpn.apply {
                 adapter = versionArrayAdapter
@@ -72,7 +73,7 @@ class VersionCheckActivity : AppCompatActivity() {
                                     ) as Version).versionName) && it.basic_info.genre != "宴会場"
                                 }
 
-                            (binding.versionCheckRecyclerView.adapter as VersionCheckAdapter).updateData(
+                            (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateData(
                                 filter.sortedByDescending { it.ds[3] })
                         }
 
@@ -83,7 +84,7 @@ class VersionCheckActivity : AppCompatActivity() {
 
             }
 
-            binding.versionCheckRecyclerView.apply {
+            binding.versionCheckRecycler.apply {
                 adapter =
                     VersionCheckAdapter(context,
                         dataList.filter {
@@ -99,7 +100,7 @@ class VersionCheckActivity : AppCompatActivity() {
 
         }
         binding.switchBtn.setOnClickListener {
-            (binding.versionCheckRecyclerView.adapter as VersionCheckAdapter).updateDisplay()
+            (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateDisplay()
         }
 
     }

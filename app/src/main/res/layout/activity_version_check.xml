@@ -10,7 +10,7 @@
         android:fitsSystemWindows="true">
 
         <include
-            android:id="@+id/toolbarLayout"
+            android:id="@+id/toolbar_layout"
             layout="@layout/title" />
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -21,14 +21,15 @@
         android:orientation="horizontal">
 
         <Spinner
-            android:id="@+id/versionSpn"
+            android:id="@+id/version_spn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:padding="10dp" />
 
         <Button
-            android:id="@+id/switchBtn"
+            android:layout_marginEnd="12dp"
+            android:id="@+id/switch_btn"
             style="@style/ButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,7 +37,7 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/versionCheckRecyclerView"
+        android:id="@+id/version_check_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp" />

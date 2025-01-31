@@ -18,12 +18,13 @@ import com.paperpig.maimaidata.model.DsSongData
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
+import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
 import com.paperpig.maimaidata.utils.toDp
 
 class LevelCheckAdapter(
     val context: Context,
     private var songData: List<SongData>,     //歌曲信息列表
-    private val record: List<Record>, //个人记录列表
+    private val recordList: List<Record>, //个人记录列表
     private var levelSelect: String   //指定难度
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     //0为显示完成率标识，1为显示FC/AP标识，2为显示FDX标识
@@ -106,28 +107,31 @@ class LevelCheckAdapter(
         if (holder is HeaderViewHolder) {
             val format = context.getString(R.string.name_plate_achieved)
 
+            val groupFlatten = groupData.values.flatten()
+            val groupSize = groupData.values.sumOf { it.size }
+
             holder.tripleSCount.text = String.format(
-                format, record.count {
-                    it.achievements >= 100 && it.level == levelSelect && songData.any { songData -> songData.id == it.song_id }
-                }, songData.size
+                format, recordList.count {
+                    it.achievements >= 100 && it.level == levelSelect && groupFlatten.any { songData -> songData.songId == it.song_id }
+                }, groupSize
             )
 
             holder.fcCount.text = String.format(
-                format, record.count {
-                    it.fc.isNotEmpty() && it.level == levelSelect && songData.any { songData -> songData.id == it.song_id }
-                }, songData.size
+                format, recordList.count {
+                    it.fc.isNotEmpty() && it.level == levelSelect && groupFlatten.any { songData -> songData.songId == it.song_id }
+                }, groupSize
             )
 
             holder.apCount.text = String.format(
-                format, record.count {
-                    (it.fc == "ap" || it.fc == "app") && it.level == levelSelect && songData.any { songData -> songData.id == it.song_id }
-                }, songData.size
+                format, recordList.count {
+                    (it.fc == "ap" || it.fc == "app") && it.level == levelSelect && groupFlatten.any { songData -> songData.songId == it.song_id }
+                }, groupSize
             )
 
             holder.fsdCount.text = String.format(
-                format, record.count {
-                    (it.fs == "fsd" || it.fs == "fsdp") && it.level == levelSelect && songData.any { songData -> songData.id == it.song_id }
-                }, songData.size
+                format, recordList.count {
+                    (it.fs == "fsd" || it.fs == "fsdp") && it.level == levelSelect && groupFlatten.any { songData -> songData.songId == it.song_id }
+                }, groupSize
             )
         }
         if (holder is LevelViewHolder) {
@@ -137,15 +141,20 @@ class LevelCheckAdapter(
         }
         if (holder is ItemViewHolder) {
             val data = getSongAt(position)
+            holder.itemView.setOnClickListener {
+                SongDetailActivity.actionStart(holder.itemView.context, data.songId)
+            }
 
-            GlideApp.with(holder.itemView.context)
-                .load(MaimaiDataClient.IMAGE_BASE_URL + data.imageUrl).into(holder.songJacket)
 
-            holder.songJacket.setBackgroundColor(
-                ContextCompat.getColor(
-                    holder.itemView.context, getBorderColor(data.levelIndex)
+            holder.songJacket.apply {
+                setBackgroundColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context, getBorderColor(data.levelIndex)
+                    )
                 )
-            )
+                GlideApp.with(holder.itemView.context)
+                    .load(MaimaiDataClient.IMAGE_BASE_URL + data.imageUrl).into(holder.songJacket)
+            }
             if (data.type == "DX") {
                 GlideApp.with(holder.itemView.context).load(R.drawable.ic_deluxe)
                     .into(holder.songType)
@@ -153,41 +162,48 @@ class LevelCheckAdapter(
                 GlideApp.with(holder.itemView.context).clear(holder.songType)
             }
 
-
-            val find = record.filter { it.song_id == data.songId }
-                .find { it.level_index == data.levelIndex }
-            if (find != null) {
-                holder.songJacket.colorFilter =
-                    PorterDuffColorFilter(Color.argb(128, 128, 128, 128), PorterDuff.Mode.SRC_ATOP)
-                when (displayMode) {
-                    0 -> {
-                        GlideApp.with(holder.itemView.context).load(find.getRankIcon()).override(
-                            50.toDp().toInt(),
-                            22.toDp().toInt()
+            recordList.find { it.song_id == data.songId && it.level_index == data.levelIndex }
+                ?.let { record ->
+                    holder.songJacket.colorFilter =
+                        PorterDuffColorFilter(
+                            Color.argb(128, 128, 128, 128),
+                            PorterDuff.Mode.SRC_ATOP
                         )
-                            .into(holder.songRecordMark)
-                    }
+                    when (displayMode) {
+                        0 -> {
+                            GlideApp.with(holder.itemView.context).load(record.getRankIcon())
+                                .override(
+                                    50.toDp().toInt(),
+                                    22.toDp().toInt()
+                                )
+                                .into(holder.songRecordMark)
+                        }
 
-                    1 -> {
-                        GlideApp.with(holder.itemView.context).load(find.getFcIcon()).override(
-                            30.toDp().toInt(),
-                            30.toDp().toInt()
-                        )
-                            .into(holder.songRecordMark)
-                    }
+                        1 -> {
+                            GlideApp.with(holder.itemView.context).load(record.getFcIcon())
+                                .override(
+                                    30.toDp().toInt(),
+                                    30.toDp().toInt()
+                                )
+                                .into(holder.songRecordMark)
+                        }
 
-                    2 -> {
-                        GlideApp.with(holder.itemView.context).load(find.getFsIcon()).override(
-                            30.toDp().toInt(),
-                            30.toDp().toInt()
-                        )
-                            .into(holder.songRecordMark)
+                        2 -> {
+                            GlideApp.with(holder.itemView.context).load(record.getFsIcon())
+                                .override(
+                                    30.toDp().toInt(),
+                                    30.toDp().toInt()
+                                )
+                                .into(holder.songRecordMark)
+                        }
+
+                        else -> {}
                     }
-                }
-            } else {
+                } ?: run {
                 holder.songJacket.colorFilter = null
                 holder.songRecordMark.setImageDrawable(null)
             }
+
         }
     }
 
@@ -197,10 +213,8 @@ class LevelCheckAdapter(
     }
 
     fun updateData(
-        newSongData: List<SongData>,
         newLevelSelect: String
     ) {
-        songData = newSongData
         levelSelect = newLevelSelect
         groupData = getFormatData()
         notifyDataSetChanged()

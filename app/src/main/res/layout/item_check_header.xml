@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:layout_margin="12dp"
-    android:background="@drawable/mmd_info_bg"
+    android:background="@drawable/mmd_checklist_top_bg"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="12dp">
