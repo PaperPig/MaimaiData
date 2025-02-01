@@ -40,6 +40,21 @@ class LoginActivity : AppCompatActivity() {
 
         setupAccountSpinner()
 
+        binding.applyAccountBtn.setOnClickListener {
+            selectedAccount?.let { (username, password) ->
+                binding.username.setText(username)
+                binding.password.setText(password)
+            } ?: Toast.makeText(this, "请选择账号", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.deleteAccountBtn.setOnClickListener {
+            selectedAccount?.let { user ->
+                accountList.remove(user)
+                sharedPrefs.removeAccount(user.first)
+                updateAccountSpinner()
+            } ?: Toast.makeText(this, "请选择要删除的账号", Toast.LENGTH_SHORT).show()
+        }
+
         binding.loginBtn.setOnClickListener {
             val username = binding.username.text.toString()
             val password = binding.password.text.toString()
@@ -74,11 +89,18 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private var isSpinnerInitialized = false  // 标志位，避免默认触发
+    private fun updateAccountSpinner() {
+        val usernames = accountList.map { it.first }
+        spinnerAdapter.clear()
+        spinnerAdapter.addAll(usernames)
+        spinnerAdapter.notifyDataSetChanged()
+    }
+
+    private var selectedAccount: Pair<String, String>? = null
 
     private fun setupAccountSpinner() {
         accountList = sharedPrefs.getAccountHistory().toMutableList()
-        val usernames = accountList.map { it.first }  // 只显示真实账号列表
+        val usernames = accountList.map { it.first }
 
         spinnerAdapter = ArrayAdapter(
             this, android.R.layout.simple_spinner_dropdown_item, usernames
@@ -88,36 +110,13 @@ class LoginActivity : AppCompatActivity() {
 
         binding.accountSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (isSpinnerInitialized) {
-                    showPopupMenu(view!!, position)
-                } else {
-                    isSpinnerInitialized = true  // 只在初始化时跳过一次
-                }
+                selectedAccount = accountList.getOrNull(position)
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-    }
-
-    private fun showPopupMenu(view: View, position: Int) {
-        val popup = PopupMenu(this, view)
-        popup.menuInflater.inflate(R.menu.account_menu, popup.menu)
-
-        popup.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.select_account -> {
-                    val (username, password) = accountList[position]
-                    binding.username.setText(username)
-                    binding.password.setText(password)
-                }
-                R.id.delete_account -> {
-                    sharedPrefs.removeAccount(accountList[position].first)
-                    setupAccountSpinner()  // 重新加载列表
-                }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                selectedAccount = null
             }
-            true
         }
-        popup.show()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

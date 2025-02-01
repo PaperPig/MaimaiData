@@ -36,28 +36,43 @@
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
     <TextView
-        android:id="@+id/savedAccountLabel"
+        android:id="@+id/savedAccountsLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
         android:text="@string/saved_accounts"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/applyAccountBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:text="@string/apply_chosen_account"
+        app:layout_constraintStart_toEndOf="@id/savedAccountsLabel"
+        app:layout_constraintTop_toTopOf="@id/savedAccountsLabel" />
+
+    <Button
+        android:id="@+id/deleteAccountBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:text="@string/delete_chosen_account"
+        app:layout_constraintStart_toEndOf="@id/applyAccountBtn"
+        app:layout_constraintTop_toTopOf="@id/applyAccountBtn" />
 
     <Spinner
         android:id="@+id/accountSpinner"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="40dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/savedAccountLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/savedAccountsLabel" />
 
     <EditText
         android:id="@+id/password"

@@ -75,5 +75,4 @@ class SharePreferencesUtils(
         prefs.edit().putString("account_history", Gson().toJson(history)).apply()
     }
 
-
 }
