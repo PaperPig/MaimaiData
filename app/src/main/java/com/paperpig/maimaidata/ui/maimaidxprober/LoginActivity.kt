@@ -41,18 +41,26 @@ class LoginActivity : AppCompatActivity() {
         setupAccountSpinner()
 
         binding.applyAccountBtn.setOnClickListener {
+            if (accountList.isEmpty()) {
+                Toast.makeText(this, R.string.select_account_hint, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             selectedAccount?.let { (username, password) ->
                 binding.username.setText(username)
                 binding.password.setText(password)
-            } ?: Toast.makeText(this, "请选择账号", Toast.LENGTH_SHORT).show()
+            } ?: Toast.makeText(this, R.string.select_account_hint, Toast.LENGTH_SHORT).show()
         }
 
         binding.deleteAccountBtn.setOnClickListener {
+            if (accountList.isEmpty()) {
+                Toast.makeText(this, R.string.select_account_hint, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             selectedAccount?.let { user ->
                 accountList.remove(user)
                 sharedPrefs.removeAccount(user.first)
                 updateAccountSpinner()
-            } ?: Toast.makeText(this, "请选择要删除的账号", Toast.LENGTH_SHORT).show()
+            } ?: Toast.makeText(this, R.string.select_account_hint, Toast.LENGTH_SHORT).show()
         }
 
         binding.loginBtn.setOnClickListener {
@@ -60,7 +68,7 @@ class LoginActivity : AppCompatActivity() {
             val password = binding.password.text.toString()
 
             if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "请输入用户名和密码", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.type_in_account_pwd_hint, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -90,7 +98,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updateAccountSpinner() {
-        val usernames = accountList.map { it.first }
+        val usernames = if (accountList.isEmpty()) {
+            listOf("无保存的账号")
+        } else {
+            accountList.map { it.first }
+        }
+
         spinnerAdapter.clear()
         spinnerAdapter.addAll(usernames)
         spinnerAdapter.notifyDataSetChanged()
@@ -100,7 +113,12 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setupAccountSpinner() {
         accountList = sharedPrefs.getAccountHistory().toMutableList()
-        val usernames = accountList.map { it.first }
+
+        val usernames = if (accountList.isEmpty()) {
+            listOf("无保存的账号")
+        } else {
+            accountList.map { it.first }
+        }
 
         spinnerAdapter = ArrayAdapter(
             this, android.R.layout.simple_spinner_dropdown_item, usernames
@@ -110,7 +128,7 @@ class LoginActivity : AppCompatActivity() {
 
         binding.accountSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedAccount = accountList.getOrNull(position)
+                selectedAccount = if (accountList.isEmpty()) null else accountList.getOrNull(position)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
