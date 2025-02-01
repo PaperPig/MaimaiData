@@ -22,6 +22,7 @@ import com.paperpig.maimaidata.widgets.SearchLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import me.zhanghai.android.fastscroll.FastScrollerBuilder
 
 
 class SongListFragment : BaseFragment<FragmentSongListBinding>() {
@@ -86,6 +87,7 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
             }
         })
 
+        FastScrollerBuilder(binding.songListRecyclerView).build()
         binding.songListRecyclerView.apply {
             songAdapter = SongListAdapter()
             adapter = songAdapter
