@@ -1,0 +1,17 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference app:key="version"
+        app:iconSpaceReserved="false"
+        app:title="@string/app_name"/>
+
+    <Preference
+        app:iconSpaceReserved="false"
+        app:key="project_url"
+        app:title="项目地址" />
+
+    <Preference
+        app:iconSpaceReserved="false"
+        app:key="feedback"
+        app:title="建议和反馈" />
+
+</PreferenceScreen>

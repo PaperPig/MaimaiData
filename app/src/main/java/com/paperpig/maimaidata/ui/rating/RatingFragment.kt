@@ -2,13 +2,18 @@ package com.paperpig.maimaidata.ui.rating
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.MenuProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentRatingBinding
 import com.paperpig.maimaidata.model.Rating
+import com.paperpig.maimaidata.ui.about.AboutActivity
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.ui.checklist.LevelCheckActivity
 import com.paperpig.maimaidata.ui.checklist.VersionCheckActivity
@@ -104,6 +109,27 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
                 showToast()
             }
         }
+
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onPrepareMenu(menu: Menu) {
+                menu.findItem(R.id.about).isVisible = !isHidden
+            }
+
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.about_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when (menuItem.itemId) {
+                    R.id.about -> {
+                        startActivity(Intent(requireContext(), AboutActivity::class.java))
+                        return true
+                    }
+                }
+                return false
+            }
+
+        })
     }
 
     private fun showToast() {

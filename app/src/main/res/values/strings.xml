@@ -131,4 +131,6 @@
     <string name="apply_chosen_account">选择该账号</string>
     <string name="select_account_hint">请选择账号</string>
     <string name="type_in_account_pwd_hint">请输入用户名或密码</string>
+
+    <string name="about">关于</string>
 </resources>

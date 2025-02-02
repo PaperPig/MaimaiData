@@ -108,9 +108,10 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
                     R.id.search -> {
                         showOrHideSearchBar()
                         hideKeyboard(view)
+                        return true
                     }
                 }
-                return true
+                return false
             }
 
         })
