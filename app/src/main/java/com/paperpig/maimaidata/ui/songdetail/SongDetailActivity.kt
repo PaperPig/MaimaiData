@@ -136,7 +136,9 @@ class SongDetailActivity : AppCompatActivity() {
                             ConstraintLayout.LayoutParams.WRAP_CONTENT
                         )
                     }
-                    binding.constraintLayout.addView(textView)
+                    constraintLayout.addView(textView)
+                }?:run {
+                    aliasLabel.visibility = View.GONE
                 }
 
                 songAliasFlow.referencedIds = aliasViewIds.toIntArray()
@@ -153,7 +155,7 @@ class SongDetailActivity : AppCompatActivity() {
                 }
 
                 viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
-                tabLayout.setupWithViewPager(binding.viewPager)
+                tabLayout.setupWithViewPager(viewPager)
 
             }
         }
