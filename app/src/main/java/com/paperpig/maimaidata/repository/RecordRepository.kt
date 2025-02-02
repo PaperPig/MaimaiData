@@ -18,6 +18,7 @@ class RecordRepository {
             BufferedWriter(OutputStreamWriter(output)).use {
                 it.write(jsonElement.toString())
             }
+            RecordDataManager.loadData()
         }
     }
 

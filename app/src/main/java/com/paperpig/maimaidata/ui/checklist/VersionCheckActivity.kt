@@ -14,12 +14,8 @@ import com.paperpig.maimaidata.databinding.ActivityVersionCheckBinding
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.model.Version
-import com.paperpig.maimaidata.repository.RecordRepository
+import com.paperpig.maimaidata.repository.RecordDataManager
 import com.paperpig.maimaidata.repository.SongDataManager
-import com.paperpig.maimaidata.repository.SongDataRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class VersionCheckActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVersionCheckBinding
@@ -48,57 +44,56 @@ class VersionCheckActivity : AppCompatActivity() {
             )
         versionArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        CoroutineScope(Dispatchers.Main).launch {
-            recordList =
-                RecordRepository().getRecord(this@VersionCheckActivity)
-                    //只获取master难度分数记录
-                    .filter { it.level_index == 3 }
 
-            dataList = SongDataManager.list
+        recordList = RecordDataManager.list
+            //只获取master难度分数记录
+            .filter { it.level_index == 3 }
 
-            binding.versionSpn.apply {
-                adapter = versionArrayAdapter
-                onItemSelectedListener =
-                    object : OnItemSelectedListener {
-                        override fun onItemSelected(
-                            parent: AdapterView<*>?,
-                            view: View?,
-                            position: Int,
-                            id: Long
-                        ) {
-                            val filter =
-                                dataList.filter {
-                                    (it.basic_info.from == (parent?.getItemAtPosition(
-                                        position
-                                    ) as Version).versionName) && it.basic_info.genre != "宴会場"
-                                }
+        dataList = SongDataManager.list
 
-                            (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateData(
-                                filter.sortedByDescending { it.ds[3] })
-                        }
+        binding.versionSpn.apply {
+            adapter = versionArrayAdapter
+            onItemSelectedListener =
+                object : OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        val filter =
+                            dataList.filter {
+                                (it.basic_info.from == (parent?.getItemAtPosition(
+                                    position
+                                ) as Version).versionName) && it.basic_info.genre != "宴会場"
+                            }
 
-                        override fun onNothingSelected(parent: AdapterView<*>?) {
-                        }
-
+                        (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateData(
+                            filter.sortedByDescending { it.ds[3] })
                     }
 
-            }
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+                    }
 
-            binding.versionCheckRecycler.apply {
-                adapter =
-                    VersionCheckAdapter(context,
-                        dataList.filter {
-                            (it.basic_info.from == ((binding.versionSpn.selectedItem) as Version).versionName)
-                        }.sortedByDescending { it.ds[3] }, recordList
-                    )
-
-                layoutManager = FlexboxLayoutManager(context).apply {
-                    flexDirection = FlexDirection.ROW
-                    justifyContent = JustifyContent.FLEX_START // 设置主轴上的对齐方式为起始位置
                 }
-            }
 
         }
+
+        binding.versionCheckRecycler.apply {
+            adapter =
+                VersionCheckAdapter(context,
+                    dataList.filter {
+                        (it.basic_info.from == ((binding.versionSpn.selectedItem) as Version).versionName)
+                    }.sortedByDescending { it.ds[3] }, recordList
+                )
+
+            layoutManager = FlexboxLayoutManager(context).apply {
+                flexDirection = FlexDirection.ROW
+                justifyContent = JustifyContent.FLEX_START // 设置主轴上的对齐方式为起始位置
+            }
+        }
+
+
         binding.switchBtn.setOnClickListener {
             (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateDisplay()
         }

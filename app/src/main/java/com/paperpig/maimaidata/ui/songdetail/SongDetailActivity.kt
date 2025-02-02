@@ -21,23 +21,22 @@ import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivitySongDetailBinding
 import com.paperpig.maimaidata.glide.GlideApp
-import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
-import com.paperpig.maimaidata.repository.RecordRepository
+import com.paperpig.maimaidata.repository.RecordDataManager
+import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.utils.toDp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class SongDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySongDetailBinding
     private val spUtils = SharePreferencesUtils(MaimaiDataApplication.instance, "songInfo")
 
     companion object {
-        fun actionStart(context: Context, songData: SongData) {
+        const val EXTRA_SONG_ID = "extra_song_id"
+
+        fun actionStart(context: Context, songId: String) {
             val intent = Intent(context, SongDetailActivity::class.java).apply {
-                putExtra("songData", songData)
+                putExtra(EXTRA_SONG_ID, songId)
             }
             context.startActivity(intent)
         }
@@ -56,11 +55,9 @@ class SongDetailActivity : AppCompatActivity() {
                 setDisplayShowHomeEnabled(true)
             }
 
-            val songData: SongData = intent.getParcelableExtra("songData")!!
-            CoroutineScope(Dispatchers.Main).launch {
-
-
-                val record = RecordRepository().getRecord(this@SongDetailActivity)
+            val songId: String? = intent.getStringExtra(EXTRA_SONG_ID)
+            SongDataManager.list.find { it.id == songId }?.let { songData ->
+                val recordList = RecordDataManager.list
 
                 appbarLayout.setBackgroundColor(
                     ContextCompat.getColor(
@@ -149,7 +146,7 @@ class SongDetailActivity : AppCompatActivity() {
 
                 (1..songData.level.size).forEach { i ->
                     val position = songData.level.size - i
-                    list.add(SongLevelFragment.newInstance(songData, position, record.find {
+                    list.add(SongLevelFragment.newInstance(songData, position, recordList.find {
                         it.song_id == songData.id &&
                                 it.level_index == position
                     }))
@@ -157,6 +154,7 @@ class SongDetailActivity : AppCompatActivity() {
 
                 viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
                 tabLayout.setupWithViewPager(binding.viewPager)
+
             }
         }
     }

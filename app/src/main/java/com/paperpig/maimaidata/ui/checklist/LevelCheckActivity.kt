@@ -10,11 +10,8 @@ import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityLevelCheckBinding
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
-import com.paperpig.maimaidata.repository.RecordRepository
+import com.paperpig.maimaidata.repository.RecordDataManager
 import com.paperpig.maimaidata.repository.SongDataManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class LevelCheckActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLevelCheckBinding
@@ -39,40 +36,37 @@ class LevelCheckActivity : AppCompatActivity() {
         val levelArrays =
             resources.getStringArray(R.array.dxp_song_level).toMutableList().apply { removeAt(0) }
 
+        recordList = RecordDataManager.list
+        dataList = SongDataManager.list
 
 
-        CoroutineScope(Dispatchers.Main).launch {
-            recordList = RecordRepository().getRecord(this@LevelCheckActivity)
-            dataList = SongDataManager.list
-
-
-            binding.levelCheckRecycler.apply {
-                binding.levelSlider.apply {
-                    addOnChangeListener { _, value, _ ->
-                        val index = value.toInt()
-                        searchLevelString = levelArrays.getOrNull(index) ?: "UNKNOWN"
-                        binding.levelText.text =
-                            context.getString(R.string.search_level_string, searchLevelString)
-                        refreshDataList()
-                    }
-                    setLabelFormatter { value ->
-                        val index = value.toInt()
-                        getString(
-                            R.string.search_level_string,
-                            levelArrays.getOrNull(index) ?: "UNKNOWN"
-                        )
-                    }
+        binding.levelCheckRecycler.apply {
+            binding.levelSlider.apply {
+                addOnChangeListener { _, value, _ ->
+                    val index = value.toInt()
+                    searchLevelString = levelArrays.getOrNull(index) ?: "UNKNOWN"
+                    binding.levelText.text =
+                        context.getString(R.string.search_level_string, searchLevelString)
+                    refreshDataList()
                 }
-                layoutManager = FlexboxLayoutManager(context).apply {
-                    flexDirection = FlexDirection.ROW
-                    justifyContent = JustifyContent.FLEX_START // 设置主轴上的对齐方式为起始位置
+                setLabelFormatter { value ->
+                    val index = value.toInt()
+                    getString(
+                        R.string.search_level_string,
+                        levelArrays.getOrNull(index) ?: "UNKNOWN"
+                    )
                 }
             }
-
-            binding.levelSlider.value = 18f
-            searchLevelString = levelArrays[binding.levelSlider.value.toInt()]
-
+            layoutManager = FlexboxLayoutManager(context).apply {
+                flexDirection = FlexDirection.ROW
+                justifyContent = JustifyContent.FLEX_START // 设置主轴上的对齐方式为起始位置
+            }
         }
+
+        binding.levelSlider.value = 18f
+        searchLevelString = levelArrays[binding.levelSlider.value.toInt()]
+
+
 
         binding.switchBtn.setOnClickListener {
             (binding.levelCheckRecycler.adapter as LevelCheckAdapter).updateDisplay()

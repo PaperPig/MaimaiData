@@ -85,7 +85,7 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val songData = songList[position]
         holder.itemView.setOnClickListener {
-            SongDetailActivity.actionStart(holder.itemView.context, songData)
+            SongDetailActivity.actionStart(holder.itemView.context, songData.id)
         }
         holder.itemView.setOnLongClickListener {
             val mClipData = ClipData.newPlainText("copyText", songData.basic_info.title)

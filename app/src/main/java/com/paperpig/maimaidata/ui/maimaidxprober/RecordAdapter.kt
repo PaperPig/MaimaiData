@@ -20,6 +20,7 @@ import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
+import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
 import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.toDp
 
@@ -113,17 +114,20 @@ class RecordAdapter(private val songData: List<SongData>) :
                 ), (record.ds * 22.512).toInt()
             )
 
-            val find = songData.find { it.id == record.song_id }
-            if (find != null) {
-                GlideApp.with(context)
-                    .load(MaimaiDataClient.IMAGE_BASE_URL + find.basic_info.image_url)
-                    .transition(DrawableTransitionOptions.withCrossFade()).apply(
-                        RequestOptions.bitmapTransform(
-                            RoundedCorners(
-                                5.toDp().toInt(),
+            songData.find { it.id == record.song_id }?.let { songData ->
+                viewHolder.itemView.setOnClickListener {
+                    SongDetailActivity.actionStart(viewHolder.itemView.context, songData.id)
+                }
+                    GlideApp.with(context)
+                        .load(MaimaiDataClient.IMAGE_BASE_URL + songData.basic_info.image_url)
+                        .transition(DrawableTransitionOptions.withCrossFade()).apply(
+                            RequestOptions.bitmapTransform(
+                                RoundedCorners(
+                                    5.toDp().toInt(),
+                                )
                             )
-                        )
-                    ).into(viewHolder.songJacket)
+                        ).into(viewHolder.songJacket)
+
             }
 
 

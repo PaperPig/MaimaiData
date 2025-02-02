@@ -7,6 +7,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ItemCheckHeaderBinding
@@ -16,12 +17,13 @@ import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
+import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
 import com.paperpig.maimaidata.utils.toDp
 
 class VersionCheckAdapter(
     val context: Context,
     private var songData: List<SongData>,
-    private val record: List<Record>
+    private val recordList: List<Record>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     //0为显示完成率标识，1为显示FC/AP标识，2为显示FDX标识
     private var displayMode = 0
@@ -85,25 +87,25 @@ class VersionCheckAdapter(
             val format = context.getString(R.string.name_plate_achieved)
 
             holder.tripleSCount.text = String.format(
-                format, record.count {
+                format, recordList.count {
                     it.achievements >= 100 && songData.any { songData -> songData.id == it.song_id }
                 }, songData.size
             )
 
             holder.fcCount.text = String.format(
-                format, record.count {
+                format, recordList.count {
                     it.fc.isNotEmpty() && songData.any { songData -> songData.id == it.song_id }
                 }, songData.size
             )
 
             holder.apCount.text = String.format(
-                format, record.count {
+                format, recordList.count {
                     (it.fc == "ap" || it.fc == "app") && songData.any { songData -> songData.id == it.song_id }
                 }, songData.size
             )
 
             holder.fsdCount.text = String.format(
-                format, record.count {
+                format, recordList.count {
                     (it.fs == "fsd" || it.fs == "fsdp") && songData.any { songData -> songData.id == it.song_id }
                 }, songData.size
             )
@@ -115,40 +117,59 @@ class VersionCheckAdapter(
         }
         if (holder is ViewHolder) {
             val data = getSongAt(position)
-            GlideApp.with(holder.itemView.context)
-                .load(MaimaiDataClient.IMAGE_BASE_URL + data.basic_info.image_url)
-                .into(holder.songJacket)
-            val find = record.find { it.song_id == data.id }
-            if (find != null) {
-                holder.songJacket.colorFilter =
-                    PorterDuffColorFilter(Color.argb(128, 128, 128, 128), PorterDuff.Mode.SRC_ATOP)
-                when (displayMode) {
-                    0 -> {
-                        GlideApp.with(holder.itemView.context).load(find.getRankIcon()).override(
-                            50.toDp().toInt(),
-                            22.toDp().toInt()
-                        )
-                            .into(holder.songRecordMark)
-                    }
+            holder.itemView.setOnClickListener {
+                SongDetailActivity.actionStart(holder.itemView.context, data.id)
+            }
+            holder.songJacket.apply {
+                setBackgroundColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context, R.color.master
+                    )
+                )
+                GlideApp.with(holder.itemView.context)
+                    .load(MaimaiDataClient.IMAGE_BASE_URL + data.basic_info.image_url)
+                    .into(this)
+            }
 
-                    1 -> {
-                        GlideApp.with(holder.itemView.context).load(find.getFcIcon()).override(
-                            30.toDp().toInt(),
-                            30.toDp().toInt()
-                        )
-                            .into(holder.songRecordMark)
-                    }
 
-                    2 -> {
-                        GlideApp.with(holder.itemView.context).load(find.getFsIcon()).override(
-                            30.toDp().toInt(),
-                            30.toDp().toInt()
+            recordList.find { it.song_id == data.id }
+                ?.let { record ->
+                    holder.songJacket.colorFilter =
+                        PorterDuffColorFilter(
+                            Color.argb(128, 128, 128, 128),
+                            PorterDuff.Mode.SRC_ATOP
                         )
-                            .into(holder.songRecordMark)
-                    }
-                }
+                    when (displayMode) {
+                        0 -> {
+                            GlideApp.with(holder.itemView.context).load(record.getRankIcon())
+                                .override(
+                                    50.toDp().toInt(),
+                                    22.toDp().toInt()
+                                )
+                                .into(holder.songRecordMark)
+                        }
 
-            } else {
+                        1 -> {
+                            GlideApp.with(holder.itemView.context).load(record.getFcIcon())
+                                .override(
+                                    30.toDp().toInt(),
+                                    30.toDp().toInt()
+                                )
+                                .into(holder.songRecordMark)
+                        }
+
+                        2 -> {
+                            GlideApp.with(holder.itemView.context).load(record.getFsIcon())
+                                .override(
+                                    30.toDp().toInt(),
+                                    30.toDp().toInt()
+                                )
+                                .into(holder.songRecordMark)
+                        }
+
+                        else -> {}
+                    }
+                } ?: run {
                 holder.songJacket.colorFilter = null
                 holder.songRecordMark.setImageDrawable(null)
             }
