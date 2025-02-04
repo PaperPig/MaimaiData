@@ -16,6 +16,7 @@ import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.model.Version
 import com.paperpig.maimaidata.repository.RecordDataManager
 import com.paperpig.maimaidata.repository.SongDataManager
+import com.paperpig.maimaidata.utils.Constants
 
 class VersionCheckActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVersionCheckBinding
@@ -65,7 +66,7 @@ class VersionCheckActivity : AppCompatActivity() {
                             dataList.filter {
                                 (it.basic_info.from == (parent?.getItemAtPosition(
                                     position
-                                ) as Version).versionName) && it.basic_info.genre != "宴会場"
+                                ) as Version).versionName) && it.basic_info.genre != Constants.GENRE_UTAGE
                             }
 
                         (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateData(

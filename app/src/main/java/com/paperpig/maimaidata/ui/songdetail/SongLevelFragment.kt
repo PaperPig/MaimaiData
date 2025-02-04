@@ -95,7 +95,7 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
 
 
         val breakTotal = note[note.size - 1]
-        val totalScore = totalScore(note, songData.type == "DX")
+        val totalScore = totalScore(note, songData.type == Constants.CHART_TYPE_DX)
         val format = DecimalFormat("0.#####%")
 
         format.roundingMode = RoundingMode.DOWN
@@ -140,8 +140,8 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
             songData.charts[position].notes[0],
             songData.charts[position].notes[1],
             songData.charts[position].notes[2],
-            if (songData.type == "DX") songData.charts[position].notes[3] else 0,
-            if (songData.type == "DX") songData.charts[position].notes[4] else songData.charts[position].notes[3]
+            if (songData.type == Constants.CHART_TYPE_DX) songData.charts[position].notes[3] else 0,
+            if (songData.type == Constants.CHART_TYPE_DX) songData.charts[position].notes[4] else songData.charts[position].notes[3]
         )
         binding.chartView.setValues(noteValueList)
         binding.chartView.setBarColor(songData.getBgColor())
@@ -189,7 +189,7 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
             )
         )
 
-        if (songData.type == "DX") {
+        if (songData.type == Constants.CHART_TYPE_DX) {
             binding.finaleGroup.visibility = View.GONE
         } else {
             binding.finaleGroup.visibility = View.VISIBLE

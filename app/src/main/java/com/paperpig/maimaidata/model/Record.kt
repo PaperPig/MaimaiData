@@ -2,6 +2,7 @@ package com.paperpig.maimaidata.model
 
 import android.os.Parcelable
 import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.utils.Constants
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -83,7 +84,7 @@ data class Record(
 
 
     fun getTypeIcon(): Int {
-        return if (type == "DX")
+        return if (type == Constants.CHART_TYPE_DX)
             R.drawable.mmd_player_rtsong_icon_dx
         else R.drawable.mmd_player_rtsong_icon_standard
     }

@@ -17,6 +17,7 @@ import com.paperpig.maimaidata.databinding.FragmentSongListBinding
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.ui.BaseFragment
+import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.widgets.AnimationHelper
 import com.paperpig.maimaidata.widgets.SearchLayout
 import kotlinx.coroutines.CoroutineScope
@@ -134,7 +135,7 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
         CoroutineScope(Dispatchers.Main).launch {
             SongDataManager.loadData()
             //默认不显示宴会场数据
-            songAdapter.setData(SongDataManager.list.filterNot { it.basic_info.genre == "宴会場" })
+            songAdapter.setData(SongDataManager.list.filterNot { it.basic_info.genre == Constants.GENRE_UTAGE })
         }
     }
 

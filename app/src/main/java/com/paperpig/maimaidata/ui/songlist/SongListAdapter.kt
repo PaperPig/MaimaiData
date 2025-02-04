@@ -22,6 +22,7 @@ import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
+import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.toDp
 
 
@@ -79,7 +80,7 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (songList[position].basic_info.genre == "宴会場") return TYPE_UTAGE else TYPE_NORMAL
+        return if (songList[position].basic_info.genre == Constants.GENRE_UTAGE) return TYPE_UTAGE else TYPE_NORMAL
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -160,7 +161,7 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
 
             }
 
-            if (songData.type == "DX") {
+            if (songData.type == Constants.CHART_TYPE_DX) {
                 holder.songType.setImageResource(R.drawable.ic_deluxe)
             } else {
                 holder.songType.setImageResource(R.drawable.ic_standard)

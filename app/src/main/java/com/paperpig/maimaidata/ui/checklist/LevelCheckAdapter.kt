@@ -19,6 +19,7 @@ import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
+import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.toDp
 
 class LevelCheckAdapter(
@@ -155,7 +156,7 @@ class LevelCheckAdapter(
                 GlideApp.with(holder.itemView.context)
                     .load(MaimaiDataClient.IMAGE_BASE_URL + data.imageUrl).into(holder.songJacket)
             }
-            if (data.type == "DX") {
+            if (data.type == Constants.CHART_TYPE_DX) {
                 GlideApp.with(holder.itemView.context).load(R.drawable.ic_deluxe)
                     .into(holder.songType)
             } else {

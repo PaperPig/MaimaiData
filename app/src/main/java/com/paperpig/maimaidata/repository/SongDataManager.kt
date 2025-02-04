@@ -2,11 +2,11 @@ package com.paperpig.maimaidata.repository
 
 import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.model.SongData
+import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.utils.versionCheck
 
 object SongDataManager {
-    private const val LABEL_GENERA_UTAGE = "宴会場"
 
     private val spUtils = SharePreferencesUtils(MaimaiDataApplication.instance, "songInfo")
 
@@ -42,7 +42,7 @@ object SongDataManager {
 
         // 遍历每个 SongData
         for (songData in list) {
-            if (songData.basic_info.genre == "宴会場")
+            if (songData.basic_info.genre == Constants.GENRE_UTAGE)
                 continue
             // 遍历每个 Chart
             for (chart in songData.charts) {
@@ -64,15 +64,15 @@ object SongDataManager {
                 }
 
                 // 计算 maxTouch（当 type 为 "DX" 时的第四个值）
-                if (songData.type == "DX" && notes.size > 3) {
+                if (songData.type == Constants.CHART_TYPE_DX && notes.size > 3) {
                     maxTouch = maxOf(maxTouch, notes[3])
                 }
 
                 // 计算 maxBreak
-                if (songData.type == "DX" && notes.size > 4) {
+                if (songData.type == Constants.CHART_TYPE_DX && notes.size > 4) {
                     // DX 类型的第五个值
                     maxBreak = maxOf(maxBreak, notes[4])
-                } else if (songData.type == "SD" && notes.size > 3) {
+                } else if (songData.type == Constants.CHART_TYPE_SD && notes.size > 3) {
                     // SD 类型的第四个值
                     maxBreak = maxOf(maxBreak, notes[3])
                 }
@@ -117,7 +117,7 @@ object SongDataManager {
             // 流派匹配，默认不显示宴会场
             val matchesGenre = when {
                 genreSortList.isNotEmpty() -> song.basic_info.genre in genreSortList
-                else -> song.basic_info.genre != LABEL_GENERA_UTAGE
+                else -> song.basic_info.genre != Constants.GENRE_UTAGE
             }
 
             // 版本匹配
