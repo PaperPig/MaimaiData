@@ -6,8 +6,13 @@ import com.google.gson.reflect.TypeToken
 
 class SharePreferencesUtils(
     val context: Context,
-    private val pref: String = "userInfo"
+    private val pref: String = PREF_NAME_USER_INFO
 ) {
+
+    companion object{
+        const val PREF_NAME_USER_INFO = "userInfo"
+        const val PREF_NAME_VERSION_INFO = "version"
+    }
 
     private val prefs by lazy {
         context.getSharedPreferences(pref, Context.MODE_PRIVATE)
@@ -75,4 +80,13 @@ class SharePreferencesUtils(
         prefs.edit().putString("account_history", Gson().toJson(history)).apply()
     }
 
+    fun saveLastUpdateChartStats(time: Long) {
+        prefs.edit().apply {
+            putLong("last_update_time", time).apply()
+        }
+    }
+
+    fun getLastUpdateChartStats(): Long {
+        return prefs.getLong("last_update_time", 0)
+    }
 }

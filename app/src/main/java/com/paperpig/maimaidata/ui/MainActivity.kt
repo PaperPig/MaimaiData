@@ -16,10 +16,15 @@ import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityMainBinding
 import com.paperpig.maimaidata.model.AppUpdateModel
 import com.paperpig.maimaidata.network.MaimaiDataRequests
+import com.paperpig.maimaidata.repository.ChartStatsManager
+import com.paperpig.maimaidata.repository.ChartStatsRepository
 import com.paperpig.maimaidata.ui.rating.RatingFragment
 import com.paperpig.maimaidata.ui.songlist.SongListFragment
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -27,8 +32,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var ratingFragment: RatingFragment
     private lateinit var songListFragment: SongListFragment
     private var updateDisposable: Disposable? = null
+    private var checkChartStatusDisposable: Disposable? = null
     private var isUpdateChecked = false
     private var downloadTask: DownloadTask? = null
+    private lateinit var spUtils: SharePreferencesUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +43,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbarLayout.toolbar)
+
+        spUtils = SharePreferencesUtils(this, SharePreferencesUtils.PREF_NAME_VERSION_INFO)
 
         if (savedInstanceState != null) {
             supportActionBar?.title = savedInstanceState.getString("TOOLBAR_TITLE")
@@ -91,6 +100,7 @@ class MainActivity : AppCompatActivity() {
         if (!isUpdateChecked) {
             updateDisposable?.dispose()
             checkUpdate()
+            checkChartStatus()
         }
     }
 
@@ -121,16 +131,14 @@ class MainActivity : AppCompatActivity() {
                     }.onNegative { d, _ ->
                         d.dismiss()
                     }.autoDismiss(true).cancelable(true).show()
-            } else if (SharePreferencesUtils(
-                    this, "version"
-                ).getDataVersion() < it.dataVersion2!!
+            } else if (spUtils.getDataVersion() < it.dataVersion2!!
             ) {
                 MaterialDialog.Builder(this)
                     .title(this@MainActivity.getString(R.string.maimai_data_data_update_title))
                     .content(
                         String.format(
                             this@MainActivity.getString(R.string.maimai_data_data_update_info),
-                            SharePreferencesUtils(this, "version").getDataVersion(),
+                            spUtils.getDataVersion(),
                             it.dataVersion2
                         )
                     ).positiveText(R.string.maimai_data_update_download)
@@ -145,6 +153,34 @@ class MainActivity : AppCompatActivity() {
         }, {
             it.printStackTrace()
         })
+    }
+
+    /**
+     * 检查水鱼谱面数据
+     */
+    private fun checkChartStatus() {
+        //每五天更新数据
+        val lastUpdateTime = spUtils.getLastUpdateChartStats()
+        val currentTime = System.currentTimeMillis()
+        val fiveDaysMillis = 5 * 24 * 60 * 60 * 1000L
+        if ((currentTime - lastUpdateTime) >= fiveDaysMillis) {
+            checkChartStatusDisposable = MaimaiDataRequests.getChartStatus().subscribe(
+                { t ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        ChartStatsRepository().saveChartStats(this@MainActivity, t)
+                        spUtils.saveLastUpdateChartStats(currentTime)
+                        ChartStatsManager.loadData()
+                    }
+                }, {
+                    it.printStackTrace()
+                    Toast.makeText(this, "谱面状态数据下载失败", Toast.LENGTH_LONG).show()
+                })
+        } else {
+            //读取谱面信息数据
+            CoroutineScope(Dispatchers.IO).launch {
+                ChartStatsManager.loadData()
+            }
+        }
     }
 
     private fun startDataDownload(appUpdateModel: AppUpdateModel) {
@@ -180,9 +216,7 @@ class MainActivity : AppCompatActivity() {
             override fun completed(task: DownloadTask) {
                 updateDialog.dismiss()
                 songListFragment.loadData()
-                SharePreferencesUtils(
-                    this@MainActivity, "version"
-                ).setDataVersion(appUpdateModel.dataVersion2!!)
+                spUtils.setDataVersion(appUpdateModel.dataVersion2!!)
             }
 
             override fun canceled(task: DownloadTask) {

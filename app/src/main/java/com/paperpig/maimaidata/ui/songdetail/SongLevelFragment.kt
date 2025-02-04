@@ -12,8 +12,10 @@ import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentSongLevelBinding
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
+import com.paperpig.maimaidata.repository.ChartStatsManager
 import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.ui.BaseFragment
+import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.toDp
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -54,27 +56,40 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         if (record != null) {
-            binding.songLevelAchievementLayout.visibility = View.VISIBLE
-            binding.songLevelNoAchievementLayout.visibility = View.GONE
-            binding.songAchievement.text =
+            binding.chartStatusGroup.visibility = View.VISIBLE
+            binding.chartNoStatusGroup.visibility = View.GONE
+            binding.chartAchievement.text =
                 getString(R.string.maimaidx_achievement_desc, record!!.achievements)
-            binding.songRank.setImageDrawable(
+            binding.chartRank.setImageDrawable(
                 ContextCompat.getDrawable(requireContext(), record!!.getRankIcon())
             )
-            binding.songFcap.setImageDrawable(
+            binding.chartFcap.setImageDrawable(
                 ContextCompat.getDrawable(requireContext(), record!!.getFcIcon())
             )
-            binding.songFsfsd.setImageDrawable(
+            binding.chartFsfsd.setImageDrawable(
                 ContextCompat.getDrawable(requireContext(), record!!.getFsIcon())
             )
         } else {
-            binding.songLevelAchievementLayout.visibility = View.GONE
-            binding.songLevelNoAchievementLayout.visibility = View.VISIBLE
+            binding.chartStatusGroup.visibility = View.GONE
+            binding.chartNoStatusGroup.visibility = View.VISIBLE
 
             binding.recordTips.setOnClickListener {
                 Toast.makeText(context, R.string.no_record_tips, Toast.LENGTH_LONG).show()
             }
         }
+        val statsList = ChartStatsManager.list
+        val fitDiff =
+            //宴会场不显示拟合定数
+            //没有拟合定数数据显示为"-"
+            if (songData.basic_info.genre == Constants.GENRE_UTAGE) {
+                "-"
+            } else {
+                statsList[songData.id]?.get(position)?.fitDiff?.let {
+                    BigDecimal(it).setScale(2, RoundingMode.HALF_UP).toString()
+                } ?: "-"
+            }
+        binding.songFitDiff.text = fitDiff
+
 
         val note = songData.charts[position].notes
 

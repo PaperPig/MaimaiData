@@ -15,6 +15,7 @@
     <string name="search_level_string">LEVEL %s</string>
     <string name="song_title">歌曲名</string>
     <string name="level">等级</string>
+    <string name="fit_diff">拟合定数</string>
     <string name="sequencing">难度排序</string>
     <string name="version">版本</string>
     <string name="sort">分类</string>
