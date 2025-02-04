@@ -1,8 +1,19 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <Preference app:key="version"
+    <Preference
         app:iconSpaceReserved="false"
-        app:title="@string/app_name"/>
+        app:key="version"
+        app:title="@string/app_name" />
+
+    <Preference
+        app:iconSpaceReserved="false"
+        app:key="base_data_version"
+        app:title="本地数据版本" />
+
+    <Preference
+        app:iconSpaceReserved="false"
+        app:key="last_time_update_chart_stats"
+        app:title="拟合更新日期" />
 
     <Preference
         app:iconSpaceReserved="false"

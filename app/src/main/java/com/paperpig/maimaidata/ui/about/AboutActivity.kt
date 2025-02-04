@@ -9,12 +9,16 @@ import androidx.preference.PreferenceFragmentCompat
 import com.paperpig.maimaidata.BuildConfig
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.AboutActivityBinding
+import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class AboutActivity : AppCompatActivity() {
-    companion object{
+    companion object {
         const val PROJECT_URL = "https://github.com/PaperPig/MaimaiData"
         const val FEEDBACK_URL = "https://github.com/PaperPig/MaimaiData/issues"
     }
+
     private lateinit var binding: AboutActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +43,17 @@ class AboutActivity : AppCompatActivity() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
+            val spUtils = SharePreferencesUtils(
+                requireContext(),
+                SharePreferencesUtils.PREF_NAME_VERSION_INFO
+            )
+
             findPreference<Preference>("version")?.summary = BuildConfig.VERSION_NAME
+            findPreference<Preference>("base_data_version")?.summary = spUtils.getDataVersion()
+            findPreference<Preference>("last_time_update_chart_stats")?.summary =
+                spUtils.getLastUpdateChartStats().let {
+                    SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(it)
+                }
             findPreference<Preference>("project_url")?.apply {
                 summary = PROJECT_URL
                 setOnPreferenceClickListener {
