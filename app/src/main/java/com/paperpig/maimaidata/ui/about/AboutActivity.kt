@@ -3,6 +3,7 @@ package com.paperpig.maimaidata.ui.about
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -75,5 +76,10 @@ class AboutActivity : AppCompatActivity() {
                 data = Uri.parse(url)
             })
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) finish()
+        return true
     }
 }
