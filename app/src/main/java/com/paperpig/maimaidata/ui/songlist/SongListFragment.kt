@@ -120,7 +120,7 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.searchLayout.visibility == View.VISIBLE) {
-                    binding.searchLayout.visibility = View.GONE
+                    showOrHideSearchBar()
                 } else {
                     requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
@@ -140,6 +140,7 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
     }
 
     private fun showOrHideSearchBar() {
+        binding.root.requestFocus()
         if (!isShowingSearchLayout) {
             hiddenAnimator.cancel()
             showAnimator.run {

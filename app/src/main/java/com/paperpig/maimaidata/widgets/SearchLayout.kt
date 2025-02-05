@@ -134,7 +134,7 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
                 )
             }
         )
-
+        binding.searchEditText.clearFocus()
     }
 
     private fun getSortCheck(): List<String> {
