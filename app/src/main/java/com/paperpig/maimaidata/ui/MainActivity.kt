@@ -46,6 +46,8 @@ class MainActivity : AppCompatActivity() {
 
         spUtils = SharePreferencesUtils(this, SharePreferencesUtils.PREF_NAME_VERSION_INFO)
 
+        checkChartStatus()
+
         if (savedInstanceState != null) {
             supportActionBar?.title = savedInstanceState.getString("TOOLBAR_TITLE")
 
@@ -100,7 +102,6 @@ class MainActivity : AppCompatActivity() {
         if (!isUpdateChecked) {
             updateDisposable?.dispose()
             checkUpdate()
-            checkChartStatus()
         }
     }
 
