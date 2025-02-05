@@ -10,8 +10,8 @@ android {
         applicationId "com.paperpig.maimaidata"
         minSdkVersion 21
         targetSdkVersion 34
-        versionCode 50
-        versionName "2.5.0"
+        versionCode 52
+        versionName "2.5.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
