@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".ui.about.AboutActivity" />
+        <activity android:name=".ui.about.SettingsActivity" />
         <activity android:name=".ui.maimaidxprober.LoginActivity" />
         <activity android:name=".ui.maimaidxprober.ProberActivity" />
         <activity android:name=".ui.songdetail.SongDetailActivity" />

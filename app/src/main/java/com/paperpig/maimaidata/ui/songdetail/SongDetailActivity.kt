@@ -26,6 +26,7 @@ import com.paperpig.maimaidata.repository.RecordDataManager
 import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.utils.toDp
+import com.paperpig.maimaidata.widgets.Settings
 
 class SongDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySongDetailBinding
@@ -115,33 +116,36 @@ class SongDetailActivity : AppCompatActivity() {
                     }
                 }
 
-                //对添加的别名进行flow约束
-                val aliasViewIds = songAliasFlow.referencedIds.toMutableList()
-                songData.alias?.forEachIndexed { _, item ->
-                    val textView = TextView(this@SongDetailActivity).apply {
-                        text = item
-                        id = View.generateViewId()
-                        aliasViewIds.add(id)
-                        val padding = 5.toDp().toInt()
-                        setPadding(padding, padding, padding, padding)
-                        setBackgroundResource(R.drawable.mmd_song_alias_info_bg)
-                        setTextColor(
-                            ContextCompat.getColor(
-                                this@SongDetailActivity,
-                                songData.getBgColor()
+                if (Settings.getEnableShowAlias()) {
+                    //对添加的别名进行flow约束
+                    val aliasViewIds = songAliasFlow.referencedIds.toMutableList()
+                    songData.alias?.forEachIndexed { _, item ->
+                        val textView = TextView(this@SongDetailActivity).apply {
+                            text = item
+                            id = View.generateViewId()
+                            aliasViewIds.add(id)
+                            val padding = 5.toDp().toInt()
+                            setPadding(padding, padding, padding, padding)
+                            setBackgroundResource(R.drawable.mmd_song_alias_info_bg)
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    this@SongDetailActivity,
+                                    songData.getBgColor()
+                                )
                             )
-                        )
-                        layoutParams = ConstraintLayout.LayoutParams(
-                            ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                            ConstraintLayout.LayoutParams.WRAP_CONTENT
-                        )
+                            layoutParams = ConstraintLayout.LayoutParams(
+                                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                                ConstraintLayout.LayoutParams.WRAP_CONTENT
+                            )
+                        }
+                        constraintLayout.addView(textView)
+                    } ?: run {
+                        aliasLabel.visibility = View.GONE
                     }
-                    constraintLayout.addView(textView)
-                }?:run {
+                    songAliasFlow.referencedIds = aliasViewIds.toIntArray()
+                } else {
                     aliasLabel.visibility = View.GONE
                 }
-
-                songAliasFlow.referencedIds = aliasViewIds.toIntArray()
 
 
                 val list = ArrayList<Fragment>()
@@ -156,7 +160,6 @@ class SongDetailActivity : AppCompatActivity() {
 
                 viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
                 tabLayout.setupWithViewPager(viewPager)
-
             }
         }
     }

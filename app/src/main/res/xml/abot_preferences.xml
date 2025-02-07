@@ -8,21 +8,20 @@
     <Preference
         app:iconSpaceReserved="false"
         app:key="base_data_version"
-        app:title="本地数据版本" />
+        app:title="@string/local_data_version" />
 
     <Preference
         app:iconSpaceReserved="false"
         app:key="last_time_update_chart_stats"
-        app:title="拟合更新日期" />
+        app:title="@string/fit_diff_update_date" />
 
     <Preference
         app:iconSpaceReserved="false"
         app:key="project_url"
-        app:title="项目地址" />
+        app:title="@string/project_url" />
 
     <Preference
         app:iconSpaceReserved="false"
         app:key="feedback"
-        app:title="建议和反馈" />
-
+        app:title="@string/feedback" />
 </PreferenceScreen>

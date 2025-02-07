@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreference
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="enable_show_alias"
+        app:title="@string/settings_enable_show_alias" />
+
+    <SwitchPreference
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="enable_alias_search"
+        app:title="@string/settings_enable_alias_search" />
+
+    <Preference
+        app:fragment="com.paperpig.maimaidata.ui.about.AboutFragment"
+        app:iconSpaceReserved="false"
+        app:key="jump_to_about"
+        app:title="@string/about" />
+
+</PreferenceScreen>

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentRatingBinding
 import com.paperpig.maimaidata.model.Rating
-import com.paperpig.maimaidata.ui.about.AboutActivity
+import com.paperpig.maimaidata.ui.about.SettingsActivity
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.ui.checklist.LevelCheckActivity
 import com.paperpig.maimaidata.ui.checklist.VersionCheckActivity
@@ -112,7 +112,7 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
 
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onPrepareMenu(menu: Menu) {
-                menu.findItem(R.id.about).isVisible = !isHidden
+                menu.findItem(R.id.settings).isVisible = !isHidden
             }
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -121,8 +121,8 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
-                    R.id.about -> {
-                        startActivity(Intent(requireContext(), AboutActivity::class.java))
+                    R.id.settings -> {
+                        startActivity(Intent(requireContext(), SettingsActivity::class.java))
                         return true
                     }
                 }

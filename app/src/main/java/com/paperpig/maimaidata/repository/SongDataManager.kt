@@ -5,6 +5,7 @@ import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.utils.versionCheck
+import com.paperpig.maimaidata.widgets.Settings
 
 object SongDataManager {
 
@@ -109,6 +110,7 @@ object SongDataManager {
             }
             // 别称匹配
             val matchesAlias = when {
+                !Settings.getEnableAliasSearch() -> false
                 searchText.isEmpty() -> true
                 song.alias == null -> false
                 else -> song.alias!!.any { it.contains(searchText, true) }
