@@ -122,7 +122,7 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
                 if (binding.searchLayout.visibility == View.VISIBLE) {
                     showOrHideSearchBar()
                 } else {
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                    requireActivity().finish()
                 }
             }
         }
