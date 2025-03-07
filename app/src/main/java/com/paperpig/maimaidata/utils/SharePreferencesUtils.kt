@@ -89,4 +89,24 @@ class SharePreferencesUtils(
     fun getLastUpdateChartStats(): Long {
         return prefs.getLong("last_update_time", 0)
     }
+
+    fun saveLastQueryLevel(level: Float){
+        prefs.edit().putFloat("last_query_level", level).apply()
+    }
+
+    fun getLastQueryLevel(): Float{
+        return try {
+            prefs.getFloat("last_query_level", 18f)
+        } catch (e: Exception) {
+            18f
+        }
+    }
+
+    fun saveLastQueryVersion(version: Int){
+        prefs.edit().putInt("last_query_version", version).apply()
+    }
+
+    fun getLastQueryVersion(): Int{
+        return prefs.getInt("last_query_version", 0)
+    }
 }

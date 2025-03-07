@@ -14,3 +14,4 @@
 .cxx
 /.idea/
 /keystore.jks
+.kotlin/sessions/
