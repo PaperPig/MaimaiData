@@ -101,4 +101,12 @@ class SharePreferencesUtils(
             18f
         }
     }
+
+    fun saveLastQueryVersion(version: Int){
+        prefs.edit().putInt("last_query_version", version).apply()
+    }
+
+    fun getLastQueryVersion(): Int{
+        return prefs.getInt("last_query_version", 0)
+    }
 }

@@ -17,11 +17,13 @@ import com.paperpig.maimaidata.model.Version
 import com.paperpig.maimaidata.repository.RecordDataManager
 import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.utils.Constants
+import com.paperpig.maimaidata.utils.SharePreferencesUtils
 
 class VersionCheckActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVersionCheckBinding
     private var dataList = listOf<SongData>()
     private var recordList = listOf<Record>()
+    private lateinit var sharedPrefs: SharePreferencesUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,25 +37,25 @@ class VersionCheckActivity : AppCompatActivity() {
             setDisplayShowHomeEnabled(true)
         }
         supportActionBar?.title = getString(R.string.version_query)
-
-
+        sharedPrefs = SharePreferencesUtils(this)
+        val versionList = getVersionList()
         val versionArrayAdapter =
             VersionArrayAdapter(
                 this@VersionCheckActivity,
                 R.layout.item_spinner_version,
-                getVersionList()
+                versionList
             )
         versionArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-
+        val lastSelectedPosition = sharedPrefs.getLastQueryVersion()
         recordList = RecordDataManager.list
             //只获取master难度分数记录
             .filter { it.level_index == 3 }
 
         dataList = SongDataManager.list
-
         binding.versionSpn.apply {
             adapter = versionArrayAdapter
+            setSelection(lastSelectedPosition, true)
             onItemSelectedListener =
                 object : OnItemSelectedListener {
                     override fun onItemSelected(
@@ -62,6 +64,7 @@ class VersionCheckActivity : AppCompatActivity() {
                         position: Int,
                         id: Long
                     ) {
+                        sharedPrefs.saveLastQueryVersion(position)
                         val filter =
                             dataList.filter {
                                 (it.basic_info.from == (parent?.getItemAtPosition(
@@ -84,7 +87,7 @@ class VersionCheckActivity : AppCompatActivity() {
             adapter =
                 VersionCheckAdapter(context,
                     dataList.filter {
-                        (it.basic_info.from == ((binding.versionSpn.selectedItem) as Version).versionName)
+                        it.basic_info.from == versionList[lastSelectedPosition].versionName
                     }.sortedByDescending { it.ds[3] }, recordList
                 )
 
