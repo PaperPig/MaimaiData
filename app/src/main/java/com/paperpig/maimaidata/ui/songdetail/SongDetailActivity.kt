@@ -24,6 +24,7 @@ import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.repository.RecordDataManager
 import com.paperpig.maimaidata.repository.SongDataManager
+import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.utils.toDp
 import com.paperpig.maimaidata.widgets.Settings
@@ -98,6 +99,13 @@ class SongDetailActivity : AppCompatActivity() {
                 songArtist.text = songData.basic_info.artist
                 songBpm.text = songData.basic_info.bpm.toString()
                 songGenre.text = songData.basic_info.genre
+                GlideApp.with(this@SongDetailActivity).apply {
+                    if (songData.type == Constants.CHART_TYPE_DX) {
+                        load(R.drawable.ic_deluxe).into(binding.songType)
+                    } else {
+                        load(R.drawable.ic_standard).into(binding.songType)
+                    }
+                }
                 setVersionImage(songAddVersion, songData.basic_info.version)
                 setCnVersionImage(songAddCnVersion, songData.basic_info.from)
 
