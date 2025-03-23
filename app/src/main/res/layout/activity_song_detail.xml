@@ -45,10 +45,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:layout_marginTop="8dp"
-                    android:minWidth="72dp"
                     android:text="@string/bpm"
                     android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@+id/song_jacket"
                     app:layout_constraintTop_toTopOf="@+id/song_jacket" />
 
@@ -56,20 +56,23 @@
                     android:id="@+id/song_bpm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
                     android:textColor="@color/white"
-                    app:layout_constraintStart_toEndOf="@+id/song_bpm_label"
-                    app:layout_constraintTop_toTopOf="@+id/song_bpm_label" />
+                    app:layout_constraintStart_toStartOf="@+id/song_bpm_label"
+                    app:layout_constraintTop_toBottomOf="@+id/song_bpm_label" />
 
                 <TextView
                     android:id="@+id/song_genre_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minWidth="72dp"
+                    android:layout_marginStart="24dp"
                     android:text="@string/genre"
                     android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="@+id/song_jacket"
-                    app:layout_constraintStart_toStartOf="@+id/song_bpm_label"
-                    app:layout_constraintTop_toTopOf="@+id/song_jacket" />
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/song_bpm_label"
+                    app:layout_constraintStart_toEndOf="@+id/song_bpm_label"
+                    app:layout_constraintTop_toTopOf="@+id/song_bpm_label" />
 
                 <TextView
                     android:id="@+id/song_genre"
@@ -78,31 +81,46 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="@+id/song_bpm"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/song_genre_label"
-                    app:layout_constraintTop_toTopOf="@+id/song_genre_label" />
+                    app:layout_constraintStart_toStartOf="@+id/song_genre_label"
+                    app:layout_constraintTop_toTopOf="@+id/song_bpm" />
 
                 <TextView
                     android:id="@+id/song_add_version_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:minWidth="72dp"
+                    android:layout_marginTop="12dp"
                     android:text="@string/add_version"
                     android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="@+id/song_jacket"
-                    app:layout_constraintStart_toStartOf="@+id/song_bpm_label" />
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@+id/song_bpm_label"
+                    app:layout_constraintTop_toBottomOf="@+id/song_bpm" />
 
                 <ImageView
                     android:id="@+id/song_add_version"
-                    android:layout_width="80dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
                     android:adjustViewBounds="true"
-                    android:maxHeight="50dp"
-                    android:scaleType="fitStart"
-                    app:layout_constraintBottom_toBottomOf="@+id/song_add_version_label"
-                    app:layout_constraintStart_toEndOf="@+id/song_add_version_label"
-                    app:layout_constraintTop_toTopOf="@+id/song_add_version_label" />
+                    android:maxWidth="120dp"
+                    android:maxHeight="45dp"
+                    android:scaleType="centerInside"
+                    app:layout_constraintStart_toStartOf="@+id/song_add_version_label"
+                    app:layout_constraintTop_toBottomOf="@+id/song_add_version_label" />
+
+                <ImageView
+                    android:id="@+id/song_add_cn_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:adjustViewBounds="true"
+                    android:maxHeight="45dp"
+                    android:scaleType="centerInside"
+                    app:layout_constraintBottom_toBottomOf="@id/song_add_version"
+                    app:layout_constraintStart_toEndOf="@+id/song_add_version"
+                    app:layout_constraintTop_toTopOf="@+id/song_add_version" />
 
 
                 <TextView

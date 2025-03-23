@@ -99,6 +99,7 @@ class SongDetailActivity : AppCompatActivity() {
                 songBpm.text = songData.basic_info.bpm.toString()
                 songGenre.text = songData.basic_info.genre
                 setVersionImage(songAddVersion, songData.basic_info.version)
+                setCnVersionImage(songAddCnVersion, songData.basic_info.from)
 
                 val colorFilter: (Boolean) -> Int = { isFavor: Boolean ->
                     if (isFavor) {
@@ -229,6 +230,24 @@ class SongDetailActivity : AppCompatActivity() {
                 startsWith("235") -> versionDrawable = R.drawable.maimaidx_festival_plus
                 startsWith("240") -> versionDrawable = R.drawable.maimaidx_buddies
                 startsWith("245") -> versionDrawable = R.drawable.maimaidx_buddies_plus
+            }
+        }
+        Glide.with(view.context)
+            .load(versionDrawable)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(view)
+    }
+
+    private fun setCnVersionImage(view: ImageView, addVersion: String) {
+
+        @DrawableRes var versionDrawable = 0
+        with(addVersion) {
+            when {
+                equals("舞萌DX") -> versionDrawable = R.drawable.maimaidx_cn
+                equals("舞萌DX 2021") -> versionDrawable = R.drawable.maimaidx_2021
+                equals("舞萌DX 2022") -> versionDrawable = R.drawable.maimaidx_2022
+                equals("舞萌DX 2023") -> versionDrawable = R.drawable.maimaidx_2023
+                equals("舞萌DX 2024") -> versionDrawable = R.drawable.maimaidx_2024
             }
         }
         Glide.with(view.context)
