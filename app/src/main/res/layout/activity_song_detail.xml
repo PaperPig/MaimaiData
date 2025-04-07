@@ -33,11 +33,12 @@
                 app:layout_collapseParallaxMultiplier="0.7">
 
                 <ImageView
-                    android:layout_marginTop="12dp"
                     android:id="@+id/song_jacket"
                     android:layout_width="128dp"
                     android:layout_height="128dp"
                     android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:transitionName="shared_image"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
