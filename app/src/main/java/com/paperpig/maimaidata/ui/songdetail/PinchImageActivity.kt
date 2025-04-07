@@ -42,5 +42,17 @@ class PinchImageActivity : AppCompatActivity() {
             GlideApp.with(this)
                 .load(thumbnailUrl)
         ).into(binding.pinchImageView)
+
+
+        binding.pinchImageView.setOnClickListener {
+            finishAfterTransition()
+        }
     }
+
+
+    override fun finishAfterTransition() {
+        binding.pinchImageView.reset()
+        super.finishAfterTransition()
+    }
+
 }
