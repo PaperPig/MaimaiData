@@ -1,16 +1,13 @@
 package com.paperpig.maimaidata.ui.maimaidxprober
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.gson.Gson
@@ -22,10 +19,11 @@ import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataRequests
 import com.paperpig.maimaidata.repository.RecordRepository
 import com.paperpig.maimaidata.repository.SongDataRepository
-import com.paperpig.maimaidata.widgets.AnimationHelper
 import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.CreateBest50
+import com.paperpig.maimaidata.utils.PermissionHelper
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import com.paperpig.maimaidata.widgets.AnimationHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,10 +40,12 @@ class ProberActivity : AppCompatActivity() {
 
     private lateinit var animationHelper: AnimationHelper
 
+    private lateinit var permissionHelper: PermissionHelper
 
-    companion object {
-        const val PERMISSION_REQUEST = 200
-    }
+    val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+            permissionHelper.onRequestPermissionsResult(result)
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +67,7 @@ class ProberActivity : AppCompatActivity() {
         binding.newVersionRdoBtn.text =
             String.format(getString(R.string.new_version_15), 0)
 
+        permissionHelper = PermissionHelper.with(this)
 
         CoroutineScope(Dispatchers.Main).launch {
             songData = SongDataRepository().getData(this@ProberActivity)
@@ -167,13 +168,14 @@ class ProberActivity : AppCompatActivity() {
                                 it.ra
                             }.filter {
                                 val find = songData.find { data -> data.id == it.song_id }
-                                find?.basic_info?.is_new ?: false
+                                find?.basic_info?.is_new == true
                             }.let {
                                 it.subList(0, if (it.size >= 15) 15 else it.size)
                             }
 
                         binding.oldVersionRdoBtn.text =
-                            String.format(getString(R.string.old_version_35),
+                            String.format(
+                                getString(R.string.old_version_35),
                                 oldRating.sumOf {
                                     ConvertUtils.achievementToRating(
                                         (it.ds * 10).toInt(),
@@ -182,7 +184,8 @@ class ProberActivity : AppCompatActivity() {
                                 }
                             )
                         binding.newVersionRdoBtn.text =
-                            String.format(getString(R.string.new_version_15),
+                            String.format(
+                                getString(R.string.new_version_15),
                                 newRating.sumOf {
                                     ConvertUtils.achievementToRating(
                                         (it.ds * 10).toInt(),
@@ -215,10 +218,21 @@ class ProberActivity : AppCompatActivity() {
                 finish()
 
             R.id.menu_share ->
-                checkPermission()
-//            R.id.menu_nameplate ->
-//                NamePlateActivity.actionStart(this,recordData)
+                permissionHelper.registerLauncher(requestPermissionLauncher).checkStoragePermission(
+                    object : PermissionHelper.PermissionCallback {
+                        override fun onAllGranted() {
+                            createImage()
+                        }
+
+                        override fun onDenied(deniedPermissions: List<String>) {
+                            Toast.makeText(
+                                this@ProberActivity,
+                                getString(R.string.storage_permission_denied), Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    })
         }
+
         return true
     }
 
@@ -236,43 +250,6 @@ class ProberActivity : AppCompatActivity() {
             binding.loading.visibility = View.GONE
         }
 
-    }
-
-
-    private fun checkPermission() {
-        val permissionsStorage = arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(this, permissionsStorage, PERMISSION_REQUEST)
-            } else {
-                createImage()
-            }
-        } else {
-            createImage()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (requestCode == PERMISSION_REQUEST) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                createImage()
-            } else {
-                Toast.makeText(this, "保存失败，没有获取储存权限", Toast.LENGTH_SHORT).show()
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
 

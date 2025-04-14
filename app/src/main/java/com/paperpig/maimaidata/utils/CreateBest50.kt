@@ -23,6 +23,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.Executors
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.scale
 
 
 object CreateBest50 {
@@ -59,11 +61,7 @@ object CreateBest50 {
 
             //绘制rating数据图
             val mainBitmap =
-                Bitmap.createBitmap(
-                    CONTAINER_WIDTH,
-                    CONTAINER_HEIGHT,
-                    Bitmap.Config.ARGB_8888
-                )
+                createBitmap(CONTAINER_WIDTH, CONTAINER_HEIGHT)
             val canvas = Canvas(mainBitmap)
 
             val threadPool = Executors.newFixedThreadPool(5)
@@ -164,14 +162,20 @@ object CreateBest50 {
                 textSize = 14f
                 letterSpacing = 0f
             }
-            containerCanvas.drawText(("旧版本：${old.sumOf { it.ra }}   现行版本：${new.sumOf { it.ra }}"),
+            containerCanvas.drawText(
+                ("旧版本：${old.sumOf { it.ra }}   现行版本：${new.sumOf { it.ra }}"),
                 480f,
                 190f,
                 textPaint
             )
             val time: String = SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA).format(Date())
 
-            PictureUtils.savePicture(context, containerBitmap, "best40_${time}")
+            PictureUtils.savePicture(
+                context,
+                containerBitmap,
+                PictureUtils.imagePath,
+                "best40_${time}"
+            )
         }
 
     }
@@ -184,7 +188,7 @@ object CreateBest50 {
 
         val find = data.find { it.id == record.song_id }
         val songContainerBitmap =
-            Bitmap.createBitmap(ITEM_WIDTH, ITEM_HEIGHT, Bitmap.Config.ARGB_8888)
+            createBitmap(ITEM_WIDTH, ITEM_HEIGHT)
         val canvas = Canvas(songContainerBitmap)
 
         //绘制歌曲背景板
@@ -200,7 +204,7 @@ object CreateBest50 {
             GlideApp.with(context).asBitmap().override(158, 155).centerCrop()
                 .load(MaimaiDataClient.IMAGE_BASE_URL + find!!.basic_info.image_url).submit()
                 .get()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             GlideApp.with(context).asBitmap().override(158, 155).centerCrop()
                 .load(R.drawable.mmd_song_jacket_placeholder).submit().get()
         }
@@ -211,11 +215,7 @@ object CreateBest50 {
         val diffDrawable =
             ContextCompat.getDrawable(context, record.getRatingDiff())
         val diffBitmap =
-            Bitmap.createBitmap(
-                diffDrawable!!.intrinsicWidth / 2,
-                diffDrawable.intrinsicHeight / 2,
-                Bitmap.Config.ARGB_8888
-            )
+            createBitmap(diffDrawable!!.intrinsicWidth / 2, diffDrawable.intrinsicHeight / 2)
         val diffCanvas = Canvas(diffBitmap)
         diffDrawable.setBounds(0, 0, diffBitmap.width, diffBitmap.height)
         diffDrawable.draw(diffCanvas)
@@ -301,12 +301,7 @@ object CreateBest50 {
     ): Bitmap {
         var bitmap = BitmapFactory.decodeResource(context.resources, res)
         if (dstHeight != 0) {
-            bitmap = Bitmap.createScaledBitmap(
-                bitmap,
-                dstWidth,
-                dstHeight,
-                false
-            )
+            bitmap = bitmap.scale(dstWidth, dstHeight, false)
         }
         return bitmap
     }

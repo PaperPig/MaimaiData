@@ -62,6 +62,8 @@
     <string name="inner_level_up">%.1f↑</string>
     <string name="inner_level_down">%.1f↓</string>
     <string name="inner_level_old">(%.1f)</string>
+    <string name="download_cover_error">下载图片失败</string>
+    <string name="share_cover">分享图片</string>
 
 
     <string name="total">TOTAL</string>
@@ -112,6 +114,9 @@
     <string name="new_version_divider">best 15 分界线</string>
     <string name="rating_scope">%d/%d</string>
     <string name="save_best40">保存图片</string>
+    <string name="image_generation_error">图片生成失败</string>
+    <string name="storage_permission_denied">保存失败，没有获取储存权限</string>
+    <string name="file_saved_to_path">文件已保存至%1$s目录</string>
     <string name="version_query">版本进度</string>
     <string name="level_query">等级表进度</string>
     <string name="switch_display">切换显示</string>

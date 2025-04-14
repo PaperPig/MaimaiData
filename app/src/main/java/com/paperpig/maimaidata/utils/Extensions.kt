@@ -2,6 +2,7 @@ package com.paperpig.maimaidata.utils
 
 import android.content.res.Resources
 import android.util.TypedValue
+import android.view.View
 
 fun String.getInt(): Int {
     return if (this.isEmpty()) {
@@ -28,4 +29,15 @@ fun Int.toDp(): Float {
         this.toFloat(),
         Resources.getSystem().displayMetrics
     )
+}
+
+fun View.setDebouncedClickListener(debounceTime: Long = 2000L, action: (view: View) -> Unit) {
+    var lastClickTime = 0L
+    this.setOnClickListener { view ->
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastClickTime >= debounceTime) {
+            action(view)
+        }
+        lastClickTime = currentTime
+    }
 }
