@@ -35,22 +35,30 @@ class PermissionHelper private constructor(private val activity: Activity) {
 
     fun checkStoragePermission(callback: PermissionCallback) {
         permissionCallback = callback
-        val permissionsStorage = arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            if (ActivityCompat.checkSelfPermission(
-                    activity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                mPermissionLauncher?.launch(permissionsStorage)
-                    ?: throw IllegalStateException("Permission launcher is not registered. Please call registerLauncher() before requesting permissions.")
+        val permissionsStorage =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                // Android 13+ 请求细粒度权限
+                arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Android 10-12 请求旧权限
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             } else {
-                permissionCallback.onAllGranted()
+                // Android 10以下权限请求
+                arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
             }
+
+        if (!permissionsStorage.all { permission ->
+                ActivityCompat.checkSelfPermission(
+                    activity,
+                    permission
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+        ) {
+            mPermissionLauncher?.launch(permissionsStorage)
+                ?: throw IllegalStateException("Permission launcher is not registered. Please call registerLauncher() before requesting permissions.")
         } else {
             permissionCallback.onAllGranted()
         }
