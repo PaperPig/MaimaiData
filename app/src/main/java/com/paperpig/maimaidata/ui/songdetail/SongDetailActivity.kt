@@ -2,6 +2,7 @@ package com.paperpig.maimaidata.ui.songdetail
 
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -9,6 +10,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -33,6 +35,7 @@ import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.utils.toDp
 import com.paperpig.maimaidata.widgets.Settings
 
+
 class SongDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySongDetailBinding
     private val spUtils = SharePreferencesUtils(MaimaiDataApplication.instance, "songInfo")
@@ -50,6 +53,7 @@ class SongDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
         binding = ActivitySongDetailBinding.inflate(layoutInflater)
 
         with(binding) {
@@ -161,6 +165,22 @@ class SongDetailActivity : AppCompatActivity() {
                         spUtils.setFavorite(songData.id, !isFavor)
                         setColorFilter(colorFilter.invoke(!isFavor))
                     }
+                }
+
+                //打开歌曲大图
+                songJacket.setOnClickListener {
+                    val options: ActivityOptions = ActivityOptions
+                        .makeSceneTransitionAnimation(
+                            this@SongDetailActivity,
+                            binding.songJacket,
+                            "shared_image"
+                        )
+                    PinchImageActivity.actionStart(
+                        this@SongDetailActivity,
+                        MaimaiDataClient.IMAGE_BASE_URL + songData.basic_info.image_url,
+                        songData.id,
+                        options.toBundle()
+                    )
                 }
 
                 if (Settings.getEnableShowAlias()) {
@@ -332,5 +352,15 @@ class SongDetailActivity : AppCompatActivity() {
             .load(versionDrawable)
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(view)
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            // 如果返回栈中有 Fragment，则回退
+            supportFragmentManager.popBackStack()
+        } else {
+            // 否则执行默认行为（退出 Activity）
+            super.onBackPressed()
+        }
     }
 }
