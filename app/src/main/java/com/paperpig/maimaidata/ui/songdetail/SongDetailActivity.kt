@@ -1,19 +1,15 @@
 package com.paperpig.maimaidata.ui.songdetail
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -32,6 +28,8 @@ import com.paperpig.maimaidata.repository.RecordDataManager
 import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import com.paperpig.maimaidata.utils.setCopyOnLongClick
+import com.paperpig.maimaidata.utils.setShrinkOnTouch
 import com.paperpig.maimaidata.utils.toDp
 import com.paperpig.maimaidata.widgets.Settings
 
@@ -110,7 +108,13 @@ class SongDetailActivity : AppCompatActivity() {
                     setCopyOnLongClick(songData.basic_info.title)
                 }
 
+                songIdText.apply {
+                    text = songData.id
+
+                    setShrinkOnTouch()
+                    setCopyOnLongClick(songData.id)
                 }
+
                 songArtist.text = songData.basic_info.artist
                 songBpm.text = songData.basic_info.bpm.toString()
                 songGenre.text = songData.basic_info.genre
