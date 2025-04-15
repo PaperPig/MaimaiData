@@ -106,37 +106,10 @@ class SongDetailActivity : AppCompatActivity() {
                 songTitle.apply {
                     text = songData.basic_info.title
 
-                    setOnTouchListener { v, event ->
-                        when (event.action) {
-                            MotionEvent.ACTION_DOWN -> {
-                                v.animate()
-                                    .scaleX(0.9f)
-                                    .scaleY(0.9f)
-                                    .setDuration(100)
-                                    .start()
-                            }
-                            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                                v.animate()
-                                    .scaleX(1f)
-                                    .scaleY(1f)
-                                    .setDuration(100)
-                                    .start()
-                            }
-                        }
-                        false // 保留 long click 事件
-                    }
+                    setShrinkOnTouch()
+                    setCopyOnLongClick(songData.basic_info.title)
+                }
 
-                    setOnLongClickListener {
-                        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                        if (clipboard != null) {
-                            val clip = ClipData.newPlainText("Alias", songData.basic_info.title)
-                            clipboard.setPrimaryClip(clip)
-                            Toast.makeText(context, "已复制别名：${songData.basic_info.title}", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(context, "无法访问剪贴板", Toast.LENGTH_SHORT).show()
-                        }
-                        true
-                    }
                 }
                 songArtist.text = songData.basic_info.artist
                 songBpm.text = songData.basic_info.bpm.toString()
@@ -205,37 +178,8 @@ class SongDetailActivity : AppCompatActivity() {
                                 ConstraintLayout.LayoutParams.WRAP_CONTENT
                             )
 
-                            setOnTouchListener { v, event ->
-                                when (event.action) {
-                                    MotionEvent.ACTION_DOWN -> {
-                                        v.animate()
-                                            .scaleX(0.9f)
-                                            .scaleY(0.9f)
-                                            .setDuration(100)
-                                            .start()
-                                    }
-                                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                                        v.animate()
-                                            .scaleX(1f)
-                                            .scaleY(1f)
-                                            .setDuration(100)
-                                            .start()
-                                    }
-                                }
-                                false // 保留 long click 事件
-                            }
-
-                            setOnLongClickListener {
-                                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                                if (clipboard != null) {
-                                    val clip = ClipData.newPlainText("Alias", item)
-                                    clipboard.setPrimaryClip(clip)
-                                    Toast.makeText(context, "已复制别名：$item", Toast.LENGTH_SHORT).show()
-                                } else {
-                                    Toast.makeText(context, "无法访问剪贴板", Toast.LENGTH_SHORT).show()
-                                }
-                                true
-                            }
+                            setShrinkOnTouch()
+                            setCopyOnLongClick(item)
                         }
                         constraintLayout.addView(textView)
                     } ?: run {
