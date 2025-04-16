@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">maimai updater</string>
+    <string name="menu_item_switch">Proxy</string>
+    <string name="menu_item_about">About</string>
+    <string name="menu_item_exit">Exit</string>
+    <string name="config_url">Config URL</string>
+    <string name="config_not_set_value">Not set</string>
+    <string name="config_url_scan">Scan an QR code</string>
+    <string name="config_url_manual">Type manually</string>
+    <string name="config_url_scan_hint">Scan the QR code of your config url</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_more">More&#8230;</string>
+    <string name="vpn_connected_status">connected</string>
+    <string name="vpn_disconnected_status">disconnected</string>
+    <string name="about_info">舞萌 DX 查分器 - 安卓数据更新器\n交流qq群：224548349\nby:bakapiano</string>
+    <string name="exit_confirm_info">This will disconnect the VPN connection, Are you sure to exit?</string>
+    <string name="err_invalid_url">The config URL is invalid.</string>
+    <string name="config_url_hint">URL or local file path</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="username">查分器账号</string>
+    <string name="password">查分器密码</string>
+</resources>

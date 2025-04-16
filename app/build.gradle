@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.paperpig.maimaidata"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 34
         versionCode 55
         versionName "2.5.3"
@@ -27,6 +27,7 @@ android {
         }
         debug {
             debuggable true
+            applicationIdSuffix ".debug"
         }
     }
     compileOptions {
@@ -49,6 +50,7 @@ repositories {
 }
 
 dependencies {
+    implementation project(':maimaidx-prober-updater-android')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:2.1.0"
     implementation 'androidx.core:core-ktx:1.13.1'

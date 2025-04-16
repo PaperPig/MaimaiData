@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentRatingBinding
 import com.paperpig.maimaidata.model.Rating
-import com.paperpig.maimaidata.ui.about.SettingsActivity
 import com.paperpig.maimaidata.ui.BaseFragment
+import com.paperpig.maimaidata.ui.about.SettingsActivity
 import com.paperpig.maimaidata.ui.checklist.LevelCheckActivity
 import com.paperpig.maimaidata.ui.checklist.VersionCheckActivity
 import com.paperpig.maimaidata.ui.finaletodx.FinaleToDxActivity
@@ -88,6 +88,10 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
 
         binding.proberFinaleToDxBtn.setOnClickListener {
             startActivity(Intent(context, FinaleToDxActivity::class.java))
+        }
+
+        binding.proberUpdateBtn.setOnClickListener {
+            startActivity(Intent(context, com.bakapiano.maimai.updater.ui.MainActivity::class.java))
         }
 
         binding.calculateBtn.setOnClickListener {

@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_item_switch"
+          android:title="@string/menu_item_switch"
+          app:showAsAction="always"
+          app:actionViewClass="androidx.appcompat.widget.SwitchCompat"/>
+
+    <item
+        android:id="@+id/menu_item_about"
+        android:title="关于" />
+    <item
+        android:id="@+id/menu_item_proxy"
+        android:title="代理设置" />
+    <item
+        android:id="@+id/menu_item_check_version"
+        android:title="检查更新" />
+</menu>

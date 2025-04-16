@@ -100,6 +100,16 @@
                 app:layout_constraintEnd_toEndOf="@id/prober_version_check_btn"
                 app:layout_constraintTop_toBottomOf="@id/prober_version_check_btn" />
 
+            <Button
+                android:id="@+id/prober_update_btn"
+                style="@style/ButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/maimaidx_prober_updater"
+                app:layout_constraintEnd_toEndOf="@id/prober_version_check_btn"
+                app:layout_constraintTop_toBottomOf="@id/prober_finale_to_dx_btn" />
+
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
