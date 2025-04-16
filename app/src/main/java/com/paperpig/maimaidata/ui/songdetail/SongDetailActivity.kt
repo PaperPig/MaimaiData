@@ -1,19 +1,15 @@
 package com.paperpig.maimaidata.ui.songdetail
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -32,6 +28,8 @@ import com.paperpig.maimaidata.repository.RecordDataManager
 import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import com.paperpig.maimaidata.utils.setCopyOnLongClick
+import com.paperpig.maimaidata.utils.setShrinkOnTouch
 import com.paperpig.maimaidata.utils.toDp
 import com.paperpig.maimaidata.widgets.Settings
 
@@ -106,38 +104,17 @@ class SongDetailActivity : AppCompatActivity() {
                 songTitle.apply {
                     text = songData.basic_info.title
 
-                    setOnTouchListener { v, event ->
-                        when (event.action) {
-                            MotionEvent.ACTION_DOWN -> {
-                                v.animate()
-                                    .scaleX(0.9f)
-                                    .scaleY(0.9f)
-                                    .setDuration(100)
-                                    .start()
-                            }
-                            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                                v.animate()
-                                    .scaleX(1f)
-                                    .scaleY(1f)
-                                    .setDuration(100)
-                                    .start()
-                            }
-                        }
-                        false // 保留 long click 事件
-                    }
-
-                    setOnLongClickListener {
-                        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                        if (clipboard != null) {
-                            val clip = ClipData.newPlainText("Alias", songData.basic_info.title)
-                            clipboard.setPrimaryClip(clip)
-                            Toast.makeText(context, "已复制别名：${songData.basic_info.title}", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(context, "无法访问剪贴板", Toast.LENGTH_SHORT).show()
-                        }
-                        true
-                    }
+                    setShrinkOnTouch()
+                    setCopyOnLongClick(songData.basic_info.title)
                 }
+
+                songIdText.apply {
+                    text = songData.id
+
+                    setShrinkOnTouch()
+                    setCopyOnLongClick(songData.id)
+                }
+
                 songArtist.text = songData.basic_info.artist
                 songBpm.text = songData.basic_info.bpm.toString()
                 songGenre.text = songData.basic_info.genre
@@ -205,37 +182,8 @@ class SongDetailActivity : AppCompatActivity() {
                                 ConstraintLayout.LayoutParams.WRAP_CONTENT
                             )
 
-                            setOnTouchListener { v, event ->
-                                when (event.action) {
-                                    MotionEvent.ACTION_DOWN -> {
-                                        v.animate()
-                                            .scaleX(0.9f)
-                                            .scaleY(0.9f)
-                                            .setDuration(100)
-                                            .start()
-                                    }
-                                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                                        v.animate()
-                                            .scaleX(1f)
-                                            .scaleY(1f)
-                                            .setDuration(100)
-                                            .start()
-                                    }
-                                }
-                                false // 保留 long click 事件
-                            }
-
-                            setOnLongClickListener {
-                                val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                                if (clipboard != null) {
-                                    val clip = ClipData.newPlainText("Alias", item)
-                                    clipboard.setPrimaryClip(clip)
-                                    Toast.makeText(context, "已复制别名：$item", Toast.LENGTH_SHORT).show()
-                                } else {
-                                    Toast.makeText(context, "无法访问剪贴板", Toast.LENGTH_SHORT).show()
-                                }
-                                true
-                            }
+                            setShrinkOnTouch()
+                            setCopyOnLongClick(item)
                         }
                         constraintLayout.addView(textView)
                     } ?: run {
