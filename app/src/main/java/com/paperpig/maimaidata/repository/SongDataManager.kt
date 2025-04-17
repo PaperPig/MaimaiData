@@ -108,12 +108,19 @@ object SongDataManager {
                 searchText.isEmpty() || song.title.isEmpty() -> true
                 else -> song.title.contains(searchText, true)
             }
+
             // 别称匹配
             val matchesAlias = when {
                 !Settings.getEnableAliasSearch() -> false
                 searchText.isEmpty() -> true
                 song.alias == null -> false
                 else -> song.alias!!.any { it.contains(searchText, true) }
+            }
+
+            // 谱师匹配
+            val matchesDesigner = when {
+                searchText.isEmpty() -> true
+                else -> song.charts.any { it.charter.contains(searchText, true) }
             }
 
             // 流派匹配，默认不显示宴会场
@@ -146,7 +153,7 @@ object SongDataManager {
             // 是否收藏
             val matchesFavorite = !isShowFavor || spUtils.isFavorite(song.id)
 
-            (matchesSearch || matchesAlias) && matchesGenre && matchesVersion && matchesLevel && matchesDs && matchesFavorite
+            (matchesSearch || matchesAlias || matchesDesigner) && matchesGenre && matchesVersion && matchesLevel && matchesDs && matchesFavorite
         }.let { filteredList ->
             when (sequencing) {
                 "EXPERT-升序" -> filteredList.sortedBy { it.ds.getOrNull(2) }

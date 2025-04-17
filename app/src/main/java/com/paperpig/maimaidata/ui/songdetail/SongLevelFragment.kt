@@ -16,6 +16,8 @@ import com.paperpig.maimaidata.repository.ChartStatsManager
 import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.Constants
+import com.paperpig.maimaidata.utils.setCopyOnLongClick
+import com.paperpig.maimaidata.utils.setShrinkOnTouch
 import com.paperpig.maimaidata.utils.toDp
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -131,7 +133,12 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
 
         }
 
-        binding.chartDesigner.text = songData.charts[position].charter
+        binding.chartDesigner.apply {
+            text = songData.charts[position].charter
+
+            setShrinkOnTouch()
+            setCopyOnLongClick(songData.charts[position].charter)
+        }
 
 
         binding.chartView.setMaxValues(SongDataManager.getMaxNotesList())
