@@ -51,12 +51,12 @@ class SharePreferencesUtils(
     }
 
     fun getDataVersion(): String {
-        return prefs.getString("version", "0") ?: "0"
+        return prefs.getString("db_version", "0") ?: "0"
     }
 
     fun setDataVersion(version: String) {
         prefs.edit().apply {
-            putString("version", version).apply()
+            putString("db_version", version).apply()
         }
     }
 
@@ -97,7 +97,7 @@ class SharePreferencesUtils(
     fun getLastQueryLevel(): Float{
         return try {
             prefs.getFloat("last_query_level", 18f)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             18f
         }
     }

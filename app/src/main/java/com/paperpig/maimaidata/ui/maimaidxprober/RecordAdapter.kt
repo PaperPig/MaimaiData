@@ -16,15 +16,15 @@ import com.bumptech.glide.request.RequestOptions
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.MmdPlayerRtsongDividerLayoutBinding
 import com.paperpig.maimaidata.databinding.MmdPlayerRtsongLayoutBinding
+import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.Record
-import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
 import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.toDp
 
-class RecordAdapter(private val songData: List<SongData>) :
+class RecordAdapter(private val dataList: List<SongWithChartsEntity>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -43,12 +43,12 @@ class RecordAdapter(private val songData: List<SongData>) :
         set(value) {
             field = value
                 .filter {
-                    val find = songData.find { data -> data.id == it.song_id }
+                    val find = dataList.find { data -> data.songData.id.toString() == it.song_id }
                     if (find != null) {
                         if (versionType == 0) {
-                            !find.basic_info.is_new
+                            !find.songData.isNew
                         } else {
-                            find.basic_info.is_new
+                            find.songData.isNew
                         }
                     } else {
                         _isMatching = false
@@ -114,19 +114,19 @@ class RecordAdapter(private val songData: List<SongData>) :
                 ), (record.ds * 22.512).toInt()
             )
 
-            songData.find { it.id == record.song_id }?.let { songData ->
+            dataList.find { it.songData.id.toString() == record.song_id }?.let { data ->
                 viewHolder.itemView.setOnClickListener {
-                    SongDetailActivity.actionStart(viewHolder.itemView.context, songData.id)
+                    SongDetailActivity.actionStart(viewHolder.itemView.context, data)
                 }
-                    GlideApp.with(context)
-                        .load(MaimaiDataClient.IMAGE_BASE_URL + songData.basic_info.image_url)
-                        .transition(DrawableTransitionOptions.withCrossFade()).apply(
-                            RequestOptions.bitmapTransform(
-                                RoundedCorners(
-                                    5.toDp().toInt(),
-                                )
+                GlideApp.with(context)
+                    .load(MaimaiDataClient.IMAGE_BASE_URL + data.songData.imageUrl)
+                    .transition(DrawableTransitionOptions.withCrossFade()).apply(
+                        RequestOptions.bitmapTransform(
+                            RoundedCorners(
+                                5.toDp().toInt(),
                             )
-                        ).into(viewHolder.songJacket)
+                        )
+                    ).into(viewHolder.songJacket)
 
             }
 

@@ -8,15 +8,16 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityLevelCheckBinding
+import com.paperpig.maimaidata.db.AppDataBase
+import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.model.Record
-import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.repository.RecordDataManager
-import com.paperpig.maimaidata.repository.SongDataManager
+import com.paperpig.maimaidata.repository.SongWithChartRepository
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 
 class LevelCheckActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLevelCheckBinding
-    private var dataList = listOf<SongData>()
+    private var dataList = listOf<SongWithChartsEntity>()
     private var recordList = listOf<Record>()
     private lateinit var sharedPrefs: SharePreferencesUtils
     private var searchLevelString = ""
@@ -34,13 +35,22 @@ class LevelCheckActivity : AppCompatActivity() {
         }
         supportActionBar?.title = getString(R.string.level_query)
         sharedPrefs = SharePreferencesUtils(this)
+
+        SongWithChartRepository.getInstance(AppDataBase.getInstance().songWithChartDao())
+            .getAllSongAndCharts(false)
+            .observe(this) {
+                dataList = it
+                initView()
+            }
+    }
+
+    private fun initView() {
         //删除ALL等级标记
         val levelArrays =
-            resources.getStringArray(R.array.dxp_song_level).toMutableList().apply { removeAt(0) }
+            resources.getStringArray(R.array.dxp_song_level).toMutableList()
+                .apply { removeAt(0) }
 
         recordList = RecordDataManager.list
-        dataList = SongDataManager.list
-
 
         binding.levelCheckRecycler.apply {
             binding.levelSlider.apply {
@@ -75,10 +85,10 @@ class LevelCheckActivity : AppCompatActivity() {
     }
 
     private fun refreshDataList() {
-
         binding.levelCheckRecycler.apply {
             if (adapter == null) {
-                adapter = LevelCheckAdapter(context,
+                adapter = LevelCheckAdapter(
+                    context,
                     dataList,
                     recordList,
                     searchLevelString

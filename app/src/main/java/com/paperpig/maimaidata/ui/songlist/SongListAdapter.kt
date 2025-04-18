@@ -18,8 +18,8 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ItemNormalSongBinding
 import com.paperpig.maimaidata.databinding.ItemUtageSongBinding
+import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.glide.GlideApp
-import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
 import com.paperpig.maimaidata.utils.Constants
@@ -33,7 +33,7 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
     }
 
 
-    private var songList = listOf<SongData>()
+    private var list = listOf<SongWithChartsEntity>()
 
     inner class NormalViewHolder(binding: ItemNormalSongBinding) :
         ViewHolder(binding.root) {
@@ -76,20 +76,21 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return songList.size
+        return list.size
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (songList[position].basic_info.genre == Constants.GENRE_UTAGE) return TYPE_UTAGE else TYPE_NORMAL
+        return if (list[position].songData.genre == Constants.GENRE_UTAGE) return TYPE_UTAGE else TYPE_NORMAL
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val songData = songList[position]
+        val songData = list[position].songData
+        val charts = list[position].charts
         holder.itemView.setOnClickListener {
-            SongDetailActivity.actionStart(holder.itemView.context, songData.id)
+            SongDetailActivity.actionStart(holder.itemView.context, list[position])
         }
         holder.itemView.setOnLongClickListener {
-            val mClipData = ClipData.newPlainText("copyText", songData.basic_info.title)
+            val mClipData = ClipData.newPlainText("copyText", songData.title)
             (holder.itemView.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(
                 mClipData
             )
@@ -116,46 +117,46 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
             ((holder.itemView.background as LayerDrawable).getDrawable(0) as LayerDrawable).findDrawableByLayerId(
                 R.id.song_list_inner_stroke
             ) as GradientDrawable
-        bgColor.setColor(ContextCompat.getColor(holder.itemView.context, songData.getBgColor()))
+        bgColor.setColor(ContextCompat.getColor(holder.itemView.context, songData.bgColor))
         bgInnerStroke.setStroke(
             3.toDp().toInt(), ContextCompat.getColor(
                 holder.itemView.context,
-                songData.getBgColor()
+                songData.bgColor
             )
         )
 
         bgStroke.setStroke(
             4.toDp().toInt(),
-            ContextCompat.getColor(holder.itemView.context, songData.getStrokeColor())
+            ContextCompat.getColor(holder.itemView.context, songData.strokeColor)
         )
 
         if (holder is NormalViewHolder) {
-            holder.songGenre.text = songData.basic_info.genre
+            holder.songGenre.text = songData.genre
             val genreBg =
                 ((holder.songGenre.background as LayerDrawable).getDrawable(0) as LayerDrawable).findDrawableByLayerId(
                     R.id.song_genre_bg
                 ) as GradientDrawable
-            genreBg.setColor(ContextCompat.getColor(holder.itemView.context, songData.getBgColor()))
+            genreBg.setColor(ContextCompat.getColor(holder.itemView.context, songData.bgColor))
 
 
             GlideApp.with(holder.itemView.context)
-                .load(MaimaiDataClient.IMAGE_BASE_URL + songData.basic_info.image_url)
+                .load(MaimaiDataClient.IMAGE_BASE_URL + songData.imageUrl)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(holder.songJacket)
             holder.songJacket.setBackgroundColor(
                 ContextCompat.getColor(
                     holder.itemView.context,
-                    songData.getStrokeColor()
+                    songData.strokeColor
                 )
             )
-            holder.songTitle.text = songData.basic_info.title
-            holder.songArtist.text = songData.basic_info.artist
-            holder.difficultyBasic.text = songData.ds[0].toString()
-            holder.difficultyAdvanced.text = songData.ds[1].toString()
-            holder.difficultyExpert.text = songData.ds[2].toString()
-            holder.difficultyMaster.text = songData.ds[3].toString()
-            if (songData.ds.size == 5) {
-                holder.difficultyRemaster.text = songData.ds[4].toString()
+            holder.songTitle.text = songData.title
+            holder.songArtist.text = songData.artist
+            holder.difficultyBasic.text = charts[0].ds.toString()
+            holder.difficultyAdvanced.text = charts[1].ds.toString()
+            holder.difficultyExpert.text = charts[2].ds.toString()
+            holder.difficultyMaster.text = charts[3].ds.toString()
+            if (charts.size == 5) {
+                holder.difficultyRemaster.text = charts[4].ds.toString()
             } else {
                 holder.difficultyRemaster.text = ""
 
@@ -168,32 +169,32 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
 
             }
         } else if (holder is UtageViewHolder) {
-            holder.songGenre.text = songData.basic_info.genre
+            holder.songGenre.text = songData.genre
             val genreBg =
                 ((holder.songGenre.background as LayerDrawable).getDrawable(0) as LayerDrawable).findDrawableByLayerId(
                     R.id.song_genre_bg
                 ) as GradientDrawable
-            genreBg.setColor(ContextCompat.getColor(holder.itemView.context, songData.getBgColor()))
+            genreBg.setColor(ContextCompat.getColor(holder.itemView.context, songData.bgColor))
 
 
             GlideApp.with(holder.itemView.context)
-                .load(MaimaiDataClient.IMAGE_BASE_URL + songData.basic_info.image_url)
+                .load(MaimaiDataClient.IMAGE_BASE_URL + songData.imageUrl)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(holder.songJacket)
             holder.songJacket.setBackgroundColor(
                 ContextCompat.getColor(
                     holder.itemView.context,
-                    songData.getStrokeColor()
+                    songData.strokeColor
                 )
             )
 
-            holder.songTitle.text = songData.basic_info.title
-            holder.songArtist.text = songData.basic_info.artist
-            holder.songLevelUtage.text = songData.level[0]
-            holder.songUtageKanji.text = songData.basic_info.kanji
-            holder.songComment.text = songData.basic_info.comment
+            holder.songTitle.text = songData.title
+            holder.songArtist.text = songData.artist
+            holder.songLevelUtage.text = charts[0].level
+            holder.songUtageKanji.text = songData.kanji
+            holder.songComment.text = songData.comment
             holder.songUtagePartyMark.visibility =
-                if (songData.basic_info.buddy != null) View.VISIBLE else View.GONE
+                if (songData.buddy != null) View.VISIBLE else View.GONE
 
 
         }
@@ -201,8 +202,8 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
     }
 
 
-    fun setData(list: List<SongData>) {
-        songList = list
+    fun setData(list: List<SongWithChartsEntity>) {
+        this.list = list
         notifyDataSetChanged()
     }
 
