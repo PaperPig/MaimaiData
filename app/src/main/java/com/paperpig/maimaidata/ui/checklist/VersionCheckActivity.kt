@@ -11,17 +11,15 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityVersionCheckBinding
+import com.paperpig.maimaidata.db.AppDataBase
 import com.paperpig.maimaidata.model.Record
-import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.model.Version
 import com.paperpig.maimaidata.repository.RecordDataManager
-import com.paperpig.maimaidata.repository.SongDataManager
-import com.paperpig.maimaidata.utils.Constants
+import com.paperpig.maimaidata.repository.SongWithChartRepository
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 
 class VersionCheckActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVersionCheckBinding
-    private var dataList = listOf<SongData>()
     private var recordList = listOf<Record>()
     private lateinit var sharedPrefs: SharePreferencesUtils
 
@@ -52,52 +50,54 @@ class VersionCheckActivity : AppCompatActivity() {
             //只获取master难度分数记录
             .filter { it.level_index == 3 }
 
-        dataList = SongDataManager.list
-        binding.versionSpn.apply {
-            adapter = versionArrayAdapter
-            setSelection(lastSelectedPosition, true)
-            onItemSelectedListener =
-                object : OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        sharedPrefs.saveLastQueryVersion(position)
-                        val filter =
-                            dataList.filter {
-                                (it.basic_info.from == (parent?.getItemAtPosition(
-                                    position
-                                ) as Version).versionName) && it.basic_info.genre != Constants.GENRE_UTAGE
+        SongWithChartRepository.getInstance(AppDataBase.getInstance().songWithChartDao())
+            .getAllSongAndCharts(false)
+            .observe(this) {
+                binding.versionSpn.apply {
+                    adapter = versionArrayAdapter
+                    setSelection(lastSelectedPosition, true)
+                    onItemSelectedListener =
+                        object : OnItemSelectedListener {
+                            override fun onItemSelected(
+                                parent: AdapterView<*>?,
+                                view: View?,
+                                position: Int,
+                                id: Long
+                            ) {
+                                sharedPrefs.saveLastQueryVersion(position)
+
+                                (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateData(
+                                    it.filter {
+                                        (it.songData.from == (parent?.getItemAtPosition(
+                                            position
+                                        ) as Version).versionName)
+                                    }.sortedByDescending { it.charts[3].ds })
                             }
 
-                        (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateData(
-                            filter.sortedByDescending { it.ds[3] })
-                    }
+                            override fun onNothingSelected(parent: AdapterView<*>?) {
+                            }
 
-                    override fun onNothingSelected(parent: AdapterView<*>?) {
-                    }
+                        }
 
                 }
 
-        }
+                binding.versionCheckRecycler.apply {
+                    adapter =
+                        VersionCheckAdapter(
+                            context,
+                            it.filter {
+                                it.songData.from == versionList[lastSelectedPosition].versionName
+                            }.sortedByDescending { it.charts[3].ds }, recordList
+                        )
 
-        binding.versionCheckRecycler.apply {
-            adapter =
-                VersionCheckAdapter(context,
-                    dataList.filter {
-                        it.basic_info.from == versionList[lastSelectedPosition].versionName
-                                && it.basic_info.genre != Constants.GENRE_UTAGE
-                                && it.ds.size > 3
-                    }.sortedByDescending { it.ds[3] }, recordList
-                )
-
-            layoutManager = FlexboxLayoutManager(context).apply {
-                flexDirection = FlexDirection.ROW
-                justifyContent = JustifyContent.FLEX_START // 设置主轴上的对齐方式为起始位置
+                    layoutManager = FlexboxLayoutManager(context).apply {
+                        flexDirection = FlexDirection.ROW
+                        justifyContent = JustifyContent.FLEX_START // 设置主轴上的对齐方式为起始位置
+                    }
+                }
             }
-        }
+
+
 
 
         binding.switchBtn.setOnClickListener {

@@ -7,13 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentSongLevelBinding
+import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.model.Record
-import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.repository.ChartStatsManager
-import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.setCopyOnLongClick
@@ -23,27 +22,23 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
-private const val ARG_PARAM1 = "songData"
-private const val ARG_PARAM2 = "position"
-private const val ARG_PARAM3 = "record"
+private const val ARG_SONG_DATA = "song_data"
+private const val ARG_POSITION = "position"
+private const val ARG_RECORD = "record"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SongLevelFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
     private lateinit var binding: FragmentSongLevelBinding
-    private lateinit var songData: SongData
+    private lateinit var data: SongWithChartsEntity
     private var record: Record? = null
     private var position: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            songData = it.getParcelable(ARG_PARAM1)!!
-            position = it.getInt(ARG_PARAM2)
-            record = it.getParcelable(ARG_PARAM3)
+            data = it.getParcelable<SongWithChartsEntity>(ARG_SONG_DATA)!!
+            position = it.getInt(ARG_POSITION)
+            record = it.getParcelable<Record>(ARG_RECORD)
         }
     }
 
@@ -79,58 +74,56 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
                 Toast.makeText(context, R.string.no_record_tips, Toast.LENGTH_LONG).show()
             }
         }
+        val chart = data.charts[position]
+        val songData = data.songData
         val statsList = ChartStatsManager.list
         val fitDiff =
-            //宴会场不显示拟合定数
+        //宴会场不显示拟合定数
             //没有拟合定数数据显示为"-"
-            if (songData.basic_info.genre == Constants.GENRE_UTAGE) {
+            if (chart.difficultyType.name == Constants.GENRE_UTAGE) {
                 "-"
             } else {
-                statsList[songData.id]?.get(position)?.fitDiff?.let {
+                statsList[chart.songId]?.get(position)?.fitDiff?.let {
                     BigDecimal(it).setScale(2, RoundingMode.HALF_UP).toString()
                 } ?: "-"
             }
+
         binding.songFitDiff.text = fitDiff
 
 
-        val note = songData.charts[position].notes
-
-
-        val breakTotal = note[note.size - 1]
-        val totalScore = totalScore(note, songData.type == Constants.CHART_TYPE_DX)
+        val totalScore =
+            (chart.notesTap + chart.notesTouch) + chart.notesHold * 2 + chart.notesSlide * 3 + chart.notesBreak * 5
         val format = DecimalFormat("0.#####%")
-
         format.roundingMode = RoundingMode.DOWN
 
-        if (songData.old_ds.isNotEmpty() && position < songData.old_ds.size) {
-            if (songData.old_ds[position] < songData.ds[position]) {
+        chart.oldDs?.let {
+            if (it < chart.ds) {
                 binding.songLevel.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
                         R.color.mmd_color_red
                     )
                 )
-                binding.songLevel.text = getString(R.string.inner_level_up, songData.ds[position])
+                binding.songLevel.text = getString(R.string.inner_level_up, chart.ds)
                 binding.oldLevel.text =
-                    getString(R.string.inner_level_old, songData.old_ds[position])
-            } else if (songData.old_ds[position] > songData.ds[position]) {
+                    getString(R.string.inner_level_old, it)
+            } else if (it > chart.ds) {
                 binding.songLevel.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
                         R.color.mmd_color_green
                     )
                 )
-                binding.songLevel.text = getString(R.string.inner_level_down, songData.ds[position])
+                binding.songLevel.text = getString(R.string.inner_level_down, chart.ds)
                 binding.oldLevel.text =
-                    getString(R.string.inner_level_old, songData.old_ds[position])
+                    getString(R.string.inner_level_old, it)
             } else {
-                binding.songLevel.text = "${songData.ds[position]}"
+                binding.songLevel.text = "${chart.ds}"
                 binding.oldLevel.text =
-                    getString(R.string.inner_level_old, songData.old_ds[position])
+                    getString(R.string.inner_level_old, it)
             }
-        } else {
-            binding.songLevel.text = songData.ds[position].toString()
-
+        } ?: run {
+            binding.songLevel.text = chart.ds.toString()
         }
 
         binding.chartDesigner.apply {
@@ -140,18 +133,27 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
             setCopyOnLongClick(songData.charts[position].charter)
         }
 
-
-        binding.chartView.setMaxValues(SongDataManager.getMaxNotesList())
+        binding.chartView.setMaxValues((MaimaiDataApplication.instance.maxNotesStats?.let {
+            listOf(
+                it.total,
+                it.tap,
+                it.hold,
+                it.slide,
+                it.touch,
+                it.break_
+            )
+        }) ?: emptyList())
         val noteValueList = listOf(
-            (songData.charts[position].notes).sum(),
-            songData.charts[position].notes[0],
-            songData.charts[position].notes[1],
-            songData.charts[position].notes[2],
-            if (songData.type == Constants.CHART_TYPE_DX) songData.charts[position].notes[3] else 0,
-            if (songData.type == Constants.CHART_TYPE_DX) songData.charts[position].notes[4] else songData.charts[position].notes[3]
+            chart.notesTotal,
+            chart.notesTap,
+            chart.notesHold,
+            chart.notesSlide,
+            chart.notesTouch,
+            chart.notesBreak
         )
         binding.chartView.setValues(noteValueList)
-        binding.chartView.setBarColor(songData.getBgColor())
+
+        binding.chartView.setBarColor(songData.bgColor)
 
         binding.tapGreatScore.text = format.format(1f / totalScore * 0.2)
         binding.tapGoodScore.text = format.format(1f / totalScore * 0.5)
@@ -163,16 +165,16 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
         binding.slideGoodScore.text = format.format(3f / totalScore * 0.5)
         binding.slideMissScore.text = format.format(3f / totalScore)
         binding.breakGreat4xScore.text =
-            format.format(5f / totalScore * 0.2 + (0.01 / breakTotal) * 0.6)
+            format.format(5f / totalScore * 0.2 + (0.01 / chart.notesBreak) * 0.6)
         binding.breakGreat3xScore.text =
-            format.format(5f / totalScore * 0.4 + (0.01 / breakTotal) * 0.6)
+            format.format(5f / totalScore * 0.4 + (0.01 / chart.notesBreak) * 0.6)
         binding.breakGreat25xScore.text =
-            format.format(5f / totalScore * 0.5 + (0.01 / breakTotal) * 0.6)
+            format.format(5f / totalScore * 0.5 + (0.01 / chart.notesBreak) * 0.6)
         binding.breakGoodScore.text =
-            format.format(5f / totalScore * 0.6 + (0.01 / breakTotal) * 0.7)
-        binding.breakMissScore.text = format.format(5f / totalScore + 0.01 / breakTotal)
-        binding.break50Score.text = format.format(0.01 / breakTotal * 0.25)
-        binding.break100Score.text = (format.format((0.01 / breakTotal) * 0.5))
+            format.format(5f / totalScore * 0.6 + (0.01 / chart.notesBreak) * 0.7)
+        binding.breakMissScore.text = format.format(5f / totalScore + 0.01 / chart.notesBreak)
+        binding.break50Score.text = format.format(0.01 / chart.notesBreak * 0.25)
+        binding.break100Score.text = (format.format((0.01 / chart.notesBreak) * 0.5))
 
 
         val notesAchievementStoke =
@@ -186,45 +188,38 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
 
         notesAchievementStoke.setStroke(
             4.toDp().toInt(),
-            ContextCompat.getColor(requireContext(), songData.getStrokeColor())
+            ContextCompat.getColor(requireContext(), songData.strokeColor)
         )
 
         notesAchievementInnerStoke.setStroke(
             3.toDp().toInt(), ContextCompat.getColor(
                 requireContext(),
-                songData.getBgColor()
+                songData.bgColor
             )
         )
 
-        if (songData.type == Constants.CHART_TYPE_DX) {
+        if (chart.type == Constants.CHART_TYPE_DX) {
             binding.finaleGroup.visibility = View.GONE
         } else {
             binding.finaleGroup.visibility = View.VISIBLE
             binding.finaleAchievement.text =
                 String.format(
                     getString(R.string.maimai_achievement_format), BigDecimal(
-                        (note[0] * 500 + note[1] * 1000 + note[2] * 1500 + note[3] * 2600) * 1.0 /
-                                (note[0] * 500 + note[1] * 1000 + note[2] * 1500 + note[3] * 2500) * 100
-                    ).setScale(2, BigDecimal.ROUND_DOWN)
+                        (chart.notesTap * 500 + chart.notesHold * 1000 + chart.notesSlide * 1500 + chart.notesBreak * 2600) * 1.0 /
+                                (chart.notesTap * 500 + chart.notesHold * 1000 + chart.notesSlide * 1500 + chart.notesBreak * 2500) * 100
+                    ).setScale(2, RoundingMode.DOWN)
                 )
         }
     }
 
-    private fun totalScore(note: List<Int>, isDx: Boolean): Int {
-        return if (isDx) {
-            (note[0] + note[3]) + note[1] * 2 + note[2] * 3 + note[4] * 5
-        } else {
-            note[0] + note[1] * 2 + note[2] * 3 + note[3] * 5
-        }
-    }
 
     companion object {
-        fun newInstance(song: SongData, position: Int, record: Record?) =
+        fun newInstance(chart: SongWithChartsEntity, position: Int, record: Record?) =
             SongLevelFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(ARG_PARAM1, song)
-                    putInt(ARG_PARAM2, position)
-                    putParcelable(ARG_PARAM3, record)
+                    putParcelable(ARG_SONG_DATA, chart)
+                    putInt(ARG_POSITION, position)
+                    putParcelable(ARG_RECORD, record)
                 }
             }
     }

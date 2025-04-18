@@ -13,21 +13,21 @@ import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ItemCheckHeaderBinding
 import com.paperpig.maimaidata.databinding.ItemLevelHeaderBinding
 import com.paperpig.maimaidata.databinding.ItemSongCheckBinding
+import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.Record
-import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
 import com.paperpig.maimaidata.utils.toDp
 
 class VersionCheckAdapter(
     val context: Context,
-    private var songData: List<SongData>,
+    private var dataList: List<SongWithChartsEntity>,
     private val recordList: List<Record>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     //0为显示完成率标识，1为显示FC/AP标识，2为显示FDX标识
     private var displayMode = 0
-    private var groupData = songData.groupBy { it.level[3] }
+    private var groupData = dataList.groupBy { it.charts[3].level }
 
     companion object {
         const val TYPE_HEADER = 0
@@ -88,37 +88,37 @@ class VersionCheckAdapter(
 
             holder.tripleSCount.text = String.format(
                 format, recordList.count {
-                    it.achievements >= 100 && songData.any { songData -> songData.id == it.song_id }
-                }, songData.size
+                    it.achievements >= 100 && dataList.any { data -> data.songData.id.toString() == it.song_id }
+                }, dataList.size
             )
 
             holder.fcCount.text = String.format(
                 format, recordList.count {
-                    it.fc.isNotEmpty() && songData.any { songData -> songData.id == it.song_id }
-                }, songData.size
+                    it.fc.isNotEmpty() && dataList.any { data -> data.songData.id.toString() == it.song_id }
+                }, dataList.size
             )
 
             holder.apCount.text = String.format(
                 format, recordList.count {
-                    (it.fc == "ap" || it.fc == "app") && songData.any { songData -> songData.id == it.song_id }
-                }, songData.size
+                    (it.fc == "ap" || it.fc == "app") && dataList.any { data -> data.songData.id.toString() == it.song_id }
+                }, dataList.size
             )
 
             holder.fsdCount.text = String.format(
                 format, recordList.count {
-                    (it.fs == "fsd" || it.fs == "fsdp") && songData.any { songData -> songData.id == it.song_id }
-                }, songData.size
+                    (it.fs == "fsd" || it.fs == "fsdp") && dataList.any { data -> data.songData.id.toString() == it.song_id }
+                }, dataList.size
             )
         }
         if (holder is LevelHolder) {
             val data = getSongAt(position)
-            holder.levelTitle.text = "Level " + data.level[3]
+            holder.levelTitle.text = "Level " + data.charts[3].level
 
         }
         if (holder is ViewHolder) {
             val data = getSongAt(position)
             holder.itemView.setOnClickListener {
-                SongDetailActivity.actionStart(holder.itemView.context, data.id)
+                SongDetailActivity.actionStart(holder.itemView.context, data)
             }
             holder.songJacket.apply {
                 setBackgroundColor(
@@ -127,12 +127,12 @@ class VersionCheckAdapter(
                     )
                 )
                 GlideApp.with(holder.itemView.context)
-                    .load(MaimaiDataClient.IMAGE_BASE_URL + data.basic_info.image_url)
+                    .load(MaimaiDataClient.IMAGE_BASE_URL + data.songData.imageUrl)
                     .into(this)
             }
 
 
-            recordList.find { it.song_id == data.id }
+            recordList.find { it.song_id == data.songData.id.toString() }
                 ?.let { record ->
                     holder.songJacket.colorFilter =
                         PorterDuffColorFilter(
@@ -178,7 +178,7 @@ class VersionCheckAdapter(
 
 
     override fun getItemCount(): Int {
-        return groupData.size + songData.size + 1
+        return groupData.size + dataList.size + 1
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -202,16 +202,16 @@ class VersionCheckAdapter(
     }
 
     fun updateData(
-        newSongData: List<SongData>,
+        newSongData: List<SongWithChartsEntity>,
     ) {
-        songData = newSongData
-        groupData = songData.groupBy { it.level[3] }
+        dataList = newSongData
+        groupData = dataList.groupBy { it.charts[3].level }
         notifyDataSetChanged()
 
     }
 
 
-    private fun getSongAt(position: Int): SongData {
+    private fun getSongAt(position: Int): SongWithChartsEntity {
         var count = 0
         for (groupDatum in groupData) {
             val size = groupDatum.value.size + 1
