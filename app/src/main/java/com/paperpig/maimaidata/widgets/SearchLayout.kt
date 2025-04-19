@@ -19,7 +19,7 @@ import java.math.RoundingMode
 
 class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
     Slider.OnSliderTouchListener {
-    private var listener: OnSearchResultListener? = null
+    private var listener: OnSearchListener? = null
     private val binding: LayoutSongSearchBinding =
         LayoutSongSearchBinding.inflate(LayoutInflater.from(context), this, true)
 
@@ -29,7 +29,10 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
     private var searchLevelDs = 1.0f
     private var searchLevelString = ""
 
-    private val spUtils = SharePreferencesUtils(MaimaiDataApplication.instance, "songInfo")
+    private val spUtils = SharePreferencesUtils(
+        MaimaiDataApplication.instance,
+        SharePreferencesUtils.PREF_NAME_SONG_INFO
+    )
 
 
     private val remasterComparator = Comparator<SongWithChartsEntity> { a, b ->
@@ -128,35 +131,22 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
 
     fun setOnSearchResultListener(
         list: List<SongWithChartsEntity>,
-        onSearchResultListener: OnSearchResultListener
+        onSearchResultListener: OnSearchListener
     ) {
         dataList = list
         listener = onSearchResultListener
     }
 
     private fun search() {
-        listener?.onResult(
-            if (binding.levelDsSwitch.isChecked) {
-                search(
-                    binding.searchEditText.text.toString(),
-                    getSortCheck(),
-                    getVersionCheck(),
-                    null,
-                    BigDecimal(searchLevelDs.toDouble()).setScale(1, RoundingMode.HALF_UP)
-                        .toDouble(),
-                    null, binding.favorCheckbox.isChecked
-                )
-            } else {
-                search(
-                    binding.searchEditText.text.toString(),
-                    getSortCheck(),
-                    getVersionCheck(),
-                    searchLevelString,
-                    null,
-                    binding.levelSortSpinner.selectedItem.toString(),
-                    binding.favorCheckbox.isChecked
-                )
-            }
+        listener?.onSearch(
+            binding.searchEditText.text.toString(),
+            getSortCheck(),
+            getVersionCheck(),
+            if (binding.levelDsSwitch.isChecked) null else searchLevelString,
+            if (binding.levelDsSwitch.isChecked) null else binding.levelSortSpinner.selectedItem.toString(),
+            if (binding.levelDsSwitch.isChecked) BigDecimal(searchLevelDs.toDouble())
+                .setScale(1, RoundingMode.HALF_UP).toDouble() else null,
+            binding.favorCheckbox.isChecked
         )
         binding.searchEditText.clearFocus()
     }
@@ -177,8 +167,16 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
         return versionList
     }
 
-    interface OnSearchResultListener {
-        fun onResult(list: List<SongWithChartsEntity>)
+    interface OnSearchListener {
+        fun onSearch(
+            searchText: String,
+            genreList: List<String>,
+            versionList: List<String>,
+            selectLevel: String?,
+            sequencing: String?,
+            ds: Double?,
+            isFavor: Boolean
+        )
     }
 
 
@@ -221,7 +219,8 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
                 searchText.isEmpty() || song.title.isEmpty() -> true
                 else -> song.title.contains(searchText, true)
             }
-            // 别称匹配
+
+            //todo 别称匹配
 //            val matchesAlias = when {
 //                !Settings.getEnableAliasSearch() -> false
 //                searchText.isEmpty() -> true
@@ -240,6 +239,7 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
                 versionSortList.isNotEmpty() -> versionSortList.versionCheck(song.from)
                 else -> true
             }
+
 
             // 等级匹配
             val matchesLevel = selectLevel?.let { level ->

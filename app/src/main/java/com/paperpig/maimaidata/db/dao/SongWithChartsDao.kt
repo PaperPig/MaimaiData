@@ -10,6 +10,7 @@ import com.paperpig.maimaidata.db.AppDataBase
 import com.paperpig.maimaidata.db.entity.ChartEntity
 import com.paperpig.maimaidata.db.entity.SongDataEntity
 import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
+import com.paperpig.maimaidata.model.DifficultyType
 import com.paperpig.maimaidata.utils.Constants
 
 @Dao
@@ -53,6 +54,73 @@ interface SongWithChartsDao {
     fun getAllSongsWithCharts(
         includeUtage: Boolean = true,
         ascending: Boolean = false
+    ): LiveData<List<SongWithChartsEntity>>
+
+
+    //todo 别称匹配查询
+    /**
+     *  根据指定的条件搜索歌曲数据及其关联的谱面信息。
+     *  该查询允许根据歌曲标题、流派、版本、难度等级、谱面类型（通过 sequencing 参数）和定数进行筛选。
+     */
+    @Query(
+        """
+        SELECT * FROM song_data 
+        WHERE 
+            -- 标题匹配
+            title LIKE '%' || :searchText || '%'
+        
+            -- 流派匹配
+            AND (
+                (:isGenreListEmpty = 1 AND genre != '${Constants.GENRE_UTAGE}')
+                OR (:isGenreListEmpty = 0 AND genre IN (:genreList))
+            )
+        
+            -- 版本匹配
+            AND (
+                :isVersionListEmpty = 1 
+                OR `from` IN (:versionList)
+            )
+        
+            -- 等级匹配
+            AND (
+                :selectLevel IS NULL 
+                OR id IN (
+                    SELECT DISTINCT song_id
+                    FROM chart
+                    WHERE (:selectLevel = 'ALL' 
+                    -- 指定具体等级时匹配指定排序的难度
+                        OR (level = :selectLevel AND (:sequencing IS NULL OR difficulty_type = :sequencing))) 
+                )
+            )
+
+            -- 定数匹配
+            AND (
+                :ds IS NULL 
+                OR id IN (
+                    SELECT DISTINCT song_id
+                    FROM chart
+                    WHERE ds = :ds
+                )
+            )
+            
+            -- 收藏匹配
+            AND (
+                :isSearchFavor = 1 AND id IN (:favIdList) 
+                OR :isSearchFavor = 0
+                )
+        """
+    )
+    fun searchSongsWithCharts(
+        searchText: String,
+        isGenreListEmpty: Boolean,
+        genreList: List<String>,
+        isVersionListEmpty: Boolean,
+        versionList: List<String>,
+        sequencing: DifficultyType?,
+        selectLevel: String?,
+        ds: Double?,
+        isSearchFavor: Boolean,
+        favIdList: List<String>
     ): LiveData<List<SongWithChartsEntity>>
 
 

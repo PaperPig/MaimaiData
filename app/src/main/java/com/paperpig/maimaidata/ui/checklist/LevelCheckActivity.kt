@@ -37,7 +37,7 @@ class LevelCheckActivity : AppCompatActivity() {
         sharedPrefs = SharePreferencesUtils(this)
 
         SongWithChartRepository.getInstance(AppDataBase.getInstance().songWithChartDao())
-            .getAllSongAndCharts(false)
+            .getAllSongWithCharts()
             .observe(this) {
                 dataList = it
                 initView()
