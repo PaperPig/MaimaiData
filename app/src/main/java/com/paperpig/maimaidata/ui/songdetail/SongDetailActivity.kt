@@ -12,9 +12,11 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -24,16 +26,18 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivitySongDetailBinding
+import com.paperpig.maimaidata.db.AppDataBase
 import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.network.MaimaiDataClient
+import com.paperpig.maimaidata.repository.AliasRepository
 import com.paperpig.maimaidata.repository.RecordDataManager
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
-import com.paperpig.maimaidata.utils.setCopyOnLongClick
-import com.paperpig.maimaidata.utils.setShrinkOnTouch
 import com.paperpig.maimaidata.utils.toDp
 import com.paperpig.maimaidata.widgets.Settings
+import com.paperpig.maimaidata.utils.setCopyOnLongClick
+import com.paperpig.maimaidata.utils.setShrinkOnTouch
 
 
 class SongDetailActivity : AppCompatActivity() {
@@ -164,72 +168,45 @@ class SongDetailActivity : AppCompatActivity() {
                 )
             }
 
-            // todo 别名适配
-//            if (Settings.getEnableShowAlias()) {
-//                //对添加的别名进行flow约束
-//                val aliasViewIds = songAliasFlow.referencedIds.toMutableList()
-//                songData.alias?.forEachIndexed { _, item ->
-//                    val textView = TextView(this@SongDetailActivity).apply {
-//                        text = item
-//                        id = View.generateViewId()
-//                        aliasViewIds.add(id)
-//                        val padding = 5.toDp().toInt()
-//                        setPadding(padding, padding, padding, padding)
-//                        setBackgroundResource(R.drawable.mmd_song_alias_info_bg)
-//                        setTextColor(
-//                            ContextCompat.getColor(
-//                                this@SongDetailActivity,
-//                                songData.getBgColor()
-//                            )
-//                        )
-//                        layoutParams = ConstraintLayout.LayoutParams(
-//                            ConstraintLayout.LayoutParams.WRAP_CONTENT,
-//                            ConstraintLayout.LayoutParams.WRAP_CONTENT
-//                        )
-//
-//                        setOnTouchListener { v, event ->
-//                            when (event.action) {
-//                                MotionEvent.ACTION_DOWN -> {
-//                                    v.animate()
-//                                        .scaleX(0.9f)
-//                                        .scaleY(0.9f)
-//                                        .setDuration(100)
-//                                        .start()
-//                                }
-//
-//                                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-//                                    v.animate()
-//                                        .scaleX(1f)
-//                                        .scaleY(1f)
-//                                        .setDuration(100)
-//                                        .start()
-//                                }
-//                            }
-//                            false // 保留 long click 事件
-//                        }
-//
-//                        setOnLongClickListener {
-//                            val clipboard =
-//                                getSystemService(CLIPBOARD_SERVICE) as? ClipboardManager
-//                            if (clipboard != null) {
-//                                val clip = ClipData.newPlainText("Alias", item)
-//                                clipboard.setPrimaryClip(clip)
-//                                Toast.makeText(context, "已复制别名：$item", Toast.LENGTH_SHORT)
-//                                    .show()
-//                            } else {
-//                                Toast.makeText(context, "无法访问剪贴板", Toast.LENGTH_SHORT).show()
-//                            }
-//                            true
-//                        }
-//                    }
-//                    constraintLayout.addView(textView)
-//                } ?: run {
-//                    aliasLabel.visibility = View.GONE
-//                }
-//                songAliasFlow.referencedIds = aliasViewIds.toIntArray()
-//            } else {
-//                aliasLabel.visibility = View.GONE
-//            }
+
+            if (Settings.getEnableShowAlias()) {
+                AliasRepository.getInstance(AppDataBase.getInstance().aliasDao())
+                    .getAliasListBySongId(songData.id).observe(this@SongDetailActivity) {
+                        //对添加的别名进行flow约束
+                        if (it.isNotEmpty()) {
+                            val aliasViewIds = songAliasFlow.referencedIds.toMutableList()
+                            it.forEachIndexed { _, item ->
+                                val textView = TextView(this@SongDetailActivity).apply {
+                                    text = item.alias
+                                    id = View.generateViewId()
+                                    aliasViewIds.add(id)
+                                    val padding = 5.toDp().toInt()
+                                    setPadding(padding, padding, padding, padding)
+                                    setBackgroundResource(R.drawable.mmd_song_alias_info_bg)
+                                    setTextColor(
+                                        ContextCompat.getColor(
+                                            this@SongDetailActivity,
+                                            songData.bgColor
+                                        )
+                                    )
+                                    layoutParams = ConstraintLayout.LayoutParams(
+                                        ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                                        ConstraintLayout.LayoutParams.WRAP_CONTENT
+                                    )
+
+                                    setShrinkOnTouch()
+                                    setCopyOnLongClick(item.alias)
+                                }
+                                constraintLayout.addView(textView)
+                            }
+                            songAliasFlow.referencedIds = aliasViewIds.toIntArray()
+                        } else {
+                            aliasLabel.visibility = View.GONE
+                        }
+                    }
+            } else {
+                aliasLabel.visibility = View.GONE
+            }
 
 
             val list = ArrayList<Fragment>()

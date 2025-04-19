@@ -7,21 +7,24 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.SQLiteConnection
 import com.paperpig.maimaidata.BuildConfig
 import com.paperpig.maimaidata.db.AppDataBase.Companion.DATABASE_VERSION
+import com.paperpig.maimaidata.db.dao.AliasDao
 import com.paperpig.maimaidata.db.dao.ChartDao
 import com.paperpig.maimaidata.db.dao.SongDao
 import com.paperpig.maimaidata.db.dao.SongWithChartsDao
+import com.paperpig.maimaidata.db.entity.AliasEntity
 import com.paperpig.maimaidata.db.entity.ChartEntity
 import com.paperpig.maimaidata.db.entity.SongDataEntity
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 
 @Database(
-    entities = [SongDataEntity::class, ChartEntity::class],
+    entities = [SongDataEntity::class, ChartEntity::class, AliasEntity::class],
     version = DATABASE_VERSION
 )
 abstract class AppDataBase : RoomDatabase() {
     abstract fun songDao(): SongDao
     abstract fun chartDao(): ChartDao
     abstract fun songWithChartDao(): SongWithChartsDao
+    abstract fun aliasDao(): AliasDao
 
 
     companion object {

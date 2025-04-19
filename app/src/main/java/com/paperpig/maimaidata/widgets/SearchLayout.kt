@@ -6,13 +6,9 @@ import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import com.google.android.material.slider.Slider
-import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.LayoutSongSearchBinding
 import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
-import com.paperpig.maimaidata.utils.Constants
-import com.paperpig.maimaidata.utils.SharePreferencesUtils
-import com.paperpig.maimaidata.utils.versionCheck
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -28,25 +24,6 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
 
     private var searchLevelDs = 1.0f
     private var searchLevelString = ""
-
-    private val spUtils = SharePreferencesUtils(
-        MaimaiDataApplication.instance,
-        SharePreferencesUtils.PREF_NAME_SONG_INFO
-    )
-
-
-    private val remasterComparator = Comparator<SongWithChartsEntity> { a, b ->
-        when {
-            a.charts.size < 5 && b.charts.size < 5 -> 0
-            a.charts.size < 5 -> 1
-            b.charts.size < 5 -> -1
-            else -> 0
-        }
-    }
-
-    private val remasterAscComparator = remasterComparator.thenBy { it.charts.getOrNull(4)?.ds }
-    private val remasterDescComparator =
-        remasterComparator.thenByDescending { it.charts.getOrNull(4)?.ds }
 
     private var genreCheckBoxList = mutableListOf(
         binding.genrePopCheckbox,
@@ -200,78 +177,5 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
                     context.getString(R.string.search_level_ds, searchLevelDs)
             }
         }
-    }
-
-    fun search(
-        searchText: String = "",
-        genreSortList: List<String> = emptyList(),
-        versionSortList: List<String> = emptyList(),
-        selectLevel: String? = null,
-        levelDs: Double? = null,
-        sequencing: String? = null,
-        isShowFavor: Boolean = false
-    ): List<SongWithChartsEntity> {
-        return dataList.filter { it ->
-            val song = it.songData
-            val chart = it.charts
-            // 歌曲名匹配
-            val matchesSearch = when {
-                searchText.isEmpty() || song.title.isEmpty() -> true
-                else -> song.title.contains(searchText, true)
-            }
-
-            //todo 别称匹配
-//            val matchesAlias = when {
-//                !Settings.getEnableAliasSearch() -> false
-//                searchText.isEmpty() -> true
-//                song.alias == null -> false
-//                else -> song.alias!!.any { it.contains(searchText, true) }
-//            }
-
-            // 流派匹配，默认不显示宴会场
-            val matchesGenre = when {
-                genreSortList.isNotEmpty() -> song.genre in genreSortList
-                else -> song.genre != Constants.GENRE_UTAGE
-            }
-
-            // 版本匹配
-            val matchesVersion = when {
-                versionSortList.isNotEmpty() -> versionSortList.versionCheck(song.from)
-                else -> true
-            }
-
-
-            // 等级匹配
-            val matchesLevel = selectLevel?.let { level ->
-                when {
-                    level == "ALL" -> true
-                    // 根据sequencing确定检查的等级位置
-                    sequencing?.startsWith("EXPERT") == true -> chart.getOrNull(2)?.level == level
-                    sequencing?.startsWith("MASTER") == true -> chart.getOrNull(3)?.level == level
-                    sequencing?.startsWith("RE:MASTER") == true -> chart.getOrNull(4)?.level == level
-                    else -> chart.any { it.level.contains(level) }
-                }
-            } != false
-
-            // 定数匹配
-            val matchesDs = levelDs?.let { ds -> chart.any { it.ds == ds } } != false
-
-            // 是否收藏
-            val matchesFavorite = !isShowFavor || spUtils.isFavorite(song.id.toString())
-
-            (matchesSearch) && matchesGenre && matchesVersion && matchesLevel && matchesDs && matchesFavorite
-        }.let { filteredList ->
-            when (sequencing) {
-                "EXPERT-升序" -> filteredList.sortedBy { it.charts.getOrNull(2)?.ds }
-                "EXPERT-降序" -> filteredList.sortedByDescending { it.charts.getOrNull(2)?.ds }
-                "MASTER-升序" -> filteredList.sortedBy { it.charts.getOrNull(3)?.ds }
-                "MASTER-降序" -> filteredList.sortedByDescending { it.charts.getOrNull(3)?.ds }
-                "RE:MASTER-升序" -> filteredList.sortedWith(remasterAscComparator)
-                "RE:MASTER-降序" -> filteredList.sortedWith(remasterDescComparator)
-                else -> filteredList.toList()
-            }
-        }
-
-
     }
 }

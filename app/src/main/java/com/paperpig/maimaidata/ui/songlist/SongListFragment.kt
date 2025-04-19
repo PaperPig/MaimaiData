@@ -21,6 +21,7 @@ import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.widgets.AnimationHelper
 import com.paperpig.maimaidata.widgets.SearchLayout
+import com.paperpig.maimaidata.widgets.Settings
 import me.zhanghai.android.fastscroll.FastScrollerBuilder
 
 
@@ -145,7 +146,8 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
                             selectLevel,
                             sequencing,
                             ds,
-                            isFavor
+                            isFavor,
+                            Settings.getEnableAliasSearch()
                         )
                             .observe(requireActivity()) {
                                 songAdapter.setData(it)

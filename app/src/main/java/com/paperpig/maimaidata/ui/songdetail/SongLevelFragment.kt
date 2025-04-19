@@ -83,7 +83,7 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
             if (chart.difficultyType.name == Constants.GENRE_UTAGE) {
                 "-"
             } else {
-                statsList[chart.songId]?.get(position)?.fitDiff?.let {
+                statsList[chart.songId.toString()]?.get(position)?.fitDiff?.let {
                     BigDecimal(it).setScale(2, RoundingMode.HALF_UP).toString()
                 } ?: "-"
             }

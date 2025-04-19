@@ -25,7 +25,7 @@ data class ChartEntity(
 
     // 外键关联 SongDataEntity.id
     @ColumnInfo(name = "song_id", index = true) // 添加索引提升查询性能
-    val songId: String,
+    val songId: Int,
 
     // 难度类型（如BASIC/ADVANCED/EXPERT/MASTER/REMASTER）
     @ColumnInfo(name = "difficulty_type")
