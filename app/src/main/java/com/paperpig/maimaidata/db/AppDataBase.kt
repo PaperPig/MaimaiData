@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.sqlite.SQLiteConnection
 import com.paperpig.maimaidata.BuildConfig
 import com.paperpig.maimaidata.db.AppDataBase.Companion.DATABASE_VERSION
 import com.paperpig.maimaidata.db.dao.ChartDao
@@ -11,6 +12,7 @@ import com.paperpig.maimaidata.db.dao.SongDao
 import com.paperpig.maimaidata.db.dao.SongWithChartsDao
 import com.paperpig.maimaidata.db.entity.ChartEntity
 import com.paperpig.maimaidata.db.entity.SongDataEntity
+import com.paperpig.maimaidata.utils.SharePreferencesUtils
 
 @Database(
     entities = [SongDataEntity::class, ChartEntity::class],
@@ -44,6 +46,14 @@ abstract class AppDataBase : RoomDatabase() {
                 DATABASE_NAME
             )
                 .fallbackToDestructiveMigration(BuildConfig.DEBUG)
+                .addCallback(object : Callback() {
+                    override fun onDestructiveMigration(connection: SQLiteConnection) {
+                        SharePreferencesUtils(
+                            context,
+                            SharePreferencesUtils.PREF_NAME_VERSION_INFO
+                        ).setDataVersion("0")
+                    }
+                })
                 .build()
             return instance
         }

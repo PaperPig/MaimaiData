@@ -51,7 +51,7 @@ class VersionCheckActivity : AppCompatActivity() {
             .filter { it.level_index == 3 }
 
         SongWithChartRepository.getInstance(AppDataBase.getInstance().songWithChartDao())
-            .getAllSongAndCharts(false)
+            .getAllSongWithCharts()
             .observe(this) {
                 binding.versionSpn.apply {
                     adapter = versionArrayAdapter

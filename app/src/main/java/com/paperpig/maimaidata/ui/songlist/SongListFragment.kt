@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentSongListBinding
 import com.paperpig.maimaidata.db.AppDataBase
-import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.repository.SongWithChartRepository
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.Constants
@@ -121,16 +120,38 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
 
     fun loadData() {
         SongWithChartRepository.getInstance(AppDataBase.getInstance().songWithChartDao())
-            .getAllSongAndCharts().observe(requireActivity()) {
-                //默认不显示宴会场
+            .getAllSongWithCharts().observe(requireActivity()) {
+
                 songAdapter.setData(it.filterNot { it.songData.genre == Constants.GENRE_UTAGE })
 
                 binding.searchLayout.setOnSearchResultListener(it, object :
-                    SearchLayout.OnSearchResultListener {
-                    override fun onResult(list: List<SongWithChartsEntity>) {
-                        songAdapter.setData(list)
-                        showOrHideSearchBar()
-                        hideKeyboard(view)
+                    SearchLayout.OnSearchListener {
+                    override fun onSearch(
+                        searchText: String,
+                        genreList: List<String>,
+                        versionList: List<String>,
+                        selectLevel: String?,
+                        sequencing: String?,
+                        ds: Double?,
+                        isFavor: Boolean
+                    ) {
+                        val repository = SongWithChartRepository.getInstance(
+                            AppDataBase.getInstance().songWithChartDao()
+                        )
+                        repository.searchSongsWithCharts(
+                            searchText,
+                            genreList,
+                            versionList,
+                            selectLevel,
+                            sequencing,
+                            ds,
+                            isFavor
+                        )
+                            .observe(requireActivity()) {
+                                songAdapter.setData(it)
+                                showOrHideSearchBar()
+                                hideKeyboard(view)
+                            }
                     }
                 })
             }

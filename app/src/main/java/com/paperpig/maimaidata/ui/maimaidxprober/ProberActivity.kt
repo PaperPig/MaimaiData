@@ -78,7 +78,7 @@ class ProberActivity : AppCompatActivity() {
 
 
         SongWithChartRepository.getInstance(AppDataBase.getInstance().songWithChartDao())
-            .getAllSongAndCharts().observe(this) {
+            .getAllSongWithCharts().observe(this) {
                 dataList = it
                 setData(dataList)
             }

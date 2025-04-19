@@ -9,9 +9,10 @@ class SharePreferencesUtils(
     private val pref: String = PREF_NAME_USER_INFO
 ) {
 
-    companion object{
+    companion object {
         const val PREF_NAME_USER_INFO = "userInfo"
         const val PREF_NAME_VERSION_INFO = "version"
+        const val PREF_NAME_SONG_INFO = "songInfo"
     }
 
     private val prefs by lazy {
@@ -48,6 +49,12 @@ class SharePreferencesUtils(
         prefs.edit().apply {
             putBoolean(id, isFav)
         }.apply()
+    }
+
+    fun getFavIds(): List<String> {
+        return prefs.all
+            .filter { it.value == true }
+            .keys.toList()
     }
 
     fun getDataVersion(): String {
@@ -90,11 +97,11 @@ class SharePreferencesUtils(
         return prefs.getLong("last_update_time", 0)
     }
 
-    fun saveLastQueryLevel(level: Float){
+    fun saveLastQueryLevel(level: Float) {
         prefs.edit().putFloat("last_query_level", level).apply()
     }
 
-    fun getLastQueryLevel(): Float{
+    fun getLastQueryLevel(): Float {
         return try {
             prefs.getFloat("last_query_level", 18f)
         } catch (_: Exception) {
@@ -102,11 +109,11 @@ class SharePreferencesUtils(
         }
     }
 
-    fun saveLastQueryVersion(version: Int){
+    fun saveLastQueryVersion(version: Int) {
         prefs.edit().putInt("last_query_version", version).apply()
     }
 
-    fun getLastQueryVersion(): Int{
+    fun getLastQueryVersion(): Int {
         return prefs.getInt("last_query_version", 0)
     }
 
