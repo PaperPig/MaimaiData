@@ -1,12 +1,13 @@
 package com.paperpig.maimaidata.utils
 
+import com.paperpig.maimaidata.db.entity.AliasEntity
 import com.paperpig.maimaidata.db.entity.ChartEntity
 import com.paperpig.maimaidata.db.entity.SongDataEntity
 import com.paperpig.maimaidata.model.DifficultyType
 import com.paperpig.maimaidata.model.SongData
 
 object JsonConvertToDb {
-    fun convert(list: List<SongData>): Pair<List<SongDataEntity>, List<ChartEntity>> {
+    fun convert(list: List<SongData>): ConversionResult {
         val songList = list.map { song ->
             SongDataEntity(
                 song.id.toInt(),
@@ -41,7 +42,7 @@ object JsonConvertToDb {
 
                 ChartEntity(
                     0,
-                    song.id,
+                    song.id.toInt(),
                     difficultyType,
                     song.type,
                     song.ds[i],
@@ -58,7 +59,14 @@ object JsonConvertToDb {
             }
         }
 
-        return songList to chartList
+
+        val aliasList = list.flatMap { song ->
+            song.alias?.map { alias ->
+                AliasEntity(0, song.id.toInt(), alias)
+            } ?: emptyList()
+        }
+
+        return ConversionResult(songList, chartList, aliasList)
     }
 
     private fun getDifficultyType(genre: String, index: Int): DifficultyType {
@@ -80,4 +88,9 @@ object JsonConvertToDb {
         }
     }
 
+    data class ConversionResult(
+        val songs: List<SongDataEntity>,
+        val charts: List<ChartEntity>,
+        val aliases: List<AliasEntity>
+    )
 }

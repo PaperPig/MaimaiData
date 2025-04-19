@@ -31,8 +31,9 @@ class SongWithChartRepository private constructor(private val songChartDao: Song
         return withContext(Dispatchers.IO) {
             val convertToChartEntities = JsonConvertToDb.convert(list)
             songChartDao.replaceAllSongsAndCharts(
-                convertToChartEntities.first,
-                convertToChartEntities.second
+                convertToChartEntities.songs,
+                convertToChartEntities.charts,
+                convertToChartEntities.aliases
             )
         }
     }
@@ -58,6 +59,7 @@ class SongWithChartRepository private constructor(private val songChartDao: Song
      * @param sequencing 可选的排序信息，用于排序指定难度的歌曲。会提取 "EXPERT" 或 "MASTER" 前缀进行筛选。可以为 null，表示默认排序。
      * @param ds 可选的定数值，用于筛选特定定数值的谱面。可以为 null，表示不按ds值筛选。
      * @param isFavor 是否搜索收藏的歌曲，设置为true时，使用sp文件中收藏歌曲的id进行查询
+     * @param isMatchAlias 是否匹配别名搜索，用于匹配歌曲别名
      * @return 包含符合搜索条件的 SongWithChartsEntity 列表的 LiveData。
      */
     fun searchSongsWithCharts(
@@ -67,7 +69,8 @@ class SongWithChartRepository private constructor(private val songChartDao: Song
         selectLevel: String?,
         sequencing: String?,
         ds: Double?,
-        isFavor: Boolean
+        isFavor: Boolean,
+        isMatchAlias: Boolean,
     ): LiveData<List<SongWithChartsEntity>> {
         val initialResult = songChartDao.searchSongsWithCharts(
             searchText = searchText,
@@ -82,7 +85,8 @@ class SongWithChartRepository private constructor(private val songChartDao: Song
             favIdList = SharePreferencesUtils(
                 MaimaiDataApplication.instance,
                 SharePreferencesUtils.PREF_NAME_SONG_INFO
-            ).getFavIds()
+            ).getFavIds(),
+            isMatchAlias = isMatchAlias
         )
         //根据sequencing指定难度排序
         return initialResult.map { list ->

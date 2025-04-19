@@ -2,7 +2,9 @@ package com.paperpig.maimaidata.db.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
+import com.paperpig.maimaidata.db.entity.ChartEntity
 import com.paperpig.maimaidata.model.MaxNotesStats
 
 @Dao
@@ -26,4 +28,12 @@ interface ChartDao {
     """
     )
     fun getMaxNotes(): LiveData<MaxNotesStats>
+
+
+    @Insert
+    fun insertAllCharts(chartList: List<ChartEntity>)
+
+
+    @Query("DELETE FROM chart")
+    fun clearCharts()
 }
