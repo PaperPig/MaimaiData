@@ -1,27 +1,83 @@
-package com.paperpig.maimaidata.model
+package com.paperpig.maimaidata.db.entity
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.utils.Constants
 import kotlinx.parcelize.Parcelize
 
+@Entity(
+    tableName = "record",
+    foreignKeys = [ForeignKey(
+        entity = SongDataEntity::class,
+        parentColumns = ["id"],
+        childColumns = ["song_id"]
+    )]
+)
 @Parcelize
-data class Record(
-    val achievements: Double,
-    val ds: Double,
-    val dxScore: Int,
-    val fc: String,
-    val fs: String,
-    val is_new: Boolean,
-    val level: String,
-    val level_index: Int,
-    val level_label: String,
-    val ra: Int,
-    val rate: String,
-    val song_id: String,
-    val title: String,
-    val type: String
+data class RecordEntity(
+    // 主键（自增长，默认值 0）
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
 
+    // 完成率
+    @ColumnInfo(name = "achievements")
+    val achievements: Double,
+
+    // 定数
+    @ColumnInfo(name = "ds")
+    val ds: Double,
+
+    // DX分数
+    @ColumnInfo(name = "dx_score")
+    val dxScore: Int,
+
+    // 全连状态
+    @ColumnInfo(name = "fc")
+    val fc: String,
+
+    // 同步状态
+    @ColumnInfo(name = "fs")
+    val fs: String,
+
+    // 等级
+    @ColumnInfo(name = "level")
+    val level: String,
+
+    // 等级索引
+    @SerializedName("level_index")
+    @ColumnInfo(name = "level_index")
+    val levelIndex: Int,
+
+    // 等级标签
+    @SerializedName("level_label")
+    @ColumnInfo(name = "level_label")
+    val levelLabel: String,
+
+    // Rating值
+    @ColumnInfo(name = "ra")
+    val ra: Int,
+
+    // 评级
+    @ColumnInfo(name = "rate")
+    val rate: String,
+
+    // 歌曲ID
+    @SerializedName("song_id")
+    @ColumnInfo(name = "song_id", index = true)
+    val songId: Int,
+
+    // 歌曲标题
+    @ColumnInfo(name = "title")
+    val title: String,
+
+    // 标准 or DX
+    @ColumnInfo(name = "type")
+    val type: String
 ) : Parcelable {
     fun getFcIcon() = when (fc) {
         "fc" -> R.drawable.mmd_player_rtsong_fc
@@ -39,7 +95,7 @@ data class Record(
         else -> R.drawable.mmd_player_rtsong_stub
     }
 
-    fun getDifficultyDiff() = when (level_index) {
+    fun getDifficultyDiff() = when (levelIndex) {
         0 -> R.drawable.mmd_player_rtsong_diff_bsc
         1 -> R.drawable.mmd_player_rtsong_diff_adv
         2 -> R.drawable.mmd_player_rtsong_diff_exp
@@ -47,7 +103,7 @@ data class Record(
         else -> R.drawable.mmd_player_rtsong_diff_rem
     }
 
-    fun getBackgroundColor() = when (level_index) {
+    fun getBackgroundColor() = when (levelIndex) {
         0 -> R.color.mmd_player_rtsong_bsc_main
         1 -> R.color.mmd_player_rtsong_adv_main
         2 -> R.color.mmd_player_rtsong_exp_main
@@ -56,7 +112,7 @@ data class Record(
     }
 
 
-    fun getShadowColor() = when (level_index) {
+    fun getShadowColor() = when (levelIndex) {
         0 -> R.color.mmd_player_rtsong_bsc_dark
         1 -> R.color.mmd_player_rtsong_adv_dark
         2 -> R.color.mmd_player_rtsong_exp_dark
@@ -89,7 +145,7 @@ data class Record(
         else R.drawable.mmd_player_rtsong_icon_standard
     }
 
-    fun getRatingBoard(): Int = when (level_index) {
+    fun getRatingBoard(): Int = when (levelIndex) {
         0 -> R.drawable.mmd_rating_board_bsc
         1 -> R.drawable.mmd_rating_board_adv
         2 -> R.drawable.mmd_rating_board_exp
@@ -97,7 +153,7 @@ data class Record(
         else -> R.drawable.mmd_rating_board_rem
     }
 
-    fun getRatingDiff() = when (level_index) {
+    fun getRatingDiff() = when (levelIndex) {
         0 -> R.drawable.mmd_rating_diff_basic
         1 -> R.drawable.mmd_rating_diff_advanced
         2 -> R.drawable.mmd_rating_diff_expert
@@ -105,3 +161,4 @@ data class Record(
         else -> R.drawable.mmd_rating_diff_remaster
     }
 }
+

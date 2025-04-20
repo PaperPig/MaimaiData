@@ -3,12 +3,12 @@ package com.paperpig.maimaidata.ui.maimaidxprober
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.paperpig.maimaidata.db.entity.RecordEntity
 import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
-import com.paperpig.maimaidata.model.Record
 
 class ProberVersionAdapter(dataList: List<SongWithChartsEntity>) :
     RecyclerView.Adapter<ProberVersionAdapter.ViewHolder>() {
-    private var recordList = listOf<Record>()
+    private var recordList = listOf<RecordEntity>()
     private var isDataMatching = true
     private var b35Adapter: RecordAdapter = RecordAdapter(dataList)
     private var b15Adapter: RecordAdapter = RecordAdapter(dataList)
@@ -38,7 +38,7 @@ class ProberVersionAdapter(dataList: List<SongWithChartsEntity>) :
         return 2
     }
 
-    fun setData(data: List<Record>) {
+    fun setData(data: List<RecordEntity>) {
         recordList = data
         b35Adapter.setData(recordList, 0)
         b15Adapter.setData(recordList, 1)

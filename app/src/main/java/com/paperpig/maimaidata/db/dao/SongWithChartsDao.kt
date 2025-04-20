@@ -39,7 +39,10 @@ interface SongWithChartsDao : ChartDao, SongDao, AliasDao {
             insertAllAlias(aliasList)
             true
         } catch (e: Exception) {
-            Log.e(AppDataBase.DATABASE_NAME, "Transaction failed: ${e.message}")
+            Log.e(
+                AppDataBase.DATABASE_NAME,
+                "Transaction replaceAllSongsAndCharts failed: ${e.message}"
+            )
             false
         }
     }

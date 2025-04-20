@@ -10,8 +10,8 @@ import androidx.core.content.ContextCompat
 import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentSongLevelBinding
+import com.paperpig.maimaidata.db.entity.RecordEntity
 import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
-import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.repository.ChartStatsManager
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.Constants
@@ -30,7 +30,7 @@ private const val ARG_RECORD = "record"
 class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
     private lateinit var binding: FragmentSongLevelBinding
     private lateinit var data: SongWithChartsEntity
-    private var record: Record? = null
+    private var record: RecordEntity? = null
     private var position: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +38,7 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
         arguments?.let {
             data = it.getParcelable<SongWithChartsEntity>(ARG_SONG_DATA)!!
             position = it.getInt(ARG_POSITION)
-            record = it.getParcelable<Record>(ARG_RECORD)
+            record = it.getParcelable<RecordEntity>(ARG_RECORD)
         }
     }
 
@@ -214,7 +214,7 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
 
 
     companion object {
-        fun newInstance(chart: SongWithChartsEntity, position: Int, record: Record?) =
+        fun newInstance(chart: SongWithChartsEntity, position: Int, record: RecordEntity?) =
             SongLevelFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_SONG_DATA, chart)

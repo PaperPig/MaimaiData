@@ -13,10 +13,10 @@ import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ItemCheckHeaderBinding
 import com.paperpig.maimaidata.databinding.ItemLevelHeaderBinding
 import com.paperpig.maimaidata.databinding.ItemSongCheckBinding
+import com.paperpig.maimaidata.db.entity.RecordEntity
 import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.DsSongData
-import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
 import com.paperpig.maimaidata.utils.Constants
@@ -25,7 +25,7 @@ import com.paperpig.maimaidata.utils.toDp
 class LevelCheckAdapter(
     val context: Context,
     private var dataList: List<SongWithChartsEntity>,     //歌曲信息列表
-    private val recordList: List<Record>, //个人记录列表
+    private val recordList: List<RecordEntity>, //个人记录列表
     private var levelSelect: String   //指定难度
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     //0为显示完成率标识，1为显示FC/AP标识，2为显示FDX标识
@@ -41,7 +41,7 @@ class LevelCheckAdapter(
                 .filter { i -> datum.charts[i].level == levelSelect }
                 .map { i ->
                     DsSongData(
-                        datum.songData.id.toString(),
+                        datum.songData.id,
                         datum.songData.title,
                         datum.songData.type,
                         datum.songData.imageUrl,
@@ -113,25 +113,25 @@ class LevelCheckAdapter(
 
             holder.tripleSCount.text = String.format(
                 format, recordList.count {
-                    it.achievements >= 100 && it.level == levelSelect && groupFlatten.any { songData -> songData.songId == it.song_id }
+                    it.achievements >= 100 && it.level == levelSelect && groupFlatten.any { songData -> songData.songId == it.songId }
                 }, groupSize
             )
 
             holder.fcCount.text = String.format(
                 format, recordList.count {
-                    it.fc.isNotEmpty() && it.level == levelSelect && groupFlatten.any { songData -> songData.songId == it.song_id }
+                    it.fc.isNotEmpty() && it.level == levelSelect && groupFlatten.any { songData -> songData.songId == it.songId }
                 }, groupSize
             )
 
             holder.apCount.text = String.format(
                 format, recordList.count {
-                    (it.fc == "ap" || it.fc == "app") && it.level == levelSelect && groupFlatten.any { songData -> songData.songId == it.song_id }
+                    (it.fc == "ap" || it.fc == "app") && it.level == levelSelect && groupFlatten.any { songData -> songData.songId == it.songId }
                 }, groupSize
             )
 
             holder.fsdCount.text = String.format(
                 format, recordList.count {
-                    (it.fs == "fsd" || it.fs == "fsdp") && it.level == levelSelect && groupFlatten.any { songData -> songData.songId == it.song_id }
+                    (it.fs == "fsd" || it.fs == "fsdp") && it.level == levelSelect && groupFlatten.any { songData -> songData.songId == it.songId }
                 }, groupSize
             )
         }
@@ -143,7 +143,7 @@ class LevelCheckAdapter(
         if (holder is ItemViewHolder) {
             val data = getSongAt(position)
             holder.itemView.setOnClickListener {
-                dataList.find { it.songData.id.toString() == data.songId }?.let {
+                dataList.find { it.songData.id == data.songId }?.let {
                     SongDetailActivity.actionStart(holder.itemView.context, it)
                 }
             }
@@ -165,7 +165,7 @@ class LevelCheckAdapter(
                 GlideApp.with(holder.itemView.context).clear(holder.songType)
             }
 
-            recordList.find { it.song_id == data.songId && it.level_index == data.levelIndex }
+            recordList.find { it.songId == data.songId && it.levelIndex == data.levelIndex }
                 ?.let { record ->
                     holder.songJacket.colorFilter =
                         PorterDuffColorFilter(

@@ -29,7 +29,7 @@ class SongWithChartRepository private constructor(private val songChartDao: Song
      */
     suspend fun updateDatabase(list: List<SongData>): Boolean {
         return withContext(Dispatchers.IO) {
-            val convertToChartEntities = JsonConvertToDb.convert(list)
+            val convertToChartEntities = JsonConvertToDb.convertSongData(list)
             songChartDao.replaceAllSongsAndCharts(
                 convertToChartEntities.songs,
                 convertToChartEntities.charts,

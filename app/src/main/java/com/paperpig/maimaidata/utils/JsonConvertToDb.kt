@@ -1,13 +1,17 @@
 package com.paperpig.maimaidata.utils
 
+import com.google.gson.Gson
+import com.google.gson.JsonElement
+import com.google.gson.reflect.TypeToken
 import com.paperpig.maimaidata.db.entity.AliasEntity
 import com.paperpig.maimaidata.db.entity.ChartEntity
+import com.paperpig.maimaidata.db.entity.RecordEntity
 import com.paperpig.maimaidata.db.entity.SongDataEntity
 import com.paperpig.maimaidata.model.DifficultyType
 import com.paperpig.maimaidata.model.SongData
 
 object JsonConvertToDb {
-    fun convert(list: List<SongData>): ConversionResult {
+    fun convertSongData(list: List<SongData>): ConversionResult {
         val songList = list.map { song ->
             SongDataEntity(
                 song.id.toInt(),
@@ -67,6 +71,12 @@ object JsonConvertToDb {
         }
 
         return ConversionResult(songList, chartList, aliasList)
+    }
+
+    fun convertRecord(json: JsonElement): List<RecordEntity> {
+        val gson = Gson()
+        val type = object : TypeToken<List<RecordEntity>>() {}.type
+        return gson.fromJson(json, type)
     }
 
     private fun getDifficultyType(genre: String, index: Int): DifficultyType {

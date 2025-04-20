@@ -16,9 +16,9 @@ import com.bumptech.glide.request.RequestOptions
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.MmdPlayerRtsongDividerLayoutBinding
 import com.paperpig.maimaidata.databinding.MmdPlayerRtsongLayoutBinding
+import com.paperpig.maimaidata.db.entity.RecordEntity
 import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.glide.GlideApp
-import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
 import com.paperpig.maimaidata.utils.ConvertUtils
@@ -38,12 +38,12 @@ class RecordAdapter(private val dataList: List<SongWithChartsEntity>) :
         get() = _isMatching
 
 
-    private var originList = listOf<Record>()
-    private var recordList = listOf<Record>()
+    private var originList = listOf<RecordEntity>()
+    private var recordList = listOf<RecordEntity>()
         set(value) {
             field = value
                 .filter {
-                    val find = dataList.find { data -> data.songData.id.toString() == it.song_id }
+                    val find = dataList.find { data -> data.songData.id == it.songId }
                     if (find != null) {
                         if (versionType == 0) {
                             !find.songData.isNew
@@ -114,7 +114,7 @@ class RecordAdapter(private val dataList: List<SongWithChartsEntity>) :
                 ), (record.ds * 22.512).toInt()
             )
 
-            dataList.find { it.songData.id.toString() == record.song_id }?.let { data ->
+            dataList.find { it.songData.id == record.songId }?.let { data ->
                 viewHolder.itemView.setOnClickListener {
                     SongDetailActivity.actionStart(viewHolder.itemView.context, data)
                 }
@@ -208,7 +208,7 @@ class RecordAdapter(private val dataList: List<SongWithChartsEntity>) :
         }
     }
 
-    fun setData(list: List<Record>, version: Int) {
+    fun setData(list: List<RecordEntity>, version: Int) {
         originList = list
         versionType = version
         recordList = originList

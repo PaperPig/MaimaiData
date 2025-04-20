@@ -7,7 +7,7 @@ data class DsSongData(
     /**
      * 歌曲id
      */
-    val songId: String,
+    val songId: Int,
 
     /**
      * 歌曲标题

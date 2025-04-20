@@ -12,18 +12,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.materialdialogs.MaterialDialog
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityProberBinding
 import com.paperpig.maimaidata.db.AppDataBase
+import com.paperpig.maimaidata.db.entity.RecordEntity
 import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
-import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.network.MaimaiDataRequests
 import com.paperpig.maimaidata.repository.RecordRepository
 import com.paperpig.maimaidata.repository.SongWithChartRepository
 import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.CreateBest50
+import com.paperpig.maimaidata.utils.JsonConvertToDb
 import com.paperpig.maimaidata.utils.PermissionHelper
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.widgets.AnimationHelper
@@ -37,9 +36,9 @@ class ProberActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProberBinding
 
     private lateinit var proberVersionAdapter: ProberVersionAdapter
-    private var recordData = arrayListOf<Record>()
-    private var oldRating = listOf<Record>()
-    private var newRating = listOf<Record>()
+    private var recordList = listOf<RecordEntity>()
+    private var oldRating = listOf<RecordEntity>()
+    private var newRating = listOf<RecordEntity>()
     private var dataList = listOf<SongWithChartsEntity>()
 
     private lateinit var animationHelper: AnimationHelper
@@ -150,27 +149,25 @@ class ProberActivity : AppCompatActivity() {
                     }
                 }
 
-                    if (Settings.getEnableDivingFishNickname()) {
-                        val hasNickname = it.asJsonObject.has("nickname")
-                        if (hasNickname) {
-                            sharedPrefs.saveDivingFishNickname(it.asJsonObject.get("nickname").asString)
-                        }
+                if (Settings.getEnableDivingFishNickname()) {
+                    val hasNickname = it.asJsonObject.has("nickname")
+                    if (hasNickname) {
+                        sharedPrefs.saveDivingFishNickname(it.asJsonObject.get("nickname").asString)
+                    }
+                }
+
+                val hasRecords = it.asJsonObject.has("records")
+                if (hasRecords) {
+                    val convertRecord =
+                        JsonConvertToDb.convertRecord(it.asJsonObject.get("records"))
+                    lifecycleScope.launch {
+                        RecordRepository.getInstance(AppDataBase.getInstance().recordDao())
+                            .replaceAllRecord(convertRecord)
                     }
 
-                    val hasRecords = it.asJsonObject.has("records")
-                    if (hasRecords) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            RecordRepository().saveRecord(
-                                this@ProberActivity,
-                                it.asJsonObject.get("records")
-                            )
-                        }
 
-                    val type = object : TypeToken<ArrayList<Record>>() {}.type
-                    recordData = Gson().fromJson(
-                        it.asJsonObject.get("records").asJsonArray, type
-                    )
-                    proberVersionAdapter.setData(recordData)
+                    recordList = convertRecord
+                    proberVersionAdapter.setData(recordList)
 
                     if (!proberVersionAdapter.isDataMatching()) {
                         MaterialDialog.Builder(this@ProberActivity)
@@ -179,21 +176,21 @@ class ProberActivity : AppCompatActivity() {
                             .positiveText(R.string.common_confirm).show()
                     }
 
-                    oldRating = recordData.sortedByDescending {
+                    oldRating = recordList.sortedByDescending {
                         it.ra
                     }.filter {
                         val find =
-                            list.find { data -> data.songData.id.toString() == it.song_id }
+                            list.find { data -> data.songData.id == it.songId }
                         if (find == null) false else !find.songData.isNew
                     }.let {
                         it.subList(0, if (it.size >= 35) 35 else it.size)
                     }
                     newRating =
-                        recordData.sortedByDescending {
+                        recordList.sortedByDescending {
                             it.ra
                         }.filter {
                             val find =
-                                list.find { data -> data.songData.id.toString() == it.song_id }
+                                list.find { data -> data.songData.id == it.songId }
                             find?.songData?.isNew == true
                         }.let {
                             it.subList(0, if (it.size >= 15) 15 else it.size)

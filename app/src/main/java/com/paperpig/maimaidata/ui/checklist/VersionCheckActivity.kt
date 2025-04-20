@@ -6,21 +6,24 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MediatorLiveData
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityVersionCheckBinding
 import com.paperpig.maimaidata.db.AppDataBase
-import com.paperpig.maimaidata.model.Record
+import com.paperpig.maimaidata.db.entity.RecordEntity
+import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.model.Version
-import com.paperpig.maimaidata.repository.RecordDataManager
+import com.paperpig.maimaidata.repository.RecordRepository
 import com.paperpig.maimaidata.repository.SongWithChartRepository
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 
 class VersionCheckActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVersionCheckBinding
-    private var recordList = listOf<Record>()
+    private var dataList = listOf<SongWithChartsEntity>()
+    private var recordList = listOf<RecordEntity>()
     private lateinit var sharedPrefs: SharePreferencesUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,74 +39,98 @@ class VersionCheckActivity : AppCompatActivity() {
         }
         supportActionBar?.title = getString(R.string.version_query)
         sharedPrefs = SharePreferencesUtils(this)
+
+        getData()
+    }
+
+    private fun getData() {
+        //获取所有的歌曲
+        val allSongs = SongWithChartRepository.getInstance(
+            AppDataBase.getInstance().songWithChartDao(),
+        ).getAllSongWithCharts()
+        //获取MASTER难度记录
+        val allRecords =
+            RecordRepository.getInstance(AppDataBase.getInstance().recordDao())
+                .getRecordsByDifficultyIndex(3)
+        //使用MediatorLiveData来监听两个LiveData的变化
+        MediatorLiveData<Pair<List<SongWithChartsEntity>, List<RecordEntity>>>().apply {
+            addSource(allSongs) { songs ->
+                val records = allRecords.value ?: emptyList()
+                value = Pair(songs, records)
+            }
+            addSource(allRecords) { records ->
+                val songs = allSongs.value ?: emptyList()
+                value = Pair(songs, records)
+            }
+            observe(this@VersionCheckActivity) {
+                if (it.first.isNotEmpty() && it.second.isNotEmpty()) {
+                    dataList = it.first
+                    recordList = it.second
+                    initView()
+                }
+            }
+        }
+    }
+
+
+    private fun initView() {
+        val lastSelectedPosition = sharedPrefs.getLastQueryVersion()
         val versionList = getVersionList()
-        val versionArrayAdapter =
-            VersionArrayAdapter(
+
+        //设置spinner适配器
+        binding.versionSpn.apply {
+            adapter = VersionArrayAdapter(
                 this@VersionCheckActivity,
                 R.layout.item_spinner_version,
                 versionList
-            )
-        versionArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-        val lastSelectedPosition = sharedPrefs.getLastQueryVersion()
-        recordList = RecordDataManager.list
-            //只获取master难度分数记录
-            .filter { it.level_index == 3 }
-
-        SongWithChartRepository.getInstance(AppDataBase.getInstance().songWithChartDao())
-            .getAllSongWithCharts()
-            .observe(this) {
-                binding.versionSpn.apply {
-                    adapter = versionArrayAdapter
-                    setSelection(lastSelectedPosition, true)
-                    onItemSelectedListener =
-                        object : OnItemSelectedListener {
-                            override fun onItemSelected(
-                                parent: AdapterView<*>?,
-                                view: View?,
-                                position: Int,
-                                id: Long
-                            ) {
-                                sharedPrefs.saveLastQueryVersion(position)
-
-                                (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateData(
-                                    it.filter {
-                                        (it.songData.from == (parent?.getItemAtPosition(
-                                            position
-                                        ) as Version).versionName)
-                                    }.sortedByDescending { it.charts[3].ds })
-                            }
-
-                            override fun onNothingSelected(parent: AdapterView<*>?) {
-                            }
-
-                        }
-
-                }
-
-                binding.versionCheckRecycler.apply {
-                    adapter =
-                        VersionCheckAdapter(
-                            context,
-                            it.filter {
-                                it.songData.from == versionList[lastSelectedPosition].versionName
-                            }.sortedByDescending { it.charts[3].ds }, recordList
-                        )
-
-                    layoutManager = FlexboxLayoutManager(context).apply {
-                        flexDirection = FlexDirection.ROW
-                        justifyContent = JustifyContent.FLEX_START // 设置主轴上的对齐方式为起始位置
-                    }
-                }
+            ).apply {
+                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             }
+            setSelection(lastSelectedPosition, true)
+            onItemSelectedListener =
+                object : OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        sharedPrefs.saveLastQueryVersion(position)
 
+                        (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateData(
+                            dataList.filter {
+                                (it.songData.from == (parent?.getItemAtPosition(
+                                    position
+                                ) as Version).versionName)
+                            }.sortedByDescending { it.charts[3].ds })
+                    }
 
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+                    }
 
+                }
+
+        }
+
+        //设置recyclerView适配器
+        binding.versionCheckRecycler.apply {
+            adapter =
+                VersionCheckAdapter(
+                    context,
+                    dataList.filter {
+                        it.songData.from == versionList[lastSelectedPosition].versionName
+                    }.sortedByDescending { it.charts[3].ds }, recordList
+                )
+
+            layoutManager = FlexboxLayoutManager(context).apply {
+                flexDirection = FlexDirection.ROW
+                justifyContent = JustifyContent.FLEX_START // 设置主轴上的对齐方式为起始位置
+            }
+        }
 
         binding.switchBtn.setOnClickListener {
             (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateDisplay()
         }
-
     }
 
     private fun getVersionList(): MutableList<Version> {

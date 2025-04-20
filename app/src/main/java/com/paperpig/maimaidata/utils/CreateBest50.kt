@@ -15,9 +15,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
 import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.db.entity.RecordEntity
 import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.glide.GlideApp
-import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,8 +45,8 @@ object CreateBest50 {
     suspend fun createSongInfo(
         context: Activity,
         dataList: List<SongWithChartsEntity>,
-        old: List<Record>,
-        new: List<Record>
+        old: List<RecordEntity>,
+        new: List<RecordEntity>
     ) {
         if (old.isEmpty() && new.isEmpty()) {
             Toast.makeText(context, "尚未取得歌曲信息，请稍后重试", Toast.LENGTH_SHORT)
@@ -196,11 +196,11 @@ object CreateBest50 {
 
     private fun drawSongItem(
         context: Context,
-        record: Record,
+        record: RecordEntity,
         dataList: List<SongWithChartsEntity>
     ): Bitmap {
 
-        val find = dataList.find { it.songData.id.toString() == record.song_id }
+        val find = dataList.find { it.songData.id == record.songId }
         val songContainerBitmap =
             createBitmap(ITEM_WIDTH, ITEM_HEIGHT)
         val canvas = Canvas(songContainerBitmap)

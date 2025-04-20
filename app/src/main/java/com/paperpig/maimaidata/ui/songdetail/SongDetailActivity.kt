@@ -27,11 +27,12 @@ import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivitySongDetailBinding
 import com.paperpig.maimaidata.db.AppDataBase
+import com.paperpig.maimaidata.db.entity.RecordEntity
 import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.repository.AliasRepository
-import com.paperpig.maimaidata.repository.RecordDataManager
+import com.paperpig.maimaidata.repository.RecordRepository
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.SharePreferencesUtils
 import com.paperpig.maimaidata.utils.toDp
@@ -43,6 +44,8 @@ import com.paperpig.maimaidata.utils.setShrinkOnTouch
 class SongDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySongDetailBinding
     private val spUtils = SharePreferencesUtils(MaimaiDataApplication.instance, "songInfo")
+
+    private lateinit var data: SongWithChartsEntity
 
     companion object {
         const val EXTRA_DATA_KEY = "data"
@@ -69,12 +72,10 @@ class SongDetailActivity : AppCompatActivity() {
                 setDisplayShowHomeEnabled(true)
             }
 
-            val data = intent.getParcelableExtra<SongWithChartsEntity>(EXTRA_DATA_KEY)!!
-
+            data = intent.getParcelableExtra<SongWithChartsEntity>(EXTRA_DATA_KEY)!!
             val songData = data.songData
-            val charts = data.charts
-            val recordList = RecordDataManager.list
 
+            //设置背景颜色
             appbarLayout.setBackgroundColor(
                 ContextCompat.getColor(
                     this@SongDetailActivity,
@@ -95,13 +96,10 @@ class SongDetailActivity : AppCompatActivity() {
                     )
                 )
             }
-
             toolbarLayout.setContentScrimResource(songData.bgColor)
-
             GlideApp.with(this@SongDetailActivity)
                 .load(MaimaiDataClient.IMAGE_BASE_URL + songData.imageUrl)
                 .into(songJacket)
-
             songJacket.setBackgroundColor(
                 ContextCompat.getColor(
                     this@SongDetailActivity,
@@ -109,6 +107,7 @@ class SongDetailActivity : AppCompatActivity() {
                 )
             )
 
+            //显示歌曲信息
             songTitle.apply {
                 text = songData.title
 
@@ -136,39 +135,8 @@ class SongDetailActivity : AppCompatActivity() {
             setVersionImage(songAddVersion, songData.version)
             setCnVersionImage(songAddCnVersion, songData.from)
 
-            val colorFilter: (Boolean) -> Int = { isFavor: Boolean ->
-                if (isFavor) {
-                    0
-                } else {
-                    Color.WHITE
-                }
-            }
-            favButton.apply {
-                setColorFilter(colorFilter.invoke(spUtils.isFavorite(songData.id.toString())))
-                setOnClickListener {
-                    val isFavor = spUtils.isFavorite(songData.id.toString())
-                    spUtils.setFavorite(songData.id.toString(), !isFavor)
-                    setColorFilter(colorFilter.invoke(!isFavor))
-                }
-            }
 
-            //打开歌曲大图
-            songJacket.setOnClickListener {
-                val options: ActivityOptions = ActivityOptions
-                    .makeSceneTransitionAnimation(
-                        this@SongDetailActivity,
-                        binding.songJacket,
-                        "shared_image"
-                    )
-                PinchImageActivity.actionStart(
-                    this@SongDetailActivity,
-                    MaimaiDataClient.IMAGE_BASE_URL + songData.imageUrl,
-                    songData.id.toString(),
-                    options.toBundle()
-                )
-            }
-
-
+            //显示别名
             if (Settings.getEnableShowAlias()) {
                 AliasRepository.getInstance(AppDataBase.getInstance().aliasDao())
                     .getAliasListBySongId(songData.id).observe(this@SongDetailActivity) {
@@ -208,22 +176,60 @@ class SongDetailActivity : AppCompatActivity() {
                 aliasLabel.visibility = View.GONE
             }
 
-
-            val list = ArrayList<Fragment>()
-
-            (1..charts.size).forEach { i ->
-                val position = charts.size - i
-                list.add(SongLevelFragment.newInstance(data, position, recordList.find {
-                    it.song_id == songData.id.toString() &&
-                            it.level_index == position
-                }))
+            //打开歌曲大图
+            songJacket.setOnClickListener {
+                val options: ActivityOptions = ActivityOptions
+                    .makeSceneTransitionAnimation(
+                        this@SongDetailActivity,
+                        binding.songJacket,
+                        "shared_image"
+                    )
+                PinchImageActivity.actionStart(
+                    this@SongDetailActivity,
+                    MaimaiDataClient.IMAGE_BASE_URL + songData.imageUrl,
+                    songData.id.toString(),
+                    options.toBundle()
+                )
             }
 
+            //设置收藏
+            favButton.apply {
+                val colorFilter: (Boolean) -> Int = { isFavor: Boolean ->
+                    if (isFavor) {
+                        0
+                    } else {
+                        Color.WHITE
+                    }
+                }
+                setColorFilter(colorFilter.invoke(spUtils.isFavorite(songData.id.toString())))
+                setOnClickListener {
+                    val isFavor = spUtils.isFavorite(songData.id.toString())
+                    spUtils.setFavorite(songData.id.toString(), !isFavor)
+                    setColorFilter(colorFilter.invoke(!isFavor))
+                }
+            }
 
-            viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
-            tabLayout.setupWithViewPager(viewPager)
-
+            //获取成绩数据
+            RecordRepository.getInstance(AppDataBase.getInstance().recordDao())
+                .getRecordsBySongId(songData.id).observe(this@SongDetailActivity) {
+                    setupFragments(it)
+                }
         }
+    }
+
+    private fun setupFragments(recordList: List<RecordEntity>) {
+        val list = ArrayList<Fragment>()
+
+        (1..data.charts.size).forEach { i ->
+            val position = data.charts.size - i
+            list.add(SongLevelFragment.newInstance(data, position, recordList.find {
+                it.songId == data.songData.id &&
+                        it.levelIndex == position
+            }))
+        }
+
+        binding.viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
     }
 
 
