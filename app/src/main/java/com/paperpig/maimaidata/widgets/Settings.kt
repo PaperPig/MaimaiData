@@ -21,11 +21,15 @@ object Settings {
     private const val KEY_SHOW_ALIAS = "enable_show_alias"
     private const val DEFAULT_SHOW_ALIAS = true
 
+    private const val KEY_NICKNAME = "nickname"
+    private const val DEFAULT_NICKNAME = ""
+
 
     fun getEnableAliasSearch() =
         settingsPre.getBoolean(KEY_ALIAS_SEARCH, DEFAULT_ALIAS_SEARCH)
 
-
     fun getEnableShowAlias() =
         settingsPre.getBoolean(KEY_SHOW_ALIAS, DEFAULT_SHOW_ALIAS)
+
+    fun getNickname(): String = settingsPre.getString(KEY_NICKNAME, DEFAULT_NICKNAME) ?: DEFAULT_NICKNAME
 }

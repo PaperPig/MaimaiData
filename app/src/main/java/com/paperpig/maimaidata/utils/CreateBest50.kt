@@ -25,6 +25,7 @@ import java.util.Locale
 import java.util.concurrent.Executors
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
+import com.paperpig.maimaidata.widgets.Settings
 
 
 object CreateBest50 {
@@ -128,8 +129,15 @@ object CreateBest50 {
                 color = Color.BLACK
                 letterSpacing = 0.2f
             }
+
+            val name = if (Settings.getNickname() == "") {
+                SharePreferencesUtils(context).getUserName()
+            } else {
+                Settings.getNickname()
+            }
+
             containerCanvas.drawText(
-                SharePreferencesUtils(context).getUserName(),
+                name,
                 450f,
                 145f,
                 textPaint
