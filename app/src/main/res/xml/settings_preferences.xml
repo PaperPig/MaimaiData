@@ -12,6 +12,12 @@
         app:key="enable_alias_search"
         app:title="@string/settings_enable_alias_search" />
 
+    <SwitchPreference
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="enable_diving_fish_nickname"
+        app:title="@string/settings_use_diving_fish_nickname" />
+
     <EditTextPreference
         app:key="nickname"
         app:title="@string/settings_nickname"
