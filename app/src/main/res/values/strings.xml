@@ -9,7 +9,7 @@
     <string name="dx_song_list">曲目列表</string>
 
     <string name="search">搜索</string>
-    <string name="search_hint">输入歌曲名进行搜索</string>
+    <string name="search_hint">输入关键字进行搜索</string>
     <string name="level_ds_select">定数筛选</string>
     <string name="search_level_ds">LEVEL %.1f</string>
     <string name="search_level_string">LEVEL %s</string>
@@ -113,7 +113,7 @@
     <string name="old_version_divider">best 35 分界线</string>
     <string name="new_version_divider">best 15 分界线</string>
     <string name="rating_scope">%d/%d</string>
-    <string name="save_best40">保存图片</string>
+    <string name="save_best">保存图片</string>
     <string name="image_generation_error">图片生成失败</string>
     <string name="storage_permission_denied">保存失败，没有获取储存权限</string>
     <string name="file_saved_to_path">文件已保存至%1$s目录</string>
@@ -147,4 +147,9 @@
     <string name="settings">设置</string>
     <string name="settings_enable_show_alias">启用别名显示</string>
     <string name="settings_enable_alias_search">启用别名搜索</string>
+
+    <string name="song_id">歌曲ID</string>
+    <string name="settings_nickname">用户昵称</string>
+    <string name="settings_nickname_dialog_title">请输入昵称</string>
+
 </resources>

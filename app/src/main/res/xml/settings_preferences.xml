@@ -12,6 +12,13 @@
         app:key="enable_alias_search"
         app:title="@string/settings_enable_alias_search" />
 
+    <EditTextPreference
+        app:key="nickname"
+        app:title="@string/settings_nickname"
+        app:dialogTitle="@string/settings_nickname_dialog_title"
+        app:defaultValue=""
+        app:iconSpaceReserved="false" />
+
     <Preference
         app:fragment="com.paperpig.maimaidata.ui.about.AboutFragment"
         app:iconSpaceReserved="false"

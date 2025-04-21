@@ -132,6 +132,27 @@
                     app:layout_constraintStart_toEndOf="@+id/song_add_version"
                     app:layout_constraintTop_toTopOf="@+id/song_add_version" />
 
+                <TextView
+                    android:id="@+id/song_id_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:padding="5dp"
+                    android:text="@string/song_id"
+                    android:textColor="@color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/song_jacket" />
+
+                <TextView
+                    android:id="@+id/song_id_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:textColor="@color/white"
+                    app:layout_constraintStart_toEndOf="@id/alias_label"
+                    app:layout_constraintTop_toTopOf="@id/song_id_label"
+                    app:layout_constraintBottom_toBottomOf="@id/song_id_label"
+                    tools:text="100"/>
 
                 <TextView
                     android:id="@+id/alias_label"
@@ -141,13 +162,12 @@
                     android:text="@string/song_alias"
                     android:textColor="@color/white"
                     app:layout_constraintStart_toStartOf="@id/song_jacket"
-                    app:layout_constraintTop_toBottomOf="@id/song_jacket" />
+                    app:layout_constraintTop_toBottomOf="@id/song_id_label" />
 
                 <androidx.constraintlayout.helper.widget.Flow
                     android:id="@+id/song_alias_flow"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
                     android:orientation="horizontal"
                     app:constraint_referenced_ids="alias_label"
                     app:flow_horizontalBias="0"
@@ -158,7 +178,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/song_jacket" />
+                    app:layout_constraintTop_toBottomOf="@id/song_id_label" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
