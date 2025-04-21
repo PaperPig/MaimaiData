@@ -10,9 +10,10 @@ import androidx.core.content.ContextCompat
 import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentSongLevelBinding
+import com.paperpig.maimaidata.db.AppDataBase
 import com.paperpig.maimaidata.db.entity.RecordEntity
 import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
-import com.paperpig.maimaidata.repository.ChartStatsManager
+import com.paperpig.maimaidata.repository.ChartStatsRepository
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.setCopyOnLongClick
@@ -76,20 +77,16 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
         }
         val chart = data.charts[position]
         val songData = data.songData
-        val statsList = ChartStatsManager.list
-        val fitDiff =
-        //宴会场不显示拟合定数
-            //没有拟合定数数据显示为"-"
-            if (chart.difficultyType.name == Constants.GENRE_UTAGE) {
-                "-"
-            } else {
-                statsList[chart.songId.toString()]?.get(position)?.fitDiff?.let {
+        //显示拟合定数
+        ChartStatsRepository.getInstance(AppDataBase.getInstance().chartStatsDao())
+            .getChartStatsBySongIdAndDifficultyIndex(songData.id, position).observe(requireActivity()) {
+                //没有拟合定数数据显示为"-"
+                val fitDiff = it?.fitDiff?.let {
                     BigDecimal(it).setScale(2, RoundingMode.HALF_UP).toString()
                 } ?: "-"
+
+                binding.songFitDiff.text = fitDiff
             }
-
-        binding.songFitDiff.text = fitDiff
-
 
         val totalScore =
             (chart.notesTap + chart.notesTouch) + chart.notesHold * 2 + chart.notesSlide * 3 + chart.notesBreak * 5
@@ -127,10 +124,10 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
         }
 
         binding.chartDesigner.apply {
-            text = songData.charts[position].charter
+            text = data.charts[position].charter
 
             setShrinkOnTouch()
-            setCopyOnLongClick(songData.charts[position].charter)
+            setCopyOnLongClick(data.charts[position].charter)
         }
 
         binding.chartView.setMaxValues((MaimaiDataApplication.instance.maxNotesStats?.let {

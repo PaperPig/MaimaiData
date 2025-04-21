@@ -5,8 +5,10 @@ import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
 import com.paperpig.maimaidata.db.entity.AliasEntity
 import com.paperpig.maimaidata.db.entity.ChartEntity
+import com.paperpig.maimaidata.db.entity.ChartStatsEntity
 import com.paperpig.maimaidata.db.entity.RecordEntity
 import com.paperpig.maimaidata.db.entity.SongDataEntity
+import com.paperpig.maimaidata.model.ChartsResponse
 import com.paperpig.maimaidata.model.DifficultyType
 import com.paperpig.maimaidata.model.SongData
 
@@ -78,6 +80,27 @@ object JsonConvertToDb {
         val type = object : TypeToken<List<RecordEntity>>() {}.type
         return gson.fromJson(json, type)
     }
+
+    fun convertChatStats(response: ChartsResponse): List<ChartStatsEntity> {
+        return response.charts.flatMap { id ->
+            id.value.mapIndexed { index, it ->
+                ChartStatsEntity(
+                    0,
+                    id.key.toInt(),
+                    it.cnt,
+                    it.diff,
+                    index,
+                    it.fitDiff,
+                    it.avg,
+                    it.avgDx,
+                    it.stdDev,
+                    it.dist,
+                    it.fcDist
+                )
+            }
+        }
+    }
+
 
     private fun getDifficultyType(genre: String, index: Int): DifficultyType {
         return if (genre == Constants.GENRE_UTAGE) {

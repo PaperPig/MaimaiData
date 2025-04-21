@@ -89,12 +89,12 @@ class SharePreferencesUtils(
 
     fun saveLastUpdateChartStats(time: Long) {
         prefs.edit().apply {
-            putLong("last_update_time", time).apply()
+            putLong("chart_stats_db_last_update_time", time).apply()
         }
     }
 
     fun getLastUpdateChartStats(): Long {
-        return prefs.getLong("last_update_time", 0)
+        return prefs.getLong("chart_stats_db_last_update_time", 0)
     }
 
     fun saveLastQueryLevel(level: Float) {
