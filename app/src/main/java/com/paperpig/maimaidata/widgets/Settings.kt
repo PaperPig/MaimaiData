@@ -21,6 +21,9 @@ object Settings {
     private const val KEY_SHOW_ALIAS = "enable_show_alias"
     private const val DEFAULT_SHOW_ALIAS = true
 
+    private const val KEY_USE_DIVING_FISH_NICKNAME = "enable_diving_fish_nickname"
+    private const val DEFAULT_USE_DIVING_FISH_NICKNAME = true
+
     private const val KEY_NICKNAME = "nickname"
     private const val DEFAULT_NICKNAME = ""
 
@@ -30,6 +33,9 @@ object Settings {
 
     fun getEnableShowAlias() =
         settingsPre.getBoolean(KEY_SHOW_ALIAS, DEFAULT_SHOW_ALIAS)
+
+    fun getEnableDivingFishNickname() =
+        settingsPre.getBoolean(KEY_USE_DIVING_FISH_NICKNAME, DEFAULT_USE_DIVING_FISH_NICKNAME)
 
     fun getNickname(): String = settingsPre.getString(KEY_NICKNAME, DEFAULT_NICKNAME) ?: DEFAULT_NICKNAME
 }

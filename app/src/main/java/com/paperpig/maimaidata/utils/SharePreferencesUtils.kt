@@ -109,4 +109,12 @@ class SharePreferencesUtils(
     fun getLastQueryVersion(): Int{
         return prefs.getInt("last_query_version", 0)
     }
+
+    fun saveDivingFishNickname(nickname: String){
+        prefs.edit().putString("diving_fish_nickname", nickname).apply()
+    }
+
+    fun getDivingFishNickname(): String {
+        return prefs.getString("diving_fish_nickname", "") ?: ""
+    }
 }

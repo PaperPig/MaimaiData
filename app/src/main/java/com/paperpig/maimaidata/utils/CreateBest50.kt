@@ -130,11 +130,15 @@ object CreateBest50 {
                 letterSpacing = 0.2f
             }
 
-            val name = if (Settings.getNickname() == "") {
-                SharePreferencesUtils(context).getUserName()
-            } else {
+            val name = if (Settings.getNickname() != "") {
                 Settings.getNickname()
+            } else if (SharePreferencesUtils(context).getDivingFishNickname() != "") {
+                SharePreferencesUtils(context).getDivingFishNickname()
+            } else {
+                SharePreferencesUtils(context).getUserName()
             }
+
+            SharePreferencesUtils(context).saveDivingFishNickname("")
 
             containerCanvas.drawText(
                 name,
