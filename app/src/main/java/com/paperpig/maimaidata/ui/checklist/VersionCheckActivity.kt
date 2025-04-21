@@ -88,6 +88,8 @@ class VersionCheckActivity : AppCompatActivity() {
                 VersionCheckAdapter(context,
                     dataList.filter {
                         it.basic_info.from == versionList[lastSelectedPosition].versionName
+                                && it.basic_info.genre != Constants.GENRE_UTAGE
+                                && it.ds.size > 3
                     }.sortedByDescending { it.ds[3] }, recordList
                 )
 
