@@ -22,7 +22,8 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity android:name=".ui.songdetail.PinchImageActivity" />
-        <activity android:name=".ui.about.SettingsActivity" />
+        <activity android:name=".ui.about.SettingsActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".ui.maimaidxprober.LoginActivity" />
         <activity android:name=".ui.maimaidxprober.ProberActivity" />
         <activity android:name=".ui.songdetail.SongDetailActivity" />
