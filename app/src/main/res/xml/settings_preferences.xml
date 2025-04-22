@@ -13,6 +13,12 @@
         app:title="@string/settings_enable_alias_search" />
 
     <SwitchPreference
+        app:defaultValue="false"
+        app:iconSpaceReserved="false"
+        app:key="enable_charter_search"
+        app:title="@string/settings_enable_charter_search" />
+
+    <SwitchPreference
         app:defaultValue="true"
         app:iconSpaceReserved="false"
         app:key="enable_diving_fish_nickname"

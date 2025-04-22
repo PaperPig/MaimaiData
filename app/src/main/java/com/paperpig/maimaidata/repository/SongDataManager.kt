@@ -119,6 +119,7 @@ object SongDataManager {
 
             // 谱师匹配
             val matchesDesigner = when {
+                !Settings.getEnableCharterSearch() -> false
                 searchText.isEmpty() -> true
                 else -> song.charts.any { it.charter.contains(searchText, true) }
             }
