@@ -23,14 +23,22 @@ import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.toDp
 
 class LevelCheckAdapter(
-    val context: Context,
-    private var dataList: List<SongWithChartsEntity>,     //歌曲信息列表
-    private val recordList: List<RecordEntity>, //个人记录列表
-    private var levelSelect: String   //指定难度
+    val context: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     //0为显示完成率标识，1为显示FC/AP标识，2为显示FDX标识
     private var displayMode = 0
-    private var groupData: Map<Double, List<DsSongData>> = getFormatData()
+
+    //歌曲信息列表
+    private var dataList: List<SongWithChartsEntity> = emptyList()
+
+    //个人记录列表
+    private var recordList: List<RecordEntity> = emptyList()
+
+    //指定难度
+    private var levelSelect: String? = null
+
+    //显示的数据
+    private var groupData: Map<Double, List<DsSongData>> = mapOf()
 
     /**
      * 转换为adapter数据源
@@ -212,6 +220,16 @@ class LevelCheckAdapter(
 
     fun updateDisplay() {
         displayMode = (displayMode + 1) % 3
+        notifyDataSetChanged()
+    }
+
+    fun setData(
+        dataList: List<SongWithChartsEntity>,
+        recordList: List<RecordEntity>
+    ) {
+        this.dataList = dataList
+        this.recordList = recordList
+        groupData = getFormatData()
         notifyDataSetChanged()
     }
 

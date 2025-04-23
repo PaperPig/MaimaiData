@@ -22,9 +22,9 @@ import com.paperpig.maimaidata.utils.SharePreferencesUtils
 
 class VersionCheckActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVersionCheckBinding
-    private var dataList = listOf<SongWithChartsEntity>()
-    private var recordList = listOf<RecordEntity>()
     private lateinit var sharedPrefs: SharePreferencesUtils
+    private var searchVersionString = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,10 +40,13 @@ class VersionCheckActivity : AppCompatActivity() {
         supportActionBar?.title = getString(R.string.version_query)
         sharedPrefs = SharePreferencesUtils(this)
 
+        initView()
         getData()
     }
 
     private fun getData() {
+        var songs: List<SongWithChartsEntity>? = null
+        var records: List<RecordEntity>? = null
         //获取所有的歌曲
         val allSongs = SongWithChartRepository.getInstance(
             AppDataBase.getInstance().songWithChartDao(),
@@ -54,19 +57,22 @@ class VersionCheckActivity : AppCompatActivity() {
                 .getRecordsByDifficultyIndex(3)
         //使用MediatorLiveData来监听两个LiveData的变化
         MediatorLiveData<Pair<List<SongWithChartsEntity>, List<RecordEntity>>>().apply {
-            addSource(allSongs) { songs ->
-                val records = allRecords.value ?: emptyList()
-                value = Pair(songs, records)
+            addSource(allSongs) { newSongs ->
+                songs = newSongs
+                if (songs != null && records != null) {
+                    value = Pair(songs!!, records!!)
+                }
             }
-            addSource(allRecords) { records ->
-                val songs = allSongs.value ?: emptyList()
-                value = Pair(songs, records)
+            addSource(allRecords) { newRecords ->
+                records = newRecords
+                if (songs != null && records != null) {
+                    value = Pair(songs, records!!)
+                }
             }
-            observe(this@VersionCheckActivity) {
-                if (it.first.isNotEmpty() && it.second.isNotEmpty()) {
-                    dataList = it.first
-                    recordList = it.second
-                    initView()
+            observe(this@VersionCheckActivity) { (songs, records) ->
+                (binding.versionCheckRecycler.adapter as VersionCheckAdapter).apply {
+                    setData(songs, records)
+                    updateData(searchVersionString)
                 }
             }
         }
@@ -76,6 +82,8 @@ class VersionCheckActivity : AppCompatActivity() {
     private fun initView() {
         val lastSelectedPosition = sharedPrefs.getLastQueryVersion()
         val versionList = getVersionList()
+        searchVersionString = versionList[lastSelectedPosition].versionName
+
 
         //设置spinner适配器
         binding.versionSpn.apply {
@@ -96,31 +104,23 @@ class VersionCheckActivity : AppCompatActivity() {
                         id: Long
                     ) {
                         sharedPrefs.saveLastQueryVersion(position)
-
+                        searchVersionString =
+                            (parent?.getItemAtPosition(position) as Version).versionName
                         (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateData(
-                            dataList.filter {
-                                (it.songData.from == (parent?.getItemAtPosition(
-                                    position
-                                ) as Version).versionName)
-                            }.sortedByDescending { it.charts[3].ds })
+                            searchVersionString
+                        )
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {
                     }
-
                 }
+
 
         }
 
         //设置recyclerView适配器
         binding.versionCheckRecycler.apply {
-            adapter =
-                VersionCheckAdapter(
-                    context,
-                    dataList.filter {
-                        it.songData.from == versionList[lastSelectedPosition].versionName
-                    }.sortedByDescending { it.charts[3].ds }, recordList
-                )
+            adapter = VersionCheckAdapter(context)
 
             layoutManager = FlexboxLayoutManager(context).apply {
                 flexDirection = FlexDirection.ROW

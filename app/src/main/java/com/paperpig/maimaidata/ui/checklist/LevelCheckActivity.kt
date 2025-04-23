@@ -18,8 +18,6 @@ import com.paperpig.maimaidata.utils.SharePreferencesUtils
 
 class LevelCheckActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLevelCheckBinding
-    private var dataList = listOf<SongWithChartsEntity>()
-    private var recordList = listOf<RecordEntity>()
     private lateinit var sharedPrefs: SharePreferencesUtils
     private var searchLevelString = ""
 
@@ -38,9 +36,12 @@ class LevelCheckActivity : AppCompatActivity() {
         sharedPrefs = SharePreferencesUtils(this)
 
         getData()
+        initView()
     }
 
     private fun getData() {
+        var songs: List<SongWithChartsEntity>? = null
+        var records: List<RecordEntity>? = null
         //获取所有的歌曲
         val allSongs = SongWithChartRepository.getInstance(
             AppDataBase.getInstance().songWithChartDao(),
@@ -50,19 +51,22 @@ class LevelCheckActivity : AppCompatActivity() {
             RecordRepository.getInstance(AppDataBase.getInstance().recordDao()).getAllRecord()
         //使用MediatorLiveData来监听两个LiveData的变化
         MediatorLiveData<Pair<List<SongWithChartsEntity>, List<RecordEntity>>>().apply {
-            addSource(allSongs) { songs ->
-                val records = allRecords.value ?: emptyList()
-                value = Pair(songs, records)
+            addSource(allSongs) { newSongs ->
+                songs = newSongs
+                if (songs != null && records != null) {
+                    value = Pair(songs!!, records!!)
+                }
             }
-            addSource(allRecords) { records ->
-                val songs = allSongs.value ?: emptyList()
-                value = Pair(songs, records)
+            addSource(allRecords) { newRecords ->
+                records = newRecords
+                if (songs != null && records != null) {
+                    value = Pair(songs, records!!)
+                }
             }
-            observe(this@LevelCheckActivity) {
-                if (it.first.isNotEmpty() && it.second.isNotEmpty()) {
-                    dataList = it.first
-                    recordList = it.second
-                    initView()
+            observe(this@LevelCheckActivity) { (songs, records) ->
+                (binding.levelCheckRecycler.adapter as LevelCheckAdapter).apply {
+                    setData(songs, records)
+                    updateData(searchLevelString)
                 }
             }
         }
@@ -73,6 +77,7 @@ class LevelCheckActivity : AppCompatActivity() {
         val levelArrays =
             resources.getStringArray(R.array.dxp_song_level).toMutableList()
                 .apply { removeAt(0) }
+        binding.levelText.text = getString(R.string.search_level_string, levelArrays[0])
 
         //设置slide监听器
         binding.levelSlider.apply {
@@ -87,6 +92,7 @@ class LevelCheckActivity : AppCompatActivity() {
                 )
                 sharedPrefs.saveLastQueryLevel(binding.levelSlider.value)
             }
+
             setLabelFormatter { value ->
                 val index = value.toInt()
                 getString(
@@ -102,12 +108,7 @@ class LevelCheckActivity : AppCompatActivity() {
                 flexDirection = FlexDirection.ROW
                 justifyContent = JustifyContent.FLEX_START // 设置主轴上的对齐方式为起始位置
             }
-            adapter = LevelCheckAdapter(
-                context,
-                dataList,
-                recordList,
-                searchLevelString
-            )
+            adapter = LevelCheckAdapter(context)
         }
 
         binding.levelSlider.value = sharedPrefs.getLastQueryLevel()

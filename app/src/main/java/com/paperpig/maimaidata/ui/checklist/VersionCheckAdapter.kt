@@ -21,13 +21,27 @@ import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
 import com.paperpig.maimaidata.utils.toDp
 
 class VersionCheckAdapter(
-    val context: Context,
-    private var dataList: List<SongWithChartsEntity>,
-    private val recordList: List<RecordEntity>
+    val context: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     //0为显示完成率标识，1为显示FC/AP标识，2为显示FDX标识
     private var displayMode = 0
-    private var groupData = dataList.groupBy { it.charts[3].level }
+
+    //歌曲信息列表
+    private var dataList: List<SongWithChartsEntity> = listOf()
+
+    //个人记录列表
+    private var recordList: List<RecordEntity> = listOf()
+
+    //指定版本
+    private var versionSelect: String? = null
+
+    private var groupData: Map<String, List<SongWithChartsEntity>> = mapOf()
+
+    private fun getFormatData(): Map<String, List<SongWithChartsEntity>> {
+        return dataList.filter { it.songData.from == versionSelect }
+            .sortedByDescending { it.charts[3].ds }.groupBy { it.charts[3].level }
+    }
+
 
     companion object {
         const val TYPE_HEADER = 0
@@ -86,28 +100,31 @@ class VersionCheckAdapter(
         if (holder is HeaderViewHolder) {
             val format = context.getString(R.string.name_plate_achieved)
 
+            val groupFlatten = groupData.values.flatten()
+            val groupSize = groupData.values.sumOf { it.size }
+
             holder.tripleSCount.text = String.format(
                 format, recordList.count {
-                    it.achievements >= 100 && dataList.any { data -> data.songData.id == it.songId }
-                }, dataList.size
+                    it.achievements >= 100 && groupFlatten.any { data -> data.songData.id == it.songId }
+                }, groupSize
             )
 
             holder.fcCount.text = String.format(
                 format, recordList.count {
-                    it.fc.isNotEmpty() && dataList.any { data -> data.songData.id == it.songId }
-                }, dataList.size
+                    it.fc.isNotEmpty() && groupFlatten.any { data -> data.songData.id == it.songId }
+                }, groupSize
             )
 
             holder.apCount.text = String.format(
                 format, recordList.count {
-                    (it.fc == "ap" || it.fc == "app") && dataList.any { data -> data.songData.id == it.songId }
-                }, dataList.size
+                    (it.fc == "ap" || it.fc == "app") && groupFlatten.any { data -> data.songData.id == it.songId }
+                }, groupSize
             )
 
             holder.fsdCount.text = String.format(
                 format, recordList.count {
-                    (it.fs == "fsd" || it.fs == "fsdp") && dataList.any { data -> data.songData.id == it.songId }
-                }, dataList.size
+                    (it.fs == "fsd" || it.fs == "fsdp") && groupFlatten.any { data -> data.songData.id == it.songId }
+                }, groupSize
             )
         }
         if (holder is LevelHolder) {
@@ -178,7 +195,7 @@ class VersionCheckAdapter(
 
 
     override fun getItemCount(): Int {
-        return groupData.size + dataList.size + 1
+        return groupData.size + groupData.values.sumOf { it.size } + 1
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -201,11 +218,20 @@ class VersionCheckAdapter(
         notifyDataSetChanged()
     }
 
-    fun updateData(
+    fun setData(
         newSongData: List<SongWithChartsEntity>,
+        newRecordList: List<RecordEntity>,
     ) {
         dataList = newSongData
-        groupData = dataList.groupBy { it.charts[3].level }
+        recordList = newRecordList
+        groupData = getFormatData()
+    }
+
+    fun updateData(
+        version: String
+    ) {
+        versionSelect = version
+        groupData = getFormatData()
         notifyDataSetChanged()
 
     }
