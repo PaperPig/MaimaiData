@@ -15,16 +15,15 @@
 
             <com.paperpig.maimaidata.widgets.ClearEditText
                 android:id="@+id/search_edit_text"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_marginEnd="12dp"
                 android:background="@drawable/search_bar_right_bg"
                 android:hint="@string/search_hint"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:padding="6dp"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toStartOf="@+id/search_button"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -289,28 +288,27 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/favor_checkbox" />
 
-            <androidx.constraintlayout.helper.widget.Flow
-                android:id="@+id/action_flow"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/search_divider_view_4"
-                app:constraint_referenced_ids="search_reset_btn,search_button"
-                app:flow_horizontalStyle="spread"
-                app:flow_verticalGap="10dp"
-                app:flow_horizontalGap="10dp"
-                app:flow_wrapMode="aligned" />
             <Button
+                android:layout_marginTop="8dp"
                 android:id="@+id/search_reset_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/search_reset" />
+                android:layout_marginEnd="6dp"
+                android:text="@string/search_reset"
+                app:layout_constraintEnd_toStartOf="@id/search_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/search_divider_view_4" />
+
             <Button
                 android:id="@+id/search_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/search" />
+                android:layout_marginStart="6dp"
+                android:text="@string/search"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/search_reset_btn"
+                app:layout_constraintTop_toTopOf="@+id/search_reset_btn" />
 
         </androidx.constraintlayout.motion.widget.MotionLayout>
 </androidx.core.widget.NestedScrollView>
