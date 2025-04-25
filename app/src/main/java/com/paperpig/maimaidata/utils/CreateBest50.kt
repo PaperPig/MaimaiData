@@ -12,20 +12,20 @@ import android.text.TextPaint
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.scale
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
+import com.paperpig.maimaidata.widgets.Settings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.Executors
-import androidx.core.graphics.createBitmap
-import androidx.core.graphics.scale
-import com.paperpig.maimaidata.widgets.Settings
 
 
 object CreateBest50 {
@@ -132,13 +132,13 @@ object CreateBest50 {
 
             val name = if (Settings.getNickname() != "") {
                 Settings.getNickname()
-            } else if (SharePreferencesUtils(context).getDivingFishNickname() != "") {
-                SharePreferencesUtils(context).getDivingFishNickname()
+            } else if (SpUtil.getDivingFishNickname() != "") {
+                SpUtil.getDivingFishNickname()
             } else {
-                SharePreferencesUtils(context).getUserName()
+                SpUtil.getUserName()
             }
 
-            SharePreferencesUtils(context).saveDivingFishNickname("")
+            SpUtil.saveDivingFishNickname("")
 
             containerCanvas.drawText(
                 name,

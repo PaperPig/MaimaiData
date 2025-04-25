@@ -20,7 +20,7 @@ import com.paperpig.maimaidata.repository.ChartStatsManager
 import com.paperpig.maimaidata.repository.ChartStatsRepository
 import com.paperpig.maimaidata.ui.rating.RatingFragment
 import com.paperpig.maimaidata.ui.songlist.SongListFragment
-import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import com.paperpig.maimaidata.utils.SpUtil
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
     private var checkChartStatusDisposable: Disposable? = null
     private var isUpdateChecked = false
     private var downloadTask: DownloadTask? = null
-    private lateinit var spUtils: SharePreferencesUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +42,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbarLayout.toolbar)
-
-        spUtils = SharePreferencesUtils(this, SharePreferencesUtils.PREF_NAME_VERSION_INFO)
 
         checkChartStatus()
 
@@ -132,14 +129,14 @@ class MainActivity : AppCompatActivity() {
                     }.onNegative { d, _ ->
                         d.dismiss()
                     }.autoDismiss(true).cancelable(true).show()
-            } else if (spUtils.getDataVersion() < it.dataVersion2!!
+            } else if (SpUtil.getDataVersion() < it.dataVersion2!!
             ) {
                 MaterialDialog.Builder(this)
                     .title(this@MainActivity.getString(R.string.maimai_data_data_update_title))
                     .content(
                         String.format(
                             this@MainActivity.getString(R.string.maimai_data_data_update_info),
-                            spUtils.getDataVersion(),
+                            SpUtil.getDataVersion(),
                             it.dataVersion2
                         )
                     ).positiveText(R.string.maimai_data_update_download)
@@ -161,7 +158,7 @@ class MainActivity : AppCompatActivity() {
      */
     private fun checkChartStatus() {
         //每五天更新数据
-        val lastUpdateTime = spUtils.getLastUpdateChartStats()
+        val lastUpdateTime = SpUtil.getLastUpdateChartStats()
         val currentTime = System.currentTimeMillis()
         val fiveDaysMillis = 5 * 24 * 60 * 60 * 1000L
         if ((currentTime - lastUpdateTime) >= fiveDaysMillis) {
@@ -169,7 +166,7 @@ class MainActivity : AppCompatActivity() {
                 { t ->
                     CoroutineScope(Dispatchers.IO).launch {
                         ChartStatsRepository().saveChartStats(this@MainActivity, t)
-                        spUtils.saveLastUpdateChartStats(currentTime)
+                        SpUtil.saveLastUpdateChartStats(currentTime)
                         ChartStatsManager.loadData()
                     }
                 }, {
@@ -217,7 +214,7 @@ class MainActivity : AppCompatActivity() {
             override fun completed(task: DownloadTask) {
                 updateDialog.dismiss()
                 songListFragment.loadData()
-                spUtils.setDataVersion(appUpdateModel.dataVersion2!!)
+                SpUtil.setDataVersion(appUpdateModel.dataVersion2!!)
             }
 
             override fun canceled(task: DownloadTask) {

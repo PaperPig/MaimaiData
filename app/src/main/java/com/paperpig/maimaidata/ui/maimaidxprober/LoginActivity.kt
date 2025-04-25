@@ -6,7 +6,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
@@ -14,11 +13,10 @@ import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityLoginBinding
 import com.paperpig.maimaidata.model.ResponseErrorBody
 import com.paperpig.maimaidata.network.MaimaiDataRequests
-import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import com.paperpig.maimaidata.utils.SpUtil
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var sharedPrefs: SharePreferencesUtils
     private lateinit var accountList: MutableList<Pair<String, String>>
     private lateinit var spinnerAdapter: ArrayAdapter<String>
 
@@ -34,9 +32,8 @@ class LoginActivity : AppCompatActivity() {
             title = getString(R.string.login)
         }
 
-        sharedPrefs = SharePreferencesUtils(this)
-        binding.username.setText(sharedPrefs.getUserName())
-        binding.password.setText(sharedPrefs.getPassword())
+        binding.username.setText(SpUtil.getUserName())
+        binding.password.setText(SpUtil.getPassword())
 
         setupAccountSpinner()
 
@@ -58,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
             }
             selectedAccount?.let { user ->
                 accountList.remove(user)
-                sharedPrefs.removeAccount(user.first)
+                SpUtil.removeAccount(user.first)
                 updateAccountSpinner()
             } ?: Toast.makeText(this, R.string.select_account_hint, Toast.LENGTH_SHORT).show()
         }
@@ -80,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
                     if (it.code() == 200) {
                         val cookie = it.headers()["set-cookie"] ?: ""
                         if (cookie.isNotBlank()) {
-                            sharedPrefs.putLoginInfo(username, password, cookie)
+                            SpUtil.putLoginInfo(username, password, cookie)
                             setupAccountSpinner()
                             startActivity(Intent(this, ProberActivity::class.java))
                             finish()
@@ -112,7 +109,7 @@ class LoginActivity : AppCompatActivity() {
     private var selectedAccount: Pair<String, String>? = null
 
     private fun setupAccountSpinner() {
-        accountList = sharedPrefs.getAccountHistory().toMutableList()
+        accountList = SpUtil.getAccountHistory().toMutableList()
 
         val usernames = if (accountList.isEmpty()) {
             listOf("无保存的账号")

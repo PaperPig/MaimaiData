@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.repository.RecordDataManager
+import com.paperpig.maimaidata.utils.SpUtil
 import com.paperpig.maimaidata.widgets.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +29,8 @@ class MaimaiDataApplication : Application() {
         super.onCreate()
 
         Settings.init(this)
+
+        SpUtil.init(this)
 
         //启动时加载分数记录
         CoroutineScope(Dispatchers.IO).launch {

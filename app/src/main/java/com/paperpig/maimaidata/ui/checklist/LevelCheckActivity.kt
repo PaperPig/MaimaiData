@@ -12,13 +12,12 @@ import com.paperpig.maimaidata.model.Record
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.repository.RecordDataManager
 import com.paperpig.maimaidata.repository.SongDataManager
-import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import com.paperpig.maimaidata.utils.SpUtil
 
 class LevelCheckActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLevelCheckBinding
     private var dataList = listOf<SongData>()
     private var recordList = listOf<Record>()
-    private lateinit var sharedPrefs: SharePreferencesUtils
     private var searchLevelString = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +32,6 @@ class LevelCheckActivity : AppCompatActivity() {
             setDisplayShowHomeEnabled(true)
         }
         supportActionBar?.title = getString(R.string.level_query)
-        sharedPrefs = SharePreferencesUtils(this)
         //删除ALL等级标记
         val levelArrays =
             resources.getStringArray(R.array.dxp_song_level).toMutableList().apply { removeAt(0) }
@@ -50,7 +48,7 @@ class LevelCheckActivity : AppCompatActivity() {
                     binding.levelText.text =
                         context.getString(R.string.search_level_string, searchLevelString)
                     refreshDataList()
-                    sharedPrefs.saveLastQueryLevel(binding.levelSlider.value)
+                    SpUtil.saveLastQueryLevel(binding.levelSlider.value)
                 }
                 setLabelFormatter { value ->
                     val index = value.toInt()
@@ -66,7 +64,7 @@ class LevelCheckActivity : AppCompatActivity() {
             }
         }
 
-        binding.levelSlider.value = sharedPrefs.getLastQueryLevel()
+        binding.levelSlider.value = SpUtil.getLastQueryLevel()
         searchLevelString = levelArrays[binding.levelSlider.value.toInt()]
 
         binding.switchBtn.setOnClickListener {

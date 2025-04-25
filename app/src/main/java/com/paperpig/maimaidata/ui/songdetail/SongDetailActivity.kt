@@ -19,7 +19,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivitySongDetailBinding
 import com.paperpig.maimaidata.glide.GlideApp
@@ -27,7 +26,7 @@ import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.repository.RecordDataManager
 import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.utils.Constants
-import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import com.paperpig.maimaidata.utils.SpUtil
 import com.paperpig.maimaidata.utils.setCopyOnLongClick
 import com.paperpig.maimaidata.utils.setShrinkOnTouch
 import com.paperpig.maimaidata.utils.toDp
@@ -36,7 +35,6 @@ import com.paperpig.maimaidata.widgets.Settings
 
 class SongDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySongDetailBinding
-    private val spUtils = SharePreferencesUtils(MaimaiDataApplication.instance, "songInfo")
 
     companion object {
         const val EXTRA_SONG_ID = "extra_song_id"
@@ -136,10 +134,10 @@ class SongDetailActivity : AppCompatActivity() {
                     }
                 }
                 favButton.apply {
-                    setColorFilter(colorFilter.invoke(spUtils.isFavorite(songData.id)))
+                    setColorFilter(colorFilter.invoke(SpUtil.isFavorite(songData.id)))
                     setOnClickListener {
-                        val isFavor = spUtils.isFavorite(songData.id)
-                        spUtils.setFavorite(songData.id, !isFavor)
+                        val isFavor = SpUtil.isFavorite(songData.id)
+                        SpUtil.setFavorite(songData.id, !isFavor)
                         setColorFilter(colorFilter.invoke(!isFavor))
                     }
                 }

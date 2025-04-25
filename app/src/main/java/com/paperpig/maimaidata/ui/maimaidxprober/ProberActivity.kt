@@ -22,7 +22,7 @@ import com.paperpig.maimaidata.repository.SongDataRepository
 import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.CreateBest50
 import com.paperpig.maimaidata.utils.PermissionHelper
-import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import com.paperpig.maimaidata.utils.SpUtil
 import com.paperpig.maimaidata.widgets.AnimationHelper
 import com.paperpig.maimaidata.widgets.Settings
 import kotlinx.coroutines.CoroutineScope
@@ -42,8 +42,6 @@ class ProberActivity : AppCompatActivity() {
     private lateinit var animationHelper: AnimationHelper
 
     private lateinit var permissionHelper: PermissionHelper
-
-    private lateinit var sharedPrefs: SharePreferencesUtils
 
     val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
@@ -71,7 +69,6 @@ class ProberActivity : AppCompatActivity() {
             String.format(getString(R.string.new_version_15), 0)
 
         permissionHelper = PermissionHelper.with(this)
-        sharedPrefs = SharePreferencesUtils(this)
 
         CoroutineScope(Dispatchers.Main).launch {
             songData = SongDataRepository().getData(this@ProberActivity)
@@ -119,7 +116,7 @@ class ProberActivity : AppCompatActivity() {
                 setColorSchemeResources(R.color.colorPrimary)
             }
 
-            MaimaiDataRequests.getRecords(SharePreferencesUtils(this@ProberActivity).getCookie())
+            MaimaiDataRequests.getRecords(SpUtil.getCookie())
                 .subscribe({ it ->
                     binding.refreshLayout.isRefreshing = false
                     val hasStatus = it.asJsonObject.has("status")
@@ -140,7 +137,7 @@ class ProberActivity : AppCompatActivity() {
                     if (Settings.getEnableDivingFishNickname()) {
                         val hasNickname = it.asJsonObject.has("nickname")
                         if (hasNickname) {
-                            sharedPrefs.saveDivingFishNickname(it.asJsonObject.get("nickname").asString)
+                            SpUtil.saveDivingFishNickname(it.asJsonObject.get("nickname").asString)
                         }
                     }
 

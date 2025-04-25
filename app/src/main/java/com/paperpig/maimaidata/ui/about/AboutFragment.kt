@@ -7,7 +7,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.paperpig.maimaidata.BuildConfig
 import com.paperpig.maimaidata.R
-import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import com.paperpig.maimaidata.utils.SpUtil
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -21,15 +21,12 @@ class AboutFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.abot_preferences, rootKey)
 
-        val spUtils = SharePreferencesUtils(
-            requireContext(),
-            SharePreferencesUtils.PREF_NAME_VERSION_INFO
-        )
+
 
         findPreference<Preference>("version")?.summary = BuildConfig.VERSION_NAME
-        findPreference<Preference>("base_data_version")?.summary = spUtils.getDataVersion()
+        findPreference<Preference>("base_data_version")?.summary = SpUtil.getDataVersion()
         findPreference<Preference>("last_time_update_chart_stats")?.summary =
-            spUtils.getLastUpdateChartStats().let {
+            SpUtil.getLastUpdateChartStats().let {
                 SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(it)
             }
         findPreference<Preference>("project_url")?.apply {

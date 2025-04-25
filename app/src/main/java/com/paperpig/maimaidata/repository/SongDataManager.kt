@@ -3,13 +3,11 @@ package com.paperpig.maimaidata.repository
 import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.utils.Constants
-import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import com.paperpig.maimaidata.utils.SpUtil
 import com.paperpig.maimaidata.utils.versionCheck
 import com.paperpig.maimaidata.widgets.Settings
 
 object SongDataManager {
-
-    private val spUtils = SharePreferencesUtils(MaimaiDataApplication.instance, "songInfo")
 
     private val remasterComparator = Comparator<SongData> { a, b ->
         when {
@@ -146,13 +144,13 @@ object SongDataManager {
                     sequencing?.startsWith("RE:MASTER") == true -> song.level.getOrNull(4) == level
                     else -> song.level.contains(level)
                 }
-            } ?: true
+            } != false
 
             // 定数匹配
-            val matchesDs = levelDs?.let { ds -> song.ds.contains(ds) } ?: true
+            val matchesDs = levelDs?.let { ds -> song.ds.contains(ds) } != false
 
             // 是否收藏
-            val matchesFavorite = !isShowFavor || spUtils.isFavorite(song.id)
+            val matchesFavorite = !isShowFavor || SpUtil.isFavorite(song.id)
 
             (matchesSearch || matchesAlias || matchesDesigner) && matchesGenre && matchesVersion && matchesLevel && matchesDs && matchesFavorite
         }.let { filteredList ->

@@ -13,15 +13,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentRatingBinding
 import com.paperpig.maimaidata.model.Rating
-import com.paperpig.maimaidata.ui.about.SettingsActivity
 import com.paperpig.maimaidata.ui.BaseFragment
+import com.paperpig.maimaidata.ui.about.SettingsActivity
 import com.paperpig.maimaidata.ui.checklist.LevelCheckActivity
 import com.paperpig.maimaidata.ui.checklist.VersionCheckActivity
 import com.paperpig.maimaidata.ui.finaletodx.FinaleToDxActivity
 import com.paperpig.maimaidata.ui.maimaidxprober.LoginActivity
 import com.paperpig.maimaidata.ui.maimaidxprober.ProberActivity
 import com.paperpig.maimaidata.utils.ConvertUtils
-import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import com.paperpig.maimaidata.utils.SpUtil
 import com.paperpig.maimaidata.utils.getInt
 import java.util.Locale
 import kotlin.math.floor
@@ -45,12 +45,12 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
 
     override fun onResume() {
         super.onResume()
-        if (SharePreferencesUtils(requireContext()).getUserName().isEmpty()) {
+        if (SpUtil.getUserName().isEmpty()) {
             binding.accountText.setText(R.string.no_logged_in)
             binding.proberQueryBtn.visibility = View.GONE
             binding.proberLoginBtn.setText(R.string.login)
         } else {
-            binding.accountText.text = SharePreferencesUtils(requireContext()).getUserName()
+            binding.accountText.text = SpUtil.getUserName()
             binding.proberQueryBtn.visibility = View.VISIBLE
             binding.proberLoginBtn.setText(R.string.change_account)
 

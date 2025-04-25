@@ -17,13 +17,12 @@ import com.paperpig.maimaidata.model.Version
 import com.paperpig.maimaidata.repository.RecordDataManager
 import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.utils.Constants
-import com.paperpig.maimaidata.utils.SharePreferencesUtils
+import com.paperpig.maimaidata.utils.SpUtil
 
 class VersionCheckActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVersionCheckBinding
     private var dataList = listOf<SongData>()
     private var recordList = listOf<Record>()
-    private lateinit var sharedPrefs: SharePreferencesUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +36,7 @@ class VersionCheckActivity : AppCompatActivity() {
             setDisplayShowHomeEnabled(true)
         }
         supportActionBar?.title = getString(R.string.version_query)
-        sharedPrefs = SharePreferencesUtils(this)
+
         val versionList = getVersionList()
         val versionArrayAdapter =
             VersionArrayAdapter(
@@ -47,7 +46,7 @@ class VersionCheckActivity : AppCompatActivity() {
             )
         versionArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-        val lastSelectedPosition = sharedPrefs.getLastQueryVersion()
+        val lastSelectedPosition = SpUtil.getLastQueryVersion()
         recordList = RecordDataManager.list
             //只获取master难度分数记录
             .filter { it.level_index == 3 }
@@ -64,7 +63,7 @@ class VersionCheckActivity : AppCompatActivity() {
                         position: Int,
                         id: Long
                     ) {
-                        sharedPrefs.saveLastQueryVersion(position)
+                        SpUtil.saveLastQueryVersion(position)
                         val filter =
                             dataList.filter {
                                 (it.basic_info.from == (parent?.getItemAtPosition(
