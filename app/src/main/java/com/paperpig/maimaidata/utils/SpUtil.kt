@@ -22,10 +22,15 @@ object SpUtil {
         getSharedPreferences(PREF_SONG_INFO)
     }
 
+    private val searchHistoryPrefs: SharedPreferences by lazy {
+        getSharedPreferences(PREF_SEARCH_HISTORY)
+    }
+
     // 常量定义
     private const val PREF_USER_INFO = "userInfo"
     private const val PREF_VERSION = "version"
     private const val PREF_SONG_INFO = "songInfo"
+    private const val PREF_SEARCH_HISTORY = "searchHistory"
 
     private const val KEY_USERNAME = "username"
     private const val KEY_PASSWORD = "password"
@@ -33,8 +38,12 @@ object SpUtil {
     private const val KEY_ACCOUNT_HISTORY = "account_history"
     private const val KEY_LAST_QUERY_LEVEL = "last_query_level"
     private const val KEY_LAST_QUERY_VERSION = "last_query_version"
+    private const val KEY_DIVING_FISH_NICKNAME = "diving_fish_nickname"
+
     private const val KEY_VERSION = "version"
     private const val KEY_LAST_UPDATE_TIME = "last_update_time"
+
+    private const val KEY_SEARCH_HISTORY = "search_history"
 
     fun init(appContext: Application) {
         application = appContext
@@ -101,11 +110,11 @@ object SpUtil {
     fun getLastQueryVersion(): Int = userInfoPrefs.getInt(KEY_LAST_QUERY_VERSION, 0)
 
     fun saveDivingFishNickname(nickname: String) {
-        userInfoPrefs.edit { putString("diving_fish_nickname", nickname) }
+        userInfoPrefs.edit { putString(KEY_DIVING_FISH_NICKNAME, nickname) }
     }
 
     fun getDivingFishNickname(): String {
-        return userInfoPrefs.getString("diving_fish_nickname", "") ?: ""
+        return userInfoPrefs.getString(KEY_DIVING_FISH_NICKNAME, "") ?: ""
     }
 
     // ================= SONG INFO =================
@@ -135,4 +144,26 @@ object SpUtil {
     }
 
     fun getLastUpdateChartStats(): Long = versionPrefs.getLong(KEY_LAST_UPDATE_TIME, 0)
+
+    // ================= SEARCH HISTORY =================
+
+    fun saveSearchHistory(query: String) {
+        val history = getSearchHistory().toMutableList()
+        if (history.contains(query)) {
+            history.remove(query) // 如果已存在，先移除
+        }
+        history.add(0, query) // 新记录添加到最前面
+        if (history.size > 30) history.removeAt(history.lastIndex) // 限制最多存储 30 条记录
+        searchHistoryPrefs.edit { putString(KEY_SEARCH_HISTORY, Gson().toJson(history)) }
+    }
+
+    fun getSearchHistory(): List<String> {
+        val json = searchHistoryPrefs.getString(KEY_SEARCH_HISTORY, "[]") ?: "[]"
+        val type = object : TypeToken<List<String>>() {}.type
+        return Gson().fromJson(json, type)
+    }
+
+    fun clearSearchHistory() {
+        searchHistoryPrefs.edit { clear() }
+    }
 }

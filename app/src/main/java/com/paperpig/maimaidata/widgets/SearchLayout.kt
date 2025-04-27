@@ -3,13 +3,23 @@ package com.paperpig.maimaidata.widgets
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.AutoTransition
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
+import com.google.android.flexbox.FlexLine
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.slider.Slider
 import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.databinding.ItemSearchHistoryBinding
 import com.paperpig.maimaidata.databinding.LayoutSongSearchBinding
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.repository.SongDataManager
+import com.paperpig.maimaidata.utils.SpUtil
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -24,6 +34,12 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
 
     private var searchLevelDs = 1.0f
     private var searchLevelString = ""
+
+    val transition: Transition by lazy {
+        AutoTransition().apply {
+            duration = 150
+        }
+    }
 
     private var genreCheckBoxList = mutableListOf(
         binding.genrePopCheckbox,
@@ -64,23 +80,33 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
         }
 
         binding.levelDsIntSlider.addOnSliderTouchListener(this)
+
         binding.levelDsDecimalSlider.addOnSliderTouchListener(this)
 
         binding.levelDsSwitch.setOnCheckedChangeListener { _, checked ->
-            if (checked) {
-                binding.searchMotionLayout.transitionToEnd()
-                binding.levelText.text =
-                    context.getString(R.string.search_level_ds, searchLevelDs)
-            } else {
-                binding.searchMotionLayout.transitionToStart()
-                binding.levelText.text =
-                    context.getString(R.string.search_level_string, searchLevelString)
+            binding.searchLayout.apply {
+                TransitionManager.beginDelayedTransition(binding.searchLayout, transition)
+                if (checked) {
+                    binding.levelText.text =
+                        context.getString(R.string.search_level_ds, searchLevelDs)
+
+                    binding.dsGroup.visibility = VISIBLE
+                    binding.levelGroup.visibility = GONE
+                } else {
+                    binding.levelText.text =
+                        context.getString(R.string.search_level_string, searchLevelString)
+
+                    binding.dsGroup.visibility = GONE
+                    binding.levelGroup.visibility = VISIBLE
+                }
             }
         }
+
 
         binding.searchButton.setOnClickListener {
             search()
         }
+
         binding.searchResetBtn.setOnClickListener {
             binding.searchEditText.setText("")
             binding.levelDsSwitch.isChecked = false
@@ -102,6 +128,35 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
                 true
             } else {
                 false
+            }
+        }
+
+        binding.searchHistoryDeleteIv.setOnClickListener {
+            clearHistoryRecyclerView()
+        }
+
+        binding.searchHistoryRecyclerView.apply {
+            val searchHistory = SpUtil.getSearchHistory()
+            setSearchHistoryGroupVisible(searchHistory.isNotEmpty())
+            adapter = HistoryAdapter(
+                searchHistory
+            ) { song ->
+                binding.searchEditText.setText(song)
+                search()
+            }
+            layoutManager = object : FlexboxLayoutManager(context) {
+
+                val fixMaxLine = 2
+
+                //超出2行的内容不显示
+                override fun getFlexLinesInternal(): MutableList<FlexLine> {
+                    val originList = super.getFlexLinesInternal()
+                    val size = originList.size
+                    if (size > fixMaxLine) {
+                        originList.subList(fixMaxLine, size).clear()
+                    }
+                    return originList
+                }
             }
         }
     }
@@ -134,6 +189,7 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
                 )
             }
         )
+        updateHistoryRecyclerView(binding.searchEditText.text.toString())
         binding.searchEditText.clearFocus()
     }
 
@@ -151,6 +207,36 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
             if (cb.isChecked) versionList.add(cb.text.toString())
         }
         return versionList
+    }
+
+    private fun updateHistoryRecyclerView(searchText: String) {
+        if (searchText.isNotEmpty()) {
+            SpUtil.saveSearchHistory(searchText)
+            val updatedHistory = SpUtil.getSearchHistory()
+            postDelayed({
+                setSearchHistoryGroupVisible(true)
+                (binding.searchHistoryRecyclerView.adapter as? HistoryAdapter)?.updateData(
+                    updatedHistory
+                )
+            }, 500)
+        }
+    }
+
+    private fun clearHistoryRecyclerView() {
+        SpUtil.clearSearchHistory()
+        setSearchHistoryGroupVisible(false)
+        (binding.searchHistoryRecyclerView.adapter as? HistoryAdapter)?.updateData(emptyList())
+    }
+
+
+    private fun setSearchHistoryGroupVisible(isShow: Boolean) {
+        binding.searchLayout.apply {
+            if (isShow == (binding.searchHistoryGroup.isVisible)) {
+                return
+            }
+            TransitionManager.beginDelayedTransition(binding.searchLayout, transition)
+            binding.searchHistoryGroup.visibility = if (isShow) VISIBLE else GONE
+        }
     }
 
     interface OnSearchResultListener {
@@ -176,6 +262,35 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
                 binding.levelText.text =
                     context.getString(R.string.search_level_ds, searchLevelDs)
             }
+        }
+    }
+
+    class HistoryAdapter(
+        private var historyList: List<String>,
+        private val onItemClick: (String) -> Unit
+    ) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
+
+        inner class HistoryViewHolder(binding: ItemSearchHistoryBinding) :
+            RecyclerView.ViewHolder(binding.root) {
+            val textView = binding.historyItemText
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
+            val binding = ItemSearchHistoryBinding.inflate(LayoutInflater.from(parent.context))
+            return HistoryViewHolder(binding)
+        }
+
+        override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
+            val item = historyList[position]
+            holder.textView.text = item
+            holder.itemView.setOnClickListener { onItemClick(item) }
+        }
+
+        override fun getItemCount(): Int = historyList.size
+
+        fun updateData(newData: List<String>) {
+            historyList = newData
+            notifyDataSetChanged()
         }
     }
 }
