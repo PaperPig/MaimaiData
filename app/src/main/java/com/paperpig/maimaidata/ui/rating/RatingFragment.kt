@@ -1,5 +1,12 @@
 package com.paperpig.maimaidata.ui.rating
 
+import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
+import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -8,11 +15,16 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.MenuProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.crawler.CrawlerCaller
+import com.paperpig.maimaidata.crawler.WechatCrawlerListener
 import com.paperpig.maimaidata.databinding.FragmentRatingBinding
 import com.paperpig.maimaidata.model.Rating
+import com.paperpig.maimaidata.network.server.HttpServerService
+import com.paperpig.maimaidata.network.vpn.core.LocalVpnService
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.ui.about.SettingsActivity
 import com.paperpig.maimaidata.ui.checklist.LevelCheckActivity
@@ -23,12 +35,32 @@ import com.paperpig.maimaidata.ui.maimaidxprober.ProberActivity
 import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.SpUtil
 import com.paperpig.maimaidata.utils.getInt
+import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.floor
+import kotlin.random.Random
 
-class RatingFragment : BaseFragment<FragmentRatingBinding>() {
+class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListener,
+    LocalVpnService.onStatusChangedListener {
+
     private lateinit var binding: FragmentRatingBinding
+
     private lateinit var resultAdapter: RatingResultAdapter
+
+    private val proberUpdateDialog by lazy { ProberUpdateDialog(requireContext()) }
+
+
+    private val httpServiceIntent by lazy {
+        Intent(requireContext(), HttpServerService::class.java)
+    }
+
+    private val vpnActivityResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            startProxyServices()
+        }
+    }
 
     companion object {
         @JvmStatic
@@ -36,6 +68,7 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
             RatingFragment()
 
         const val TAG = "RatingFragment"
+
     }
 
     override fun getViewBinding(container: ViewGroup?): FragmentRatingBinding {
@@ -110,6 +143,27 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
             }
         }
 
+        CrawlerCaller.setOnWechatCrawlerListener(this)
+        LocalVpnService.addOnStatusChangedListener(this)
+
+        binding.proberProxySimpleText.setOnClickListener {
+            proberUpdateDialog.show()
+        }
+
+        binding.proberProxyUpdateBtn.setOnClickListener {
+            if (!LocalVpnService.IsRunning) {
+                val intent: Intent? = LocalVpnService.prepare(context)
+                if (intent == null) {
+                    startProxyServices()
+                } else {
+                    vpnActivityResultLauncher.launch(intent)
+                }
+            } else {
+                LocalVpnService.IsRunning = false
+                stopHttpService()
+            }
+        }
+
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onPrepareMenu(menu: Menu) {
                 menu.findItem(R.id.settings).isVisible = !isHidden
@@ -132,13 +186,66 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
         })
     }
 
+    private fun startProxyServices() {
+        startVPNService()
+        startHttpService()
+        createLinkUrl()
+        getWechatApi()
+    }
+
+
+    private fun createLinkUrl() {
+        val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        val randomChar = (1..10)
+            .map { chars[Random.nextInt(chars.length)] }
+            .joinToString("")
+
+        val link = "http://127.0.0.2:8284/$randomChar"
+
+        val mClipData = ClipData.newPlainText("copyText", link)
+        (requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(
+            mClipData
+        )
+
+        Toast.makeText(
+            requireContext(),
+            "已复制链接，请在微信中粘贴并打开",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun getWechatApi() {
+        try {
+            val intent = Intent(Intent.ACTION_MAIN)
+            val cmp = ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI")
+            intent.apply {
+                addCategory(Intent.CATEGORY_LAUNCHER)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                component = cmp
+            }
+            startActivity(intent)
+        } catch (_: ActivityNotFoundException) {
+        }
+    }
+
+    private fun startVPNService() {
+        requireContext().startService(Intent(requireContext(), LocalVpnService::class.java))
+    }
+
+    private fun startHttpService() {
+        requireContext().startService(httpServiceIntent)
+    }
+
+    private fun stopHttpService() {
+        requireContext().stopService(httpServiceIntent)
+    }
+
     private fun showToast() {
         val text = "请输入内容!"
         val duration = Toast.LENGTH_SHORT
         val toast = Toast.makeText(this.context, text, duration)
         toast.show()
     }
-
 
     private fun onCalculate(targetString: String) {
         val targetRating = targetString.getInt()
@@ -176,6 +283,52 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>() {
 
         resultAdapter.setData(list)
 
+    }
+
+    override fun onStatusChanged(status: String, isRunning: Boolean) {
+        binding.proberProxyUpdateBtn.setText(if (isRunning) R.string.stop_proxy else R.string.start_proxy)
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun onLogReceived(logString: String) {
+        val timestamp = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+            .format(System.currentTimeMillis())
+        proberUpdateDialog.appendText("[$timestamp] $logString\n")
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun onMessageReceived(logString: String) {
+        val timestamp = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+            .format(System.currentTimeMillis())
+        proberUpdateDialog.appendText("[$timestamp] $logString\n")
+        binding.proberProxySimpleText.text = "[$timestamp] $logString"
+    }
+
+    override fun onStartAuth() {
+        binding.proberProxySimpleText.text = ""
+        binding.proberProxyIndicator.isIndeterminate = true
+        binding.proberProxyStatusGroup.visibility = View.VISIBLE
+    }
+
+    override fun onFinishUpdate() {
+        binding.proberProxyIndicator.visibility = View.INVISIBLE
+        stopHttpService()
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun onError(e: Exception) {
+        val timestamp = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+            .format(System.currentTimeMillis())
+        proberUpdateDialog.appendText("[$timestamp] $e\n")
+        binding.proberProxySimpleText.text = "[$timestamp] $e"
+        binding.proberProxyIndicator.visibility = View.INVISIBLE
+        stopHttpService()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        CrawlerCaller.removeOnWechatCrawlerListener()
+        LocalVpnService.removeOnStatusChangedListener(this)
     }
 }
 

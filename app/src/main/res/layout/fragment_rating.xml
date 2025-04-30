@@ -100,6 +100,46 @@
                 app:layout_constraintEnd_toEndOf="@id/prober_version_check_btn"
                 app:layout_constraintTop_toBottomOf="@id/prober_version_check_btn" />
 
+            <Button
+                android:id="@+id/prober_proxy_update_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:text="@string/start_proxy"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/prober_finale_to_dx_btn" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/prober_proxy_status_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:constraint_referenced_ids="prober_proxy_indicator,prober_proxy_simple_text" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/prober_proxy_indicator"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:indeterminate="true"
+                app:layout_constraintBottom_toBottomOf="@id/prober_proxy_update_btn"
+                app:layout_constraintEnd_toStartOf="@+id/prober_proxy_update_btn"
+                app:layout_constraintStart_toStartOf="parent" />
+
+
+            <TextView
+                android:id="@+id/prober_proxy_simple_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:ellipsize="end"
+                android:lines="2"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintBottom_toTopOf="@id/prober_proxy_indicator"
+                app:layout_constraintEnd_toEndOf="@+id/prober_proxy_indicator"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="@+id/prober_proxy_indicator" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -250,11 +290,11 @@
                 android:text="单曲rating计算" />
 
             <Button
-                android:layout_marginEnd="12dp"
                 android:id="@+id/calculate_single_rating"
                 style="@style/ButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
                 android:layout_weight="1"
                 android:text="计算单曲rating" />
         </LinearLayout>

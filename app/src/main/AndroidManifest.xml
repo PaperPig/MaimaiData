@@ -41,6 +41,18 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".network.vpn.core.LocalVpnService"
+            android:exported="false"
+            android:permission="android.permission.BIND_VPN_SERVICE">
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+        </service>
+
+        <service android:name=".network.server.HttpServerService" />
+
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.paperpig.maimaidata.fileprovider"

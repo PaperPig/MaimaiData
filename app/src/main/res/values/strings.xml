@@ -139,6 +139,9 @@
     <string name="select_account_hint">请选择账号</string>
     <string name="type_in_account_pwd_hint">请输入用户名或密码</string>
 
+    <string name="start_proxy">开启代理</string>
+    <string name="stop_proxy">关闭代理</string>
+
     <string name="about">关于</string>
     <string name="local_data_version">本地数据版本</string>
     <string name="fit_diff_update_date">拟合定数更新日期</string>
@@ -154,5 +157,8 @@
     <string name="settings_nickname">全局用户昵称</string>
     <string name="settings_nickname_dialog_title">请输入昵称（Best导出时强制显示该昵称）</string>
     <string name="settings_use_diving_fish_nickname">使用水鱼账号昵称</string>
+
+    <string name="vpn_connected_status">connected</string>
+    <string name="vpn_disconnected_status">disconnected</string>
 
 </resources>
