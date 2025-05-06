@@ -31,6 +31,15 @@
         app:defaultValue=""
         app:iconSpaceReserved="false" />
 
+    <MultiSelectListPreference
+        app:iconSpaceReserved="false"
+        app:key="select_difficulties"
+        app:title="@string/settings_update_difficulty"
+        app:dialogTitle="@string/settings_difficulty_pick"
+        app:entries="@array/difficulty_options"
+        app:entryValues="@array/difficulty_values"
+        app:defaultValue="@array/difficulty_default" />
+
     <Preference
         app:fragment="com.paperpig.maimaidata.ui.about.AboutFragment"
         app:iconSpaceReserved="false"

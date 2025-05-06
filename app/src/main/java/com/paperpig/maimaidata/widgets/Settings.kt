@@ -30,6 +30,9 @@ object Settings {
     private const val KEY_NICKNAME = "nickname"
     private const val DEFAULT_NICKNAME = ""
 
+    private const val KEY_SELECT_DIFFICULTIES = "select_difficulties"
+    private val DEFAULT_SELECT = setOf("2", "3", "4")
+
 
     fun getEnableAliasSearch() =
         settingsPre.getBoolean(KEY_ALIAS_SEARCH, DEFAULT_ALIAS_SEARCH)
@@ -43,6 +46,13 @@ object Settings {
     fun getEnableDivingFishNickname() =
         settingsPre.getBoolean(KEY_USE_DIVING_FISH_NICKNAME, DEFAULT_USE_DIVING_FISH_NICKNAME)
 
+    fun getNickname(): String =
+        settingsPre.getString(KEY_NICKNAME, DEFAULT_NICKNAME) ?: DEFAULT_NICKNAME
 
-    fun getNickname(): String = settingsPre.getString(KEY_NICKNAME, DEFAULT_NICKNAME) ?: DEFAULT_NICKNAME
+    fun getUpdateDifficulty(): Set<Int> {
+        val selectedSet =
+            settingsPre.getStringSet(KEY_SELECT_DIFFICULTIES, DEFAULT_SELECT) ?: DEFAULT_SELECT
+        return selectedSet.mapNotNull { it.toIntOrNull() }.toSet()
+
+    }
 }

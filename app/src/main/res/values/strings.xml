@@ -157,6 +157,8 @@
     <string name="settings_nickname">全局用户昵称</string>
     <string name="settings_nickname_dialog_title">请输入昵称（Best导出时强制显示该昵称）</string>
     <string name="settings_use_diving_fish_nickname">使用水鱼账号昵称</string>
+    <string name="settings_update_difficulty">选择上传查分器难度</string>
+    <string name="settings_difficulty_pick">选择难度</string>
 
     <string name="vpn_connected_status">connected</string>
     <string name="vpn_disconnected_status">disconnected</string>

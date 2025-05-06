@@ -2,12 +2,11 @@ package com.paperpig.maimaidata.crawler
 
 import com.paperpig.maimaidata.network.vpn.core.LocalVpnService
 import com.paperpig.maimaidata.utils.SpUtil
+import com.paperpig.maimaidata.widgets.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
-import java.io.PrintWriter
-import java.io.StringWriter
 
 object CrawlerCaller {
     private var listener: WechatCrawlerListener? = null
@@ -82,7 +81,7 @@ object CrawlerCaller {
         this.listener = null
     }
 
-    fun getDifficulties(): Set<Int> {
-        return setOf(0, 1, 2, 3, 4)
+    private fun getDifficulties(): Set<Int> {
+        return Settings.getUpdateDifficulty()
     }
 }
