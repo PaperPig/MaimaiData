@@ -73,7 +73,7 @@ interface SongWithChartsDao : ChartDao, SongDao, AliasDao {
      * 根据指定的筛选条件搜索歌曲数据，并获取其关联的谱面信息。
      *
      * 支持的筛选条件包括：
-     * - 歌曲标题或别名（模糊匹配）
+     * - 歌曲标题、别名、谱师、id（模糊匹配）
      * - 歌曲流派
      * - 歌曲所属版本
      * - 谱面等级（可指定难度类型）
@@ -100,71 +100,103 @@ interface SongWithChartsDao : ChartDao, SongDao, AliasDao {
      * @param favIdList 收藏歌曲的 ID 列表（只有当 isSearchFavor 为 true 时生效）。
      * @param isMatchAlias 是否启用别名匹配。
      *        - 若为 true，除了主标题外也会匹配 alias 表中的别名。
-     *        - 若为 false，只匹配主标题。
+     *        - 若为 false，不匹配别名。
+     * @param isMatchCharter 是否启用谱师匹配。
+     *        - 若为 true，会匹配 chart 表中的 charter 谱师字段。
+     *        - 若为 false，不匹配谱师字段。
+     * @param isMatchSongId 是否启用歌曲 ID 匹配。
+     *        - 若为 true，会匹配歌曲的唯一 ID。
+     *        - 若为 false，不匹配歌曲 ID。
      *
      * @return 包含歌曲及其关联谱面的实体列表（通过 LiveData 返回，便于 UI 响应式刷新）。
      */
     @Query(
         """
-        SELECT * FROM song_data 
+        SELECT * 
+        FROM song_data 
         WHERE 
-            -- 标题匹配（主标题或别名）
             (
+                -- 主标题或别名匹配
                 title LIKE '%' || :searchText || '%'
+
                 OR (
                     :isMatchAlias = 1 
-                    AND EXISTS(
-                        SELECT 1 
+                    AND EXISTS (
+                        SELECT 1
                         FROM alias a 
                         WHERE 
                             a.song_id = song_data.id 
                             AND a.alias LIKE '%' || :searchText || '%'
                     )
                 )
+
+                OR (
+                    :isMatchCharter = 1 
+                    AND EXISTS (
+                        SELECT 1
+                        FROM chart 
+                        WHERE 
+                            chart.song_id = song_data.id 
+                            AND chart.charter LIKE '%' || :searchText || '%'
+                    )
+                )
+
+                OR (
+                    :isMatchSongId = 1 
+                    AND song_data.id = :searchText
+                )
             )
-            
+
             -- 流派匹配
             AND (
                 (:isGenreListEmpty = 1 AND genre != '${Constants.GENRE_UTAGE}')
                 OR (:isGenreListEmpty = 0 AND genre IN (:genreList))
             )
-            
+
             -- 版本匹配
             AND (
                 :isVersionListEmpty = 1 
                 OR `from` IN (:versionList)
             )
-            
+
             -- 等级匹配
             AND (
                 :selectLevel IS NULL 
-                OR id IN (
-                    SELECT DISTINCT song_id
-                    FROM chart
+                OR EXISTS (
+                    SELECT 1
+                    FROM chart 
                     WHERE 
-                        :selectLevel = 'ALL' 
-                        OR (
-                            level = :selectLevel 
-                            AND (:sequencing IS NULL OR difficulty_type = :sequencing)
-                        ) 
+                        chart.song_id = song_data.id
+                        AND (
+                            :selectLevel = 'ALL'
+                            OR (
+                                chart.level = :selectLevel 
+                                AND (
+                                    :sequencing IS NULL 
+                                    OR chart.difficulty_type = :sequencing
+                                )
+                            )
+                        )
                 )
             )
-            
+
             -- 定数匹配
             AND (
                 :ds IS NULL 
-                OR id IN (
-                    SELECT DISTINCT song_id
-                    FROM chart
-                    WHERE ds = :ds
-                )
+                OR EXISTS (
+                    SELECT 1
+                    FROM chart 
+                    WHERE 
+                        chart.song_id = song_data.id 
+                        AND chart.ds = :ds
+                    )
             )
-            
+
             -- 收藏歌曲匹配
             AND (
                 (:isSearchFavor = 1 AND id IN (:favIdList))
                 OR :isSearchFavor = 0
-            )
+            );
         """
     )
     fun searchSongsWithCharts(
@@ -178,7 +210,9 @@ interface SongWithChartsDao : ChartDao, SongDao, AliasDao {
         ds: Double?,
         isSearchFavor: Boolean,
         favIdList: List<String>,
-        isMatchAlias: Boolean
+        isMatchAlias: Boolean,
+        isMatchCharter: Boolean,
+        isMatchSongId: Boolean
     ): LiveData<List<SongWithChartsEntity>>
 
 

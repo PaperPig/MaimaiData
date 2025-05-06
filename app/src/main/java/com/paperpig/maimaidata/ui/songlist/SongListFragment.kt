@@ -147,7 +147,9 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
                             sequencing,
                             ds,
                             isFavor,
-                            Settings.getEnableAliasSearch()
+                            Settings.getEnableAliasSearch(),
+                            Settings.getEnableCharterSearch(),
+                            true
                         )
                             .observe(requireActivity()) {
                                 songAdapter.setData(it)

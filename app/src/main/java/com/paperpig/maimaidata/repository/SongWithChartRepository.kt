@@ -71,6 +71,8 @@ class SongWithChartRepository private constructor(private val songChartDao: Song
         ds: Double?,
         isFavor: Boolean,
         isMatchAlias: Boolean,
+        isMatchCharter: Boolean,
+        isMatchSongId: Boolean
     ): LiveData<List<SongWithChartsEntity>> {
         val initialResult = songChartDao.searchSongsWithCharts(
             searchText = searchText,
@@ -86,7 +88,9 @@ class SongWithChartRepository private constructor(private val songChartDao: Song
                 MaimaiDataApplication.instance,
                 SharePreferencesUtils.PREF_NAME_SONG_INFO
             ).getFavIds(),
-            isMatchAlias = isMatchAlias
+            isMatchAlias = isMatchAlias,
+            isMatchCharter = isMatchCharter,
+            isMatchSongId = isMatchSongId
         )
         //根据sequencing指定难度排序
         return initialResult.map { list ->
