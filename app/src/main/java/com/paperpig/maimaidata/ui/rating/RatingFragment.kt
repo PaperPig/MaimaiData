@@ -187,6 +187,14 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
     }
 
     private fun startProxyServices() {
+        if (SpUtil.getUserName().isEmpty()) {
+            Toast.makeText(
+                requireContext(),
+                getString(R.string.vpn_please_login),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
         startVPNService()
         startHttpService()
         createLinkUrl()
