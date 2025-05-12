@@ -11,18 +11,17 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.view.MenuProvider
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentSongListBinding
-import com.paperpig.maimaidata.model.SongData
-import com.paperpig.maimaidata.repository.SongDataManager
+import com.paperpig.maimaidata.db.AppDataBase
+import com.paperpig.maimaidata.repository.SongWithChartRepository
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.widgets.AnimationHelper
 import com.paperpig.maimaidata.widgets.SearchLayout
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.paperpig.maimaidata.widgets.Settings
 import me.zhanghai.android.fastscroll.FastScrollerBuilder
 
 
@@ -58,8 +57,7 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
     companion object {
 
         @JvmStatic
-        fun newInstance() =
-            SongListFragment()
+        fun newInstance() = SongListFragment()
 
         const val TAG = "SongListFragment"
     }
@@ -77,16 +75,7 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
         animationHelper = AnimationHelper(layoutInflater)
         binding.root.addView(animationHelper.loadLayout(), 0)
         animationHelper.startAnimation()
-        isShowingSearchLayout = binding.searchLayout.visibility == View.VISIBLE
-
-        binding.searchLayout.setOnSearchResultListener(object :
-            SearchLayout.OnSearchResultListener {
-            override fun onResult(list: List<SongData>) {
-                songAdapter.setData(list)
-                showOrHideSearchBar()
-                hideKeyboard(view)
-            }
-        })
+        isShowingSearchLayout = binding.searchLayout.isVisible
 
         FastScrollerBuilder(binding.songListRecyclerView).build()
         binding.songListRecyclerView.apply {
@@ -119,24 +108,57 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
 
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (binding.searchLayout.visibility == View.VISIBLE) {
+                if (binding.searchLayout.isVisible) {
                     showOrHideSearchBar()
                 } else {
                     requireActivity().finish()
                 }
             }
-        }
-        )
+        })
         loadData()
     }
 
 
     fun loadData() {
-        CoroutineScope(Dispatchers.Main).launch {
-            SongDataManager.loadData()
-            //默认不显示宴会场数据
-            songAdapter.setData(SongDataManager.list.filterNot { it.basic_info.genre == Constants.GENRE_UTAGE })
-        }
+        SongWithChartRepository.getInstance(AppDataBase.getInstance().songWithChartDao())
+            .getAllSongWithCharts().observe(requireActivity()) {
+
+                songAdapter.setData(it.filterNot { it.songData.genre == Constants.GENRE_UTAGE })
+
+                binding.searchLayout.setOnSearchResultListener(it, object :
+                    SearchLayout.OnSearchListener {
+                    override fun onSearch(
+                        searchText: String,
+                        genreList: List<String>,
+                        versionList: List<String>,
+                        selectLevel: String?,
+                        sequencing: String?,
+                        ds: Double?,
+                        isFavor: Boolean
+                    ) {
+                        val repository = SongWithChartRepository.getInstance(
+                            AppDataBase.getInstance().songWithChartDao()
+                        )
+                        repository.searchSongsWithCharts(
+                            searchText,
+                            genreList,
+                            versionList,
+                            selectLevel,
+                            sequencing,
+                            ds,
+                            isFavor,
+                            Settings.getEnableAliasSearch(),
+                            Settings.getEnableCharterSearch(),
+                            true
+                        )
+                            .observe(requireActivity()) {
+                                songAdapter.setData(it)
+                                showOrHideSearchBar()
+                                hideKeyboard(view)
+                            }
+                    }
+                })
+            }
     }
 
     private fun showOrHideSearchBar() {

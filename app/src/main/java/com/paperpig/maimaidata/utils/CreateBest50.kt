@@ -15,9 +15,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.scale
 import com.paperpig.maimaidata.R
+import com.paperpig.maimaidata.db.entity.RecordEntity
+import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.glide.GlideApp
-import com.paperpig.maimaidata.model.Record
-import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.widgets.Settings
 import kotlinx.coroutines.Dispatchers
@@ -42,9 +42,9 @@ object CreateBest50 {
     @SuppressLint("DiscouragedApi")
     suspend fun createSongInfo(
         context: Activity,
-        songData: List<SongData>,
-        old: List<Record>,
-        new: List<Record>
+        dataList: List<SongWithChartsEntity>,
+        old: List<RecordEntity>,
+        new: List<RecordEntity>
     ) {
         if (old.isEmpty() && new.isEmpty()) {
             Toast.makeText(context, "尚未取得歌曲信息，请稍后重试", Toast.LENGTH_SHORT)
@@ -73,7 +73,7 @@ object CreateBest50 {
                     println(Thread.currentThread().name)
                     val drawBitmap = drawSongItem(
                         context,
-                        old[i], songData
+                        old[i], dataList
                     )
                     canvas.drawBitmap(
                         drawBitmap,
@@ -88,7 +88,7 @@ object CreateBest50 {
                 println(Thread.currentThread().name)
 
                 threadPool.submit {
-                    val drawBitmap = drawSongItem(context, new[i], songData)
+                    val drawBitmap = drawSongItem(context, new[i], dataList)
                     canvas.drawBitmap(
                         drawBitmap,
                         (i % 3 * ITEM_WIDTH + (ITEM_WIDTH + ITEM_PADDING) * 7 + VERSION_PADDING + i % 3 * ITEM_PADDING).toFloat(),
@@ -194,11 +194,11 @@ object CreateBest50 {
 
     private fun drawSongItem(
         context: Context,
-        record: Record,
-        data: List<SongData>
+        record: RecordEntity,
+        dataList: List<SongWithChartsEntity>
     ): Bitmap {
 
-        val find = data.find { it.id == record.song_id }
+        val find = dataList.find { it.songData.id == record.songId }
         val songContainerBitmap =
             createBitmap(ITEM_WIDTH, ITEM_HEIGHT)
         val canvas = Canvas(songContainerBitmap)
@@ -214,7 +214,7 @@ object CreateBest50 {
         //绘制曲封
         val jacketBitmap: Bitmap = try {
             GlideApp.with(context).asBitmap().override(158, 155).centerCrop()
-                .load(MaimaiDataClient.IMAGE_BASE_URL + find!!.basic_info.image_url).submit()
+                .load(MaimaiDataClient.IMAGE_BASE_URL + find!!.songData.imageUrl).submit()
                 .get()
         } catch (_: Exception) {
             GlideApp.with(context).asBitmap().override(158, 155).centerCrop()
