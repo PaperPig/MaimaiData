@@ -44,7 +44,9 @@ class LevelCheckActivity : AppCompatActivity() {
             searchLevelString = levelArrays.getOrNull(index) ?: "UNKNOWN"
             if (binding.levelSlider.value.toInt() == levelArrays.size - 1){
                 binding.btnRight.isVisible = false
+                binding.btnLeft.isVisible = true
             } else if (binding.levelSlider.value.toInt() == 0){
+                binding.btnRight.isVisible = true
                 binding.btnLeft.isVisible = false
             } else {
                 binding.btnRight.isVisible = true
