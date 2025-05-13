@@ -70,6 +70,16 @@ class LevelCheckActivity : AppCompatActivity() {
         binding.switchBtn.setOnClickListener {
             (binding.levelCheckRecycler.adapter as LevelCheckAdapter).updateDisplay()
         }
+
+        binding.btnLeft.setOnClickListener {
+            binding.levelSlider.value -= 1f
+            searchLevelString = levelArrays[binding.levelSlider.value.toInt()]
+        }
+
+        binding.btnRight.setOnClickListener {
+            binding.levelSlider.value += 1f
+            searchLevelString = levelArrays[binding.levelSlider.value.toInt()]
+        }
     }
 
     private fun refreshDataList() {
