@@ -9,6 +9,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -17,6 +19,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.MenuProvider
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.crawler.CrawlerCaller
@@ -128,20 +131,55 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
             onCalculate(binding.targetRatingEdit.text.toString())
         }
 
-        binding.calculateSingleRating.setOnClickListener {
-            hideKeyboard(view)
-            if (binding.inputSongLevel.text.toString()
-                    .isNotEmpty() && binding.inputSongAchievement.text.toString()
-                    .isNotEmpty()
-            ) {
-                binding.outputSingleRating.text = ConvertUtils.achievementToRating(
-                    (binding.inputSongLevel.text.toString().toFloat() * 10).toInt(),
-                    (binding.inputSongAchievement.text.toString().toFloat() * 10000).toInt()
-                ).toString()
-            } else {
-                showToast()
+        binding.inputSongLevel.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // 文本变化前
             }
-        }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // 文本变化时
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // 文本变化后
+                val songLevel = s.toString()
+                val songAchievementText = binding.inputSongAchievement.text.toString()
+                if (songAchievementText.isNotEmpty() && songAchievementText != "."
+                    && songLevel.isNotEmpty() && songLevel != "."){
+                    binding.outputSingleRating.text = ConvertUtils.achievementToRating(
+                        (binding.inputSongLevel.text.toString().toFloat() * 10).toInt(),
+                        (binding.inputSongAchievement.text.toString().toFloat() * 10000).toInt()
+                    ).toString()
+                } else {
+                    binding.outputSingleRating.text = "0"
+                }
+            }
+        })
+
+        binding.inputSongAchievement.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // 文本变化前
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // 文本变化时
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // 文本变化后
+                val songAchievement = s.toString()
+                val songLevelText = binding.inputSongLevel.text.toString()
+                if (songAchievement.isNotEmpty() && songAchievement != "."
+                    && songLevelText.isNotEmpty() && songLevelText != "."){
+                    binding.outputSingleRating.text = ConvertUtils.achievementToRating(
+                        (binding.inputSongLevel.text.toString().toFloat() * 10).toInt(),
+                        (binding.inputSongAchievement.text.toString().toFloat() * 10000).toInt()
+                    ).toString()
+                } else {
+                    binding.outputSingleRating.text = "0"
+                }
+            }
+        })
 
         CrawlerCaller.setOnWechatCrawlerListener(this)
         LocalVpnService.addOnStatusChangedListener(this)

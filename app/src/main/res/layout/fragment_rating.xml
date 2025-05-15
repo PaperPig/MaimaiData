@@ -253,6 +253,15 @@
                 android:text="歌曲rating = 15个最高单曲rating(舞萌2024分类) + 35个最高单曲rating(舞萌2024以外分类)" />
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="计算单曲rating"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:paddingHorizontal="12dp"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -287,16 +296,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="单曲rating计算" />
-
-            <Button
-                android:id="@+id/calculate_single_rating"
-                style="@style/ButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:layout_weight="1"
-                android:text="计算单曲rating" />
+                android:text="0" />
         </LinearLayout>
 
         <LinearLayout

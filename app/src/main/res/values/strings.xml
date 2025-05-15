@@ -163,5 +163,7 @@
     <string name="vpn_connected_status">connected</string>
     <string name="vpn_disconnected_status">disconnected</string>
     <string name="vpn_please_login">请先登录查分器账户</string>
+    <string name="left_arrow">◀</string>
+    <string name="right_arrow">▶</string>
 
 </resources>

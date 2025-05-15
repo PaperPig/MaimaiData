@@ -3,6 +3,7 @@ package com.paperpig.maimaidata.ui.checklist
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
@@ -39,12 +40,25 @@ class LevelCheckActivity : AppCompatActivity() {
         recordList = RecordDataManager.list
         dataList = SongDataManager.list
 
+        fun refreshText(index: Int){
+            searchLevelString = levelArrays.getOrNull(index) ?: "UNKNOWN"
+            if (binding.levelSlider.value.toInt() == levelArrays.size - 1){
+                binding.btnRight.isVisible = false
+                binding.btnLeft.isVisible = true
+            } else if (binding.levelSlider.value.toInt() == 0){
+                binding.btnRight.isVisible = true
+                binding.btnLeft.isVisible = false
+            } else {
+                binding.btnRight.isVisible = true
+                binding.btnLeft.isVisible = true
+            }
+        }
 
         binding.levelCheckRecycler.apply {
             binding.levelSlider.apply {
                 addOnChangeListener { _, value, _ ->
                     val index = value.toInt()
-                    searchLevelString = levelArrays.getOrNull(index) ?: "UNKNOWN"
+                    refreshText(index)
                     binding.levelText.text =
                         context.getString(R.string.search_level_string, searchLevelString)
                     refreshDataList()
@@ -65,10 +79,28 @@ class LevelCheckActivity : AppCompatActivity() {
         }
 
         binding.levelSlider.value = SpUtil.getLastQueryLevel()
-        searchLevelString = levelArrays[binding.levelSlider.value.toInt()]
+        refreshText(binding.levelSlider.value.toInt())
 
         binding.switchBtn.setOnClickListener {
             (binding.levelCheckRecycler.adapter as LevelCheckAdapter).updateDisplay()
+        }
+
+        binding.btnLeft.setOnClickListener {
+            if (binding.levelSlider.value.toInt() == 0){
+                // ignored
+            } else {
+                binding.levelSlider.value -= 1f
+            }
+            refreshText(binding.levelSlider.value.toInt())
+        }
+
+        binding.btnRight.setOnClickListener {
+            if (binding.levelSlider.value.toInt() == levelArrays.size - 1){
+                // ignored
+            } else {
+                binding.levelSlider.value += 1f
+            }
+            refreshText(binding.levelSlider.value.toInt())
         }
     }
 
