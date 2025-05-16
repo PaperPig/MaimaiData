@@ -17,8 +17,6 @@ import com.paperpig.maimaidata.utils.SpUtil
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var accountList: MutableList<Pair<String, String>>
-    private lateinit var spinnerAdapter: ArrayAdapter<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,29 +33,31 @@ class LoginActivity : AppCompatActivity() {
         binding.username.setText(SpUtil.getUserName())
         binding.password.setText(SpUtil.getPassword())
 
-        setupAccountSpinner()
-
-        binding.applyAccountBtn.setOnClickListener {
-            if (accountList.isEmpty()) {
-                Toast.makeText(this, R.string.select_account_hint, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        binding.showAccountListButton.setOnClickListener {
+            val accountList = SpUtil.getAccountHistory().toMutableList()
+            val accounts = if (accountList.isEmpty()) {
+                listOf("无保存的账号")
+            } else {
+                accountList.map { it.first }
             }
-            selectedAccount?.let { (username, password) ->
-                binding.username.setText(username)
-                binding.password.setText(password)
-            } ?: Toast.makeText(this, R.string.select_account_hint, Toast.LENGTH_SHORT).show()
-        }
 
-        binding.deleteAccountBtn.setOnClickListener {
-            if (accountList.isEmpty()) {
-                Toast.makeText(this, R.string.select_account_hint, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            selectedAccount?.let { user ->
-                accountList.remove(user)
-                SpUtil.removeAccount(user.first)
-                updateAccountSpinner()
-            } ?: Toast.makeText(this, R.string.select_account_hint, Toast.LENGTH_SHORT).show()
+            val bottomSheet = AccountListBottomSheet(
+                accounts,
+                onAccountSelected = { selected ->
+                    selectedAccount = accountList.find { x -> x.first == selected }
+
+                    selectedAccount?.let { (username, password) ->
+                        binding.username.setText(username)
+                        binding.password.setText(password)
+                    } ?: Toast.makeText(this, R.string.select_account_hint, Toast.LENGTH_SHORT).show()
+                },
+                onAccountDeleted = { deletedAccount ->
+                    SpUtil.removeAccount(deletedAccount)
+                    Toast.makeText(this, "已删除账号：$deletedAccount", Toast.LENGTH_SHORT).show()
+                }
+            )
+
+            bottomSheet.show(supportFragmentManager, "AccountList")
         }
 
         binding.loginBtn.setOnClickListener {
@@ -78,7 +78,6 @@ class LoginActivity : AppCompatActivity() {
                         val cookie = it.headers()["set-cookie"] ?: ""
                         if (cookie.isNotBlank()) {
                             SpUtil.putLoginInfo(username, password, cookie)
-                            setupAccountSpinner()
                             startActivity(Intent(this, ProberActivity::class.java))
                             finish()
                         }
@@ -94,45 +93,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateAccountSpinner() {
-        val usernames = if (accountList.isEmpty()) {
-            listOf("无保存的账号")
-        } else {
-            accountList.map { it.first }
-        }
-
-        spinnerAdapter.clear()
-        spinnerAdapter.addAll(usernames)
-        spinnerAdapter.notifyDataSetChanged()
-    }
-
     private var selectedAccount: Pair<String, String>? = null
 
-    private fun setupAccountSpinner() {
-        accountList = SpUtil.getAccountHistory().toMutableList()
-
-        val usernames = if (accountList.isEmpty()) {
-            listOf("无保存的账号")
-        } else {
-            accountList.map { it.first }
-        }
-
-        spinnerAdapter = ArrayAdapter(
-            this, android.R.layout.simple_spinner_dropdown_item, usernames
-        )
-
-        binding.accountSpinner.adapter = spinnerAdapter
-
-        binding.accountSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedAccount = if (accountList.isEmpty()) null else accountList.getOrNull(position)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                selectedAccount = null
-            }
-        }
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) finish()

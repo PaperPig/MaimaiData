@@ -133,9 +133,6 @@
     <string name="maimai_data_download_title">正在下载</string>
     <string name="maimai_data_start_download">开始下载</string>
     <string name="maimai_data_download_error">下载出错，请重新下载</string>
-    <string name="saved_accounts">已保存账号</string>
-    <string name="delete_chosen_account">删除该账号</string>
-    <string name="apply_chosen_account">选择该账号</string>
     <string name="select_account_hint">请选择账号</string>
     <string name="type_in_account_pwd_hint">请输入用户名或密码</string>
 
@@ -165,5 +162,7 @@
     <string name="vpn_please_login">请先登录查分器账户</string>
     <string name="left_arrow">◀</string>
     <string name="right_arrow">▶</string>
+    <string name="accountManagement">账号管理</string>
+    <string name="selectAccount">选择账号</string>
 
 </resources>
