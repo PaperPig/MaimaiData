@@ -2,10 +2,9 @@ package com.paperpig.maimaidata.ui.maimaidxprober
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.MenuItem
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
@@ -17,6 +16,7 @@ import com.paperpig.maimaidata.utils.SpUtil
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
+    private var isPasswordVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +58,18 @@ class LoginActivity : AppCompatActivity() {
             )
 
             bottomSheet.show(supportFragmentManager, "AccountList")
+        }
+
+        binding.eyeIcon.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            if (isPasswordVisible) {
+                binding.password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                binding.eyeIcon.setImageResource(R.drawable.eye_closed)
+            } else {
+                binding.password.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                binding.eyeIcon.setImageResource(R.drawable.eye_open)
+            }
+            binding.password.setSelection(binding.password.text.length)
         }
 
         binding.loginBtn.setOnClickListener {
