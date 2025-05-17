@@ -119,7 +119,7 @@
     <string name="storage_permission_denied">保存失败，没有获取储存权限</string>
     <string name="file_saved_to_path">文件已保存至%1$s目录</string>
     <string name="version_query">版本进度</string>
-    <string name="level_query">等级表进度</string>
+    <string name="level_query">等级进度</string>
     <string name="switch_display">切换显示</string>
     <string name="name_plate_achieved">%d/%d</string>
     <string name="mismatching_data_title">当前数据库不匹配查分数据</string>
