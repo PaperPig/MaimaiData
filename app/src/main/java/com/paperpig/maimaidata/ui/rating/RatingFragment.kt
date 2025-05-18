@@ -19,8 +19,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.MenuProvider
-import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.afollestad.materialdialogs.MaterialDialog
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.crawler.CrawlerCaller
 import com.paperpig.maimaidata.crawler.WechatCrawlerListener
@@ -51,6 +51,7 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
     private lateinit var resultAdapter: RatingResultAdapter
 
     private val proberUpdateDialog by lazy { ProberUpdateDialog(requireContext()) }
+    private lateinit var proberUpdateTipsDialog: MaterialDialog
 
 
     private val httpServiceIntent by lazy {
@@ -145,7 +146,8 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
                 val songLevel = s.toString()
                 val songAchievementText = binding.inputSongAchievement.text.toString()
                 if (songAchievementText.isNotEmpty() && songAchievementText != "."
-                    && songLevel.isNotEmpty() && songLevel != "."){
+                    && songLevel.isNotEmpty() && songLevel != "."
+                ) {
                     binding.outputSingleRating.text = ConvertUtils.achievementToRating(
                         (binding.inputSongLevel.text.toString().toFloat() * 10).toInt(),
                         (binding.inputSongAchievement.text.toString().toFloat() * 10000).toInt()
@@ -170,7 +172,8 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
                 val songAchievement = s.toString()
                 val songLevelText = binding.inputSongLevel.text.toString()
                 if (songAchievement.isNotEmpty() && songAchievement != "."
-                    && songLevelText.isNotEmpty() && songLevelText != "."){
+                    && songLevelText.isNotEmpty() && songLevelText != "."
+                ) {
                     binding.outputSingleRating.text = ConvertUtils.achievementToRating(
                         (binding.inputSongLevel.text.toString().toFloat() * 10).toInt(),
                         (binding.inputSongAchievement.text.toString().toFloat() * 10000).toInt()
@@ -200,6 +203,10 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
                 LocalVpnService.IsRunning = false
                 stopHttpService()
             }
+        }
+
+        binding.proberProxyUpdateHelpIv.setOnClickListener {
+            showHelpDialog()
         }
 
         requireActivity().addMenuProvider(object : MenuProvider {
@@ -375,6 +382,24 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
         super.onDestroy()
         CrawlerCaller.removeOnWechatCrawlerListener()
         LocalVpnService.removeOnStatusChangedListener(this)
+    }
+
+    private fun showHelpDialog() {
+        if (::proberUpdateTipsDialog.isInitialized) {
+            proberUpdateTipsDialog.show()
+        } else {
+            var helpStringBuilder = ""
+            helpStringBuilder = getString(R.string.prober_update_content_step1) + "\n" +
+                    getString(R.string.prober_update_content_step2) + "\n" +
+                    getString(R.string.prober_update_content_step3) + "\n" +
+                    getString(R.string.prober_update_content_step4) + "\n"
+
+            proberUpdateTipsDialog = MaterialDialog.Builder(requireContext())
+                .title(getString(R.string.prober_update_help))
+                .content(helpStringBuilder)
+                .build()
+            proberUpdateTipsDialog.show()
+        }
     }
 }
 

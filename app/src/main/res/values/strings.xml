@@ -95,6 +95,11 @@
     <string name="current_user">当前用户</string>
     <string name="prober_tips">数据来源于舞萌DX查分器，\n请使用舞萌DX查分器进行数据同步</string>
     <string name="prober_url">https://github.com/Diving-Fish/maimaidx-prober</string>
+    <string name="prober_update_help">传分帮助</string>
+    <string name="prober_update_content_step1">①.打开“开启代理”，App会自动打开代理（第一次使用请同意VPN创建请求）、复制链接、跳转微信</string>
+    <string name="prober_update_content_step2">②.在微信中将复制的链接发送至聊天窗口（如文件传输助手）</string>
+    <string name="prober_update_content_step3">③.点击发送的链接，等待网页提示“登录信息以获取”后，即可关闭页面返回App</string>
+    <string name="prober_update_content_step4">④.App开始获取分数信息，并根据设置中的难度选择将对应难度的成绩上传至水鱼网</string>
     <string name="change_account">更换账户</string>
     <string name="query_record">查分</string>
     <string name="rank">RANK</string>
