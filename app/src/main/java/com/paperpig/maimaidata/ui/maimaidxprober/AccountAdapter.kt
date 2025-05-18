@@ -15,7 +15,7 @@ class AccountAdapter(
         val textView: TextView = view.findViewById(android.R.id.text1)
         init {
             view.setOnClickListener {
-                val account = accounts[adapterPosition]
+                val account = accounts[getBindingAdapterPosition()]
                 onItemClick(account)
             }
         }

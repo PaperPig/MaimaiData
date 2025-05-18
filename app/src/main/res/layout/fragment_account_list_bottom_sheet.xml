@@ -12,7 +12,7 @@
         android:padding="12dp">
 
         <TextView
-            android:id="@+id/titleText"
+            android:id="@+id/title_text"
             android:text="@string/selectAccount"
             android:textSize="18sp"
             android:layout_centerInParent="true"
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content" />
 
         <ImageButton
-            android:id="@+id/deleteModeButton"
+            android:id="@+id/delete_mode_button"
             android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/accountRecyclerView"
+        android:id="@+id/account_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>
