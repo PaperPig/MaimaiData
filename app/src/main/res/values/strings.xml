@@ -124,7 +124,7 @@
     <string name="storage_permission_denied">保存失败，没有获取储存权限</string>
     <string name="file_saved_to_path">文件已保存至%1$s目录</string>
     <string name="version_query">版本进度</string>
-    <string name="level_query">等级表进度</string>
+    <string name="level_query">等级进度</string>
     <string name="switch_display">切换显示</string>
     <string name="name_plate_achieved">%d/%d</string>
     <string name="mismatching_data_title">当前数据库不匹配查分数据</string>
@@ -138,9 +138,6 @@
     <string name="maimai_data_download_title">正在下载</string>
     <string name="maimai_data_start_download">开始下载</string>
     <string name="maimai_data_download_error">下载出错，请重新下载</string>
-    <string name="saved_accounts">已保存账号</string>
-    <string name="delete_chosen_account">删除该账号</string>
-    <string name="apply_chosen_account">选择该账号</string>
     <string name="select_account_hint">请选择账号</string>
     <string name="type_in_account_pwd_hint">请输入用户名或密码</string>
 
@@ -170,5 +167,7 @@
     <string name="vpn_please_login">请先登录查分器账户</string>
     <string name="left_arrow">◀</string>
     <string name="right_arrow">▶</string>
+    <string name="accountManagement">账号管理</string>
+    <string name="selectAccount">选择账号</string>
 
 </resources>
