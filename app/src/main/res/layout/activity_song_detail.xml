@@ -28,7 +28,7 @@
                 android:paddingLeft="12dp"
                 android:paddingTop="70dp"
                 android:paddingRight="12dp"
-                android:paddingBottom="18dp"
+                android:paddingBottom="12dp"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.7">
 
@@ -136,7 +136,7 @@
                     android:id="@+id/song_id_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="5dp"
                     android:padding="5dp"
                     android:text="@string/song_id"
                     android:textColor="@color/white"
@@ -147,12 +147,13 @@
                     android:id="@+id/song_id_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
                     android:padding="5dp"
                     android:textColor="@color/white"
-                    app:layout_constraintStart_toEndOf="@id/alias_label"
-                    app:layout_constraintTop_toTopOf="@id/song_id_label"
                     app:layout_constraintBottom_toBottomOf="@id/song_id_label"
-                    tools:text="100"/>
+                    app:layout_constraintStart_toEndOf="@id/song_id_label"
+                    app:layout_constraintTop_toTopOf="@id/song_id_label"
+                    tools:text="100" />
 
                 <TextView
                     android:id="@+id/alias_label"
@@ -168,6 +169,7 @@
                     android:id="@+id/song_alias_flow"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:orientation="horizontal"
                     app:constraint_referenced_ids="alias_label"
                     app:flow_horizontalBias="0"
