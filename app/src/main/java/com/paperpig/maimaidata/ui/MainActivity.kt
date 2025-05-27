@@ -6,24 +6,28 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
 import com.liulishuo.okdownload.DownloadTask
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause
 import com.liulishuo.okdownload.core.listener.DownloadListener3
 import com.paperpig.maimaidata.BuildConfig
+import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityMainBinding
+import com.paperpig.maimaidata.db.AppDataBase
 import com.paperpig.maimaidata.model.AppUpdateModel
 import com.paperpig.maimaidata.network.MaimaiDataRequests
-import com.paperpig.maimaidata.repository.ChartStatsManager
+import com.paperpig.maimaidata.repository.ChartRepository
 import com.paperpig.maimaidata.repository.ChartStatsRepository
+import com.paperpig.maimaidata.repository.SongDataRepository
+import com.paperpig.maimaidata.repository.SongWithChartRepository
 import com.paperpig.maimaidata.ui.rating.RatingFragment
 import com.paperpig.maimaidata.ui.songlist.SongListFragment
 import com.paperpig.maimaidata.utils.SpUtil
+import com.paperpig.maimaidata.utils.JsonConvertToDb
 import io.reactivex.disposables.Disposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -44,6 +48,8 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbarLayout.toolbar)
 
         checkChartStatus()
+
+        queryMaxNotes()
 
         if (savedInstanceState != null) {
             supportActionBar?.title = savedInstanceState.getString("TOOLBAR_TITLE")
@@ -154,6 +160,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
+     * 查询最大notes数量
+     */
+    private fun queryMaxNotes() {
+        ChartRepository.getInstance(AppDataBase.getInstance().chartDao()).getMaxNotes()
+            .observe(this) {
+                MaimaiDataApplication.instance.maxNotesStats = it
+            }
+    }
+
+    /**
      * 检查水鱼谱面数据
      */
     private fun checkChartStatus() {
@@ -164,20 +180,19 @@ class MainActivity : AppCompatActivity() {
         if ((currentTime - lastUpdateTime) >= fiveDaysMillis) {
             checkChartStatusDisposable = MaimaiDataRequests.getChartStatus().subscribe(
                 { t ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        ChartStatsRepository().saveChartStats(this@MainActivity, t)
-                        SpUtil.saveLastUpdateChartStats(currentTime)
-                        ChartStatsManager.loadData()
+                    lifecycleScope.launch {
+                        val convertChatStats = JsonConvertToDb.convertChatStats(t)
+                        val result = ChartStatsRepository.getInstance(
+                            AppDataBase.getInstance().chartStatsDao()
+                        ).replaceAllChartStats(convertChatStats)
+                        if (result) {
+                            SpUtil.saveLastUpdateChartStats(currentTime)
+                        }
                     }
                 }, {
                     it.printStackTrace()
                     Toast.makeText(this, "谱面状态数据下载失败", Toast.LENGTH_LONG).show()
                 })
-        } else {
-            //读取谱面信息数据
-            CoroutineScope(Dispatchers.IO).launch {
-                ChartStatsManager.loadData()
-            }
         }
     }
 
@@ -213,8 +228,15 @@ class MainActivity : AppCompatActivity() {
 
             override fun completed(task: DownloadTask) {
                 updateDialog.dismiss()
-                songListFragment.loadData()
-                SpUtil.setDataVersion(appUpdateModel.dataVersion2!!)
+                lifecycleScope.launch {
+                    val data = SongDataRepository().getData(this@MainActivity)
+                    val result = SongWithChartRepository.getInstance(
+                        AppDataBase.getInstance().songWithChartDao()
+                    ).updateDatabase(data)
+                    if (result) {
+                        SpUtil.setDataVersion(appUpdateModel.dataVersion2!!)
+                    }
+                }
             }
 
             override fun canceled(task: DownloadTask) {

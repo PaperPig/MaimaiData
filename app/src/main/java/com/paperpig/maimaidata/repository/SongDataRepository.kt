@@ -22,7 +22,7 @@ class SongDataRepository {
                     list, object : TypeToken<List<SongData>>() {}.type
                 )
 
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 emptyList()
             }
         }

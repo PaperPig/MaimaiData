@@ -18,19 +18,20 @@ import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ItemSearchHistoryBinding
 import com.paperpig.maimaidata.databinding.LayoutSongSearchBinding
 import com.paperpig.maimaidata.model.SongData
-import com.paperpig.maimaidata.repository.SongDataManager
 import com.paperpig.maimaidata.utils.SpUtil
+import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 
 class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context, attrs),
     Slider.OnSliderTouchListener {
-    private var listener: OnSearchResultListener? = null
+    private var listener: OnSearchListener? = null
     private val binding: LayoutSongSearchBinding =
         LayoutSongSearchBinding.inflate(LayoutInflater.from(context), this, true)
 
     private val levels = resources.getStringArray(R.array.dxp_song_level)
+    private var dataList: List<SongWithChartsEntity> = listOf()
 
     private var searchLevelDs = 1.0f
     private var searchLevelString = ""
@@ -161,33 +162,24 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
         }
     }
 
-    fun setOnSearchResultListener(onSearchResultListener: OnSearchResultListener) {
+    fun setOnSearchResultListener(
+        list: List<SongWithChartsEntity>,
+        onSearchResultListener: OnSearchListener
+    ) {
+        dataList = list
         listener = onSearchResultListener
     }
 
     private fun search() {
-        listener?.onResult(
-            if (binding.levelDsSwitch.isChecked) {
-                SongDataManager.search(
-                    binding.searchEditText.text.toString(),
-                    getSortCheck(),
-                    getVersionCheck(),
-                    null,
-                    BigDecimal(searchLevelDs.toDouble()).setScale(1, RoundingMode.HALF_UP)
-                        .toDouble(),
-                    null, binding.favorCheckbox.isChecked
-                )
-            } else {
-                SongDataManager.search(
-                    binding.searchEditText.text.toString(),
-                    getSortCheck(),
-                    getVersionCheck(),
-                    searchLevelString,
-                    null,
-                    binding.levelSortSpinner.selectedItem.toString(),
-                    binding.favorCheckbox.isChecked
-                )
-            }
+        listener?.onSearch(
+            binding.searchEditText.text.toString(),
+            getSortCheck(),
+            getVersionCheck(),
+            if (binding.levelDsSwitch.isChecked) null else searchLevelString,
+            if (binding.levelDsSwitch.isChecked) null else binding.levelSortSpinner.selectedItem.toString(),
+            if (binding.levelDsSwitch.isChecked) BigDecimal(searchLevelDs.toDouble())
+                .setScale(1, RoundingMode.HALF_UP).toDouble() else null,
+            binding.favorCheckbox.isChecked
         )
         updateHistoryRecyclerView(binding.searchEditText.text.toString())
         binding.searchEditText.clearFocus()
@@ -209,6 +201,17 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
         return versionList
     }
 
+    interface OnSearchListener {
+        fun onSearch(
+            searchText: String,
+            genreList: List<String>,
+            versionList: List<String>,
+            selectLevel: String?,
+            sequencing: String?,
+            ds: Double?,
+            isFavor: Boolean
+        )
+    }
     private fun updateHistoryRecyclerView(searchText: String) {
         if (searchText.isNotEmpty()) {
             SpUtil.saveSearchHistory(searchText)

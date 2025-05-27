@@ -40,8 +40,8 @@ object SpUtil {
     private const val KEY_LAST_QUERY_VERSION = "last_query_version"
     private const val KEY_DIVING_FISH_NICKNAME = "diving_fish_nickname"
 
-    private const val KEY_VERSION = "version"
-    private const val KEY_LAST_UPDATE_TIME = "last_update_time"
+    private const val KEY_VERSION = "db_version"
+    private const val KEY_LAST_UPDATE_TIME = "chart_stats_db_last_update_time"
 
     private const val KEY_SEARCH_HISTORY = "search_history"
 

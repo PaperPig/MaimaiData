@@ -1,40 +1,33 @@
 package com.paperpig.maimaidata.repository
 
-import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.JsonElement
-import com.google.gson.reflect.TypeToken
-import com.paperpig.maimaidata.model.ChartStatus
+import androidx.lifecycle.LiveData
+import com.paperpig.maimaidata.db.dao.ChartStatsDao
+import com.paperpig.maimaidata.db.entity.ChartStatsEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.BufferedWriter
-import java.io.OutputStreamWriter
 
-class ChartStatsRepository {
+class ChartStatsRepository private constructor(val chartStatsDao: ChartStatsDao) {
+    companion object {
+        @Volatile
+        private var instance: ChartStatsRepository? = null
 
-    suspend fun saveChartStats(context: Context, jsonElement: JsonElement) {
-        withContext(Dispatchers.IO) {
-            val output = context.openFileOutput("chart_stats.json", Context.MODE_PRIVATE)
-
-            BufferedWriter(OutputStreamWriter(output)).use {
-                it.write(jsonElement.toString())
+        fun getInstance(chartStatsDao: ChartStatsDao): ChartStatsRepository {
+            return instance ?: synchronized(this) {
+                instance ?: ChartStatsRepository(chartStatsDao).also { instance = it }
             }
         }
     }
 
-    suspend fun getChartStats(context: Context): Map<String, List<ChartStatus>> {
+    suspend fun replaceAllChartStats(list: List<ChartStatsEntity>): Boolean {
         return withContext(Dispatchers.IO) {
-            try {
-                val input = context.openFileInput("chart_stats.json")
-                val list = input?.bufferedReader().use {
-                    it?.readText()
-                }
-                Gson().fromJson(
-                    list, object : TypeToken<Map<String, List<ChartStatus>>>() {}.type
-                )
-            } catch (e: Exception) {
-                mapOf()
-            }
+            chartStatsDao.replaceAllChartStats(list)
         }
+    }
+
+    fun getChartStatsBySongIdAndDifficultyIndex(
+        songId: Int,
+        index: Int
+    ): LiveData<ChartStatsEntity> {
+        return chartStatsDao.getChartStatsBySongIdAndDifficultyIndex(songId, index)
     }
 }

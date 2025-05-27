@@ -6,23 +6,24 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MediatorLiveData
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityVersionCheckBinding
-import com.paperpig.maimaidata.model.Record
-import com.paperpig.maimaidata.model.SongData
+import com.paperpig.maimaidata.db.AppDataBase
+import com.paperpig.maimaidata.db.entity.RecordEntity
+import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.model.Version
-import com.paperpig.maimaidata.repository.RecordDataManager
-import com.paperpig.maimaidata.repository.SongDataManager
-import com.paperpig.maimaidata.utils.Constants
+import com.paperpig.maimaidata.repository.RecordRepository
+import com.paperpig.maimaidata.repository.SongWithChartRepository
 import com.paperpig.maimaidata.utils.SpUtil
 
 class VersionCheckActivity : AppCompatActivity() {
     private lateinit var binding: ActivityVersionCheckBinding
-    private var dataList = listOf<SongData>()
-    private var recordList = listOf<Record>()
+    private var searchVersionString = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,23 +38,60 @@ class VersionCheckActivity : AppCompatActivity() {
         }
         supportActionBar?.title = getString(R.string.version_query)
 
+        initView()
+        getData()
+    }
+
+    private fun getData() {
+        var songs: List<SongWithChartsEntity>? = null
+        var records: List<RecordEntity>? = null
+        //获取所有的歌曲
+        val allSongs = SongWithChartRepository.getInstance(
+            AppDataBase.getInstance().songWithChartDao(),
+        ).getAllSongWithCharts()
+        //获取MASTER难度记录
+        val allRecords =
+            RecordRepository.getInstance(AppDataBase.getInstance().recordDao())
+                .getRecordsByDifficultyIndex(3)
+        //使用MediatorLiveData来监听两个LiveData的变化
+        MediatorLiveData<Pair<List<SongWithChartsEntity>, List<RecordEntity>>>().apply {
+            addSource(allSongs) { newSongs ->
+                songs = newSongs
+                if (songs != null && records != null) {
+                    value = Pair(songs!!, records!!)
+                }
+            }
+            addSource(allRecords) { newRecords ->
+                records = newRecords
+                if (songs != null && records != null) {
+                    value = Pair(songs!!, records!!)
+                }
+            }
+            observe(this@VersionCheckActivity) { (songs, records) ->
+                (binding.versionCheckRecycler.adapter as VersionCheckAdapter).apply {
+                    setData(songs, records)
+                    updateData(searchVersionString)
+                }
+            }
+        }
+    }
+
+
+    private fun initView() {
+        val lastSelectedPosition = SpUtil.getLastQueryVersion()
         val versionList = getVersionList()
-        val versionArrayAdapter =
-            VersionArrayAdapter(
+        searchVersionString = versionList[lastSelectedPosition].versionName
+
+
+        //设置spinner适配器
+        binding.versionSpn.apply {
+            adapter = VersionArrayAdapter(
                 this@VersionCheckActivity,
                 R.layout.item_spinner_version,
                 versionList
-            )
-        versionArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-        val lastSelectedPosition = SpUtil.getLastQueryVersion()
-        recordList = RecordDataManager.list
-            //只获取master难度分数记录
-            .filter { it.level_index == 3 }
-
-        dataList = SongDataManager.list
-        binding.versionSpn.apply {
-            adapter = versionArrayAdapter
+            ).apply {
+                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            }
             setSelection(lastSelectedPosition, true)
             onItemSelectedListener =
                 object : OnItemSelectedListener {
@@ -64,33 +102,21 @@ class VersionCheckActivity : AppCompatActivity() {
                         id: Long
                     ) {
                         SpUtil.saveLastQueryVersion(position)
-                        val filter =
-                            dataList.filter {
-                                (it.basic_info.from == (parent?.getItemAtPosition(
-                                    position
-                                ) as Version).versionName) && it.basic_info.genre != Constants.GENRE_UTAGE
-                            }
-
+                        searchVersionString =
+                            (parent?.getItemAtPosition(position) as Version).versionName
                         (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateData(
-                            filter.sortedByDescending { it.ds[3] })
+                            searchVersionString
+                        )
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {
                     }
-
                 }
-
         }
 
+        //设置recyclerView适配器
         binding.versionCheckRecycler.apply {
-            adapter =
-                VersionCheckAdapter(context,
-                    dataList.filter {
-                        it.basic_info.from == versionList[lastSelectedPosition].versionName
-                                && it.basic_info.genre != Constants.GENRE_UTAGE
-                                && it.ds.size > 3
-                    }.sortedByDescending { it.ds[3] }, recordList
-                )
+            adapter = VersionCheckAdapter(context)
 
             layoutManager = FlexboxLayoutManager(context).apply {
                 flexDirection = FlexDirection.ROW
@@ -98,11 +124,9 @@ class VersionCheckActivity : AppCompatActivity() {
             }
         }
 
-
         binding.switchBtn.setOnClickListener {
             (binding.versionCheckRecycler.adapter as VersionCheckAdapter).updateDisplay()
         }
-
     }
 
     private fun getVersionList(): MutableList<Version> {

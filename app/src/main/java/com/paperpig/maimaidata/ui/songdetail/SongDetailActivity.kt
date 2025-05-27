@@ -1,15 +1,19 @@
 package com.paperpig.maimaidata.ui.songdetail
 
 import android.app.ActivityOptions
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -21,27 +25,34 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivitySongDetailBinding
+import com.paperpig.maimaidata.db.AppDataBase
+import com.paperpig.maimaidata.db.entity.RecordEntity
+import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.network.MaimaiDataClient
-import com.paperpig.maimaidata.repository.RecordDataManager
-import com.paperpig.maimaidata.repository.SongDataManager
+import com.paperpig.maimaidata.repository.AliasRepository
+import com.paperpig.maimaidata.repository.RecordRepository
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.SpUtil
 import com.paperpig.maimaidata.utils.setCopyOnLongClick
 import com.paperpig.maimaidata.utils.setShrinkOnTouch
 import com.paperpig.maimaidata.utils.toDp
 import com.paperpig.maimaidata.widgets.Settings
+import com.paperpig.maimaidata.utils.setCopyOnLongClick
+import com.paperpig.maimaidata.utils.setShrinkOnTouch
 
 
 class SongDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySongDetailBinding
 
-    companion object {
-        const val EXTRA_SONG_ID = "extra_song_id"
+    private lateinit var data: SongWithChartsEntity
 
-        fun actionStart(context: Context, songId: String) {
+    companion object {
+        const val EXTRA_DATA_KEY = "data"
+
+        fun actionStart(context: Context, songWithChartsEntity: SongWithChartsEntity) {
             val intent = Intent(context, SongDetailActivity::class.java).apply {
-                putExtra(EXTRA_SONG_ID, songId)
+                putExtra(EXTRA_DATA_KEY, songWithChartsEntity)
             }
             context.startActivity(intent)
         }
@@ -61,70 +72,68 @@ class SongDetailActivity : AppCompatActivity() {
                 setDisplayShowHomeEnabled(true)
             }
 
-            val songId: String? = intent.getStringExtra(EXTRA_SONG_ID)
-            SongDataManager.list.find { it.id == songId }?.let { songData ->
-                val recordList = RecordDataManager.list
+            data = intent.getParcelableExtra<SongWithChartsEntity>(EXTRA_DATA_KEY)!!
+            val songData = data.songData
 
-                appbarLayout.setBackgroundColor(
+            //设置背景颜色
+            appbarLayout.setBackgroundColor(
+                ContextCompat.getColor(
+                    this@SongDetailActivity,
+                    songData.bgColor
+                )
+            )
+            tabLayout.apply {
+                setSelectedTabIndicatorColor(
                     ContextCompat.getColor(
                         this@SongDetailActivity,
-                        songData.getBgColor()
+                        songData.bgColor
                     )
                 )
-                tabLayout.apply {
-                    setSelectedTabIndicatorColor(
-                        ContextCompat.getColor(
-                            this@SongDetailActivity,
-                            songData.getBgColor()
-                        )
-                    )
-                    setTabTextColors(
-                        Color.BLACK, ContextCompat.getColor(
-                            this@SongDetailActivity,
-                            songData.getBgColor()
-                        )
-                    )
-                }
-
-                toolbarLayout.setContentScrimResource(songData.getBgColor())
-
-                GlideApp.with(this@SongDetailActivity)
-                    .load(MaimaiDataClient.IMAGE_BASE_URL + songData.basic_info.image_url)
-                    .into(songJacket)
-
-                songJacket.setBackgroundColor(
-                    ContextCompat.getColor(
+                setTabTextColors(
+                    Color.BLACK, ContextCompat.getColor(
                         this@SongDetailActivity,
-                        songData.getStrokeColor()
+                        songData.bgColor
                     )
                 )
+            }
+            toolbarLayout.setContentScrimResource(songData.bgColor)
+            GlideApp.with(this@SongDetailActivity)
+                .load(MaimaiDataClient.IMAGE_BASE_URL + songData.imageUrl)
+                .into(songJacket)
+            songJacket.setBackgroundColor(
+                ContextCompat.getColor(
+                    this@SongDetailActivity,
+                    songData.strokeColor
+                )
+            )
 
-                songTitle.apply {
-                    text = songData.basic_info.title
+            //显示歌曲信息
+            songTitle.apply {
+                text = songData.title
 
-                    setShrinkOnTouch()
-                    setCopyOnLongClick(songData.basic_info.title)
+                setShrinkOnTouch()
+                setCopyOnLongClick(songData.title)
+            }
+
+            songIdText.apply {
+                text = songData.id.toString()
+
+                setShrinkOnTouch()
+                setCopyOnLongClick(songData.id.toString())
+            }
+
+            songArtist.text = songData.artist
+            songBpm.text = songData.bpm.toString()
+            songGenre.text = songData.genre
+            GlideApp.with(this@SongDetailActivity).apply {
+                if (songData.type == Constants.CHART_TYPE_DX) {
+                    load(R.drawable.ic_deluxe).into(binding.songType)
+                } else {
+                    load(R.drawable.ic_standard).into(binding.songType)
                 }
-
-                songIdText.apply {
-                    text = songData.id
-
-                    setShrinkOnTouch()
-                    setCopyOnLongClick(songData.id)
-                }
-
-                songArtist.text = songData.basic_info.artist
-                songBpm.text = songData.basic_info.bpm.toString()
-                songGenre.text = songData.basic_info.genre
-                GlideApp.with(this@SongDetailActivity).apply {
-                    if (songData.type == Constants.CHART_TYPE_DX) {
-                        load(R.drawable.ic_deluxe).into(binding.songType)
-                    } else {
-                        load(R.drawable.ic_standard).into(binding.songType)
-                    }
-                }
-                setVersionImage(songAddVersion, songData.basic_info.version)
-                setCnVersionImage(songAddCnVersion, songData.basic_info.from)
+            }
+            setVersionImage(songAddVersion, songData.version)
+            setCnVersionImage(songAddCnVersion, songData.from)
 
                 val colorFilter: (Boolean) -> Int = { isFavor: Boolean ->
                     if (isFavor) {
@@ -134,79 +143,108 @@ class SongDetailActivity : AppCompatActivity() {
                     }
                 }
                 favButton.apply {
-                    setColorFilter(colorFilter.invoke(SpUtil.isFavorite(songData.id)))
+                    setColorFilter(colorFilter.invoke(SpUtil.isFavorite(songData.id.toString())))
                     setOnClickListener {
-                        val isFavor = SpUtil.isFavorite(songData.id)
-                        SpUtil.setFavorite(songData.id, !isFavor)
+                        val isFavor = SpUtil.isFavorite(songData.id.toString())
+                        SpUtil.setFavorite(songData.id.toString(), !isFavor)
                         setColorFilter(colorFilter.invoke(!isFavor))
                     }
                 }
 
-                //打开歌曲大图
-                songJacket.setOnClickListener {
-                    val options: ActivityOptions = ActivityOptions
-                        .makeSceneTransitionAnimation(
-                            this@SongDetailActivity,
-                            binding.songJacket,
-                            "shared_image"
-                        )
-                    PinchImageActivity.actionStart(
-                        this@SongDetailActivity,
-                        MaimaiDataClient.IMAGE_BASE_URL + songData.basic_info.image_url,
-                        songData.id,
-                        options.toBundle()
-                    )
-                }
+            //显示别名
+            if (Settings.getEnableShowAlias()) {
+                AliasRepository.getInstance(AppDataBase.getInstance().aliasDao())
+                    .getAliasListBySongId(songData.id).observe(this@SongDetailActivity) {
+                        //对添加的别名进行flow约束
+                        if (it.isNotEmpty()) {
+                            val aliasViewIds = songAliasFlow.referencedIds.toMutableList()
+                            it.forEachIndexed { _, item ->
+                                val textView = TextView(this@SongDetailActivity).apply {
+                                    text = item.alias
+                                    id = View.generateViewId()
+                                    aliasViewIds.add(id)
+                                    val padding = 5.toDp().toInt()
+                                    setPadding(padding, padding, padding, padding)
+                                    setBackgroundResource(R.drawable.mmd_song_alias_info_bg)
+                                    setTextColor(
+                                        ContextCompat.getColor(
+                                            this@SongDetailActivity,
+                                            songData.bgColor
+                                        )
+                                    )
+                                    layoutParams = ConstraintLayout.LayoutParams(
+                                        ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                                        ConstraintLayout.LayoutParams.WRAP_CONTENT
+                                    )
 
-                if (Settings.getEnableShowAlias()) {
-                    //对添加的别名进行flow约束
-                    val aliasViewIds = songAliasFlow.referencedIds.toMutableList()
-                    songData.alias?.forEachIndexed { _, item ->
-                        val textView = TextView(this@SongDetailActivity).apply {
-                            text = item
-                            id = View.generateViewId()
-                            aliasViewIds.add(id)
-                            val padding = 5.toDp().toInt()
-                            setPadding(padding, padding, padding, padding)
-                            setBackgroundResource(R.drawable.mmd_song_alias_info_bg)
-                            setTextColor(
-                                ContextCompat.getColor(
-                                    this@SongDetailActivity,
-                                    songData.getBgColor()
-                                )
-                            )
-                            layoutParams = ConstraintLayout.LayoutParams(
-                                ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                                ConstraintLayout.LayoutParams.WRAP_CONTENT
-                            )
-
-                            setShrinkOnTouch()
-                            setCopyOnLongClick(item)
+                                    setShrinkOnTouch()
+                                    setCopyOnLongClick(item.alias)
+                                }
+                                constraintLayout.addView(textView)
+                            }
+                            songAliasFlow.referencedIds = aliasViewIds.toIntArray()
+                        } else {
+                            aliasLabel.visibility = View.GONE
                         }
-                        constraintLayout.addView(textView)
-                    } ?: run {
-                        aliasLabel.visibility = View.GONE
                     }
-                    songAliasFlow.referencedIds = aliasViewIds.toIntArray()
-                } else {
-                    aliasLabel.visibility = View.GONE
-                }
-
-
-                val list = ArrayList<Fragment>()
-
-                (1..songData.level.size).forEach { i ->
-                    val position = songData.level.size - i
-                    list.add(SongLevelFragment.newInstance(songData, position, recordList.find {
-                        it.song_id == songData.id &&
-                                it.level_index == position
-                    }))
-                }
-
-                viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
-                tabLayout.setupWithViewPager(viewPager)
+            } else {
+                aliasLabel.visibility = View.GONE
             }
+
+            //打开歌曲大图
+            songJacket.setOnClickListener {
+                val options: ActivityOptions = ActivityOptions
+                    .makeSceneTransitionAnimation(
+                        this@SongDetailActivity,
+                        binding.songJacket,
+                        "shared_image"
+                    )
+                PinchImageActivity.actionStart(
+                    this@SongDetailActivity,
+                    MaimaiDataClient.IMAGE_BASE_URL + songData.imageUrl,
+                    songData.id.toString(),
+                    options.toBundle()
+                )
+            }
+
+            //设置收藏
+            favButton.apply {
+                val colorFilter: (Boolean) -> Int = { isFavor: Boolean ->
+                    if (isFavor) {
+                        0
+                    } else {
+                        Color.WHITE
+                    }
+                }
+                setColorFilter(colorFilter.invoke(SpUtil.isFavorite(songData.id.toString())))
+                setOnClickListener {
+                    val isFavor = SpUtil.isFavorite(songData.id.toString())
+                    SpUtil.setFavorite(songData.id.toString(), !isFavor)
+                    setColorFilter(colorFilter.invoke(!isFavor))
+                }
+            }
+
+            //获取成绩数据
+            RecordRepository.getInstance(AppDataBase.getInstance().recordDao())
+                .getRecordsBySongId(songData.id).observe(this@SongDetailActivity) {
+                    setupFragments(it)
+                }
         }
+    }
+
+    private fun setupFragments(recordList: List<RecordEntity>) {
+        val list = ArrayList<Fragment>()
+
+        (1..data.charts.size).forEach { i ->
+            val position = data.charts.size - i
+            list.add(SongLevelFragment.newInstance(data, position, recordList.find {
+                it.songId == data.songData.id &&
+                        it.levelIndex == position
+            }))
+        }
+
+        binding.viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
     }
 
 
@@ -298,15 +336,5 @@ class SongDetailActivity : AppCompatActivity() {
             .load(versionDrawable)
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(view)
-    }
-
-    override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 0) {
-            // 如果返回栈中有 Fragment，则回退
-            supportFragmentManager.popBackStack()
-        } else {
-            // 否则执行默认行为（退出 Activity）
-            super.onBackPressed()
-        }
     }
 }

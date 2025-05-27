@@ -1,10 +1,9 @@
 package com.paperpig.maimaidata.network
 
 import com.google.gson.Gson
-import com.google.gson.JsonArray
 import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import com.paperpig.maimaidata.model.AppUpdateModel
+import com.paperpig.maimaidata.model.ChartsResponse
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -60,32 +59,14 @@ object MaimaiDataRequests {
     /**
      * get chart_status json
      */
-    fun getChartStatus(): Observable<JsonElement> =
+    fun getChartStatus(): Observable<ChartsResponse> =
         MaimaiDataClient
             .instance
             .getService()
             .getChartStatus()
             .compose(MaimaiDataTransformer.handleResult())
             .flatMap {
-                val originJsonObject = it.asJsonObject.getAsJsonObject("charts")
-
-                // 只获取拟合定数数据
-                val transformedCharts = JsonObject()
-
-                for ((key, value) in originJsonObject.entrySet()) {
-                    if (value is JsonArray) {
-                        val newArray = JsonArray()
-
-                        for (item in value) {
-                            val newItem = JsonObject()
-                            if (item is JsonObject && item.has("fit_diff")) {
-                                newItem.addProperty("fit_diff", item.get("fit_diff").asDouble)
-                            }
-                            newArray.add(newItem)
-                        }
-                        transformedCharts.add(key, newArray)
-                    }
-                }
-                Observable.just(transformedCharts)
+                val model = Gson().fromJson(it, ChartsResponse::class.java)
+                Observable.just(model)
             }
 }
