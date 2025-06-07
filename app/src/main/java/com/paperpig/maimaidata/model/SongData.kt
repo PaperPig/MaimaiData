@@ -14,8 +14,9 @@ data class SongData(
     val ds: List<Double>,
     var old_ds: List<Double>,
     val id: String,
-    val level: List<String>,
+    var level: List<String>,
     val title: String,
+    var title_kana: String,
     val type: String,
     var alias: List<String>?,
 ) : Parcelable {
@@ -48,6 +49,7 @@ data class SongData(
         val bpm: Int,
         var from: String,
         var genre: String,
+        var catcode: String,
         val is_new: Boolean,
         val title: String,
         var image_url: String,

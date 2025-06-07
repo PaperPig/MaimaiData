@@ -18,11 +18,11 @@ object JsonConvertToDb {
             SongDataEntity(
                 song.id.toInt(),
                 song.title,
-                song.title,
+                song.title_kana,
                 song.basic_info.artist,
                 song.basic_info.image_url,
                 song.basic_info.genre,
-                song.basic_info.genre,
+                song.basic_info.catcode,
                 song.basic_info.bpm,
                 song.basic_info.from,
                 song.type,
