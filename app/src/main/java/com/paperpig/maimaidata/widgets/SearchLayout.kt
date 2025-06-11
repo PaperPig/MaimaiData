@@ -63,7 +63,8 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
         binding.versionDx2021Checkbox,
         binding.versionDx2022Checkbox,
         binding.versionDx2023Checkbox,
-        binding.versionDx2024Checkbox
+        binding.versionDx2024Checkbox,
+        binding.versionDx2025Checkbox
     )
 
 
