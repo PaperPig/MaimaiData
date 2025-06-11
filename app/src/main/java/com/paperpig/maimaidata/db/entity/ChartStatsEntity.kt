@@ -2,7 +2,6 @@ package com.paperpig.maimaidata.db.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
@@ -10,14 +9,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 
-@Entity(
-    tableName = "chart_stats",
-    foreignKeys = [ForeignKey(
-        entity = SongDataEntity::class,
-        parentColumns = ["id"],
-        childColumns = ["song_id"]
-    )]
-)
+@Entity(tableName = "chart_stats")
 data class ChartStatsEntity(
     // 主键（自增长，默认值 0）
     @PrimaryKey(autoGenerate = true)

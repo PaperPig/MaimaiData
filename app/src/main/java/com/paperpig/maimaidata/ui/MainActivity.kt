@@ -25,8 +25,8 @@ import com.paperpig.maimaidata.repository.SongDataRepository
 import com.paperpig.maimaidata.repository.SongWithChartRepository
 import com.paperpig.maimaidata.ui.rating.RatingFragment
 import com.paperpig.maimaidata.ui.songlist.SongListFragment
-import com.paperpig.maimaidata.utils.SpUtil
 import com.paperpig.maimaidata.utils.JsonConvertToDb
+import com.paperpig.maimaidata.utils.SpUtil
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.launch
 
@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
                     }.onNegative { d, _ ->
                         d.dismiss()
                     }.autoDismiss(true).cancelable(true).show()
-            } else if (SpUtil.getDataVersion() < it.dataVersion2!!
+            } else if (SpUtil.getDataVersion() < it.dataVersion3!!
             ) {
                 MaterialDialog.Builder(this)
                     .title(this@MainActivity.getString(R.string.maimai_data_data_update_title))
@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                         String.format(
                             this@MainActivity.getString(R.string.maimai_data_data_update_info),
                             SpUtil.getDataVersion(),
-                            it.dataVersion2
+                            it.dataVersion3
                         )
                     ).positiveText(R.string.maimai_data_update_download)
                     .negativeText(R.string.common_cancel).onPositive { _, which ->
@@ -202,7 +202,7 @@ class MainActivity : AppCompatActivity() {
                 .content(getString(R.string.maimai_data_start_download)).cancelable(false).show()
         downloadTask =
             DownloadTask.Builder(
-                appUpdateModel.dataUrl2!!,
+                appUpdateModel.dataUrl3!!,
                 filesDir.path,
                 "songdata.json"
             )
@@ -234,7 +234,7 @@ class MainActivity : AppCompatActivity() {
                         AppDataBase.getInstance().songWithChartDao()
                     ).updateDatabase(data)
                     if (result) {
-                        SpUtil.setDataVersion(appUpdateModel.dataVersion2!!)
+                        SpUtil.setDataVersion(appUpdateModel.dataVersion3!!)
                     }
                 }
             }

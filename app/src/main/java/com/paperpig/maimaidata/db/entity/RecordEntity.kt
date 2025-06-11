@@ -3,21 +3,13 @@ package com.paperpig.maimaidata.db.entity
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.utils.Constants
 import kotlinx.parcelize.Parcelize
 
-@Entity(
-    tableName = "record",
-    foreignKeys = [ForeignKey(
-        entity = SongDataEntity::class,
-        parentColumns = ["id"],
-        childColumns = ["song_id"]
-    )]
-)
+@Entity(tableName = "record")
 @Parcelize
 data class RecordEntity(
     // 主键（自增长，默认值 0）

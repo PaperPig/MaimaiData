@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "2c41d128deb1739b438e87536eccaec3",
+    "identityHash": "e8e650d0cbe113afa581d7f6072a7fa3",
     "entities": [
       {
         "tableName": "song_data",
@@ -278,7 +278,7 @@
       },
       {
         "tableName": "record",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `achievements` REAL NOT NULL, `ds` REAL NOT NULL, `dx_score` INTEGER NOT NULL, `fc` TEXT NOT NULL, `fs` TEXT NOT NULL, `level` TEXT NOT NULL, `level_index` INTEGER NOT NULL, `level_label` TEXT NOT NULL, `ra` INTEGER NOT NULL, `rate` TEXT NOT NULL, `song_id` INTEGER NOT NULL, `title` TEXT NOT NULL, `type` TEXT NOT NULL, FOREIGN KEY(`song_id`) REFERENCES `song_data`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `achievements` REAL NOT NULL, `ds` REAL NOT NULL, `dx_score` INTEGER NOT NULL, `fc` TEXT NOT NULL, `fs` TEXT NOT NULL, `level` TEXT NOT NULL, `level_index` INTEGER NOT NULL, `level_label` TEXT NOT NULL, `ra` INTEGER NOT NULL, `rate` TEXT NOT NULL, `song_id` INTEGER NOT NULL, `title` TEXT NOT NULL, `type` TEXT NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -381,24 +381,11 @@
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_record_song_id` ON `${TABLE_NAME}` (`song_id`)"
           }
-        ],
-        "foreignKeys": [
-          {
-            "table": "song_data",
-            "onDelete": "NO ACTION",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "song_id"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          }
         ]
       },
       {
         "tableName": "chart_stats",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `song_id` INTEGER NOT NULL, `cnt` REAL, `diff` TEXT, `level_index` INTEGER NOT NULL, `fit_diff` REAL, `avg` REAL, `avg_dx` REAL, `std_dev` REAL, `dist` TEXT, `fc_dist` TEXT, FOREIGN KEY(`song_id`) REFERENCES `song_data`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `song_id` INTEGER NOT NULL, `cnt` REAL, `diff` TEXT, `level_index` INTEGER NOT NULL, `fit_diff` REAL, `avg` REAL, `avg_dx` REAL, `std_dev` REAL, `dist` TEXT, `fc_dist` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -475,25 +462,12 @@
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_chart_stats_song_id` ON `${TABLE_NAME}` (`song_id`)"
           }
-        ],
-        "foreignKeys": [
-          {
-            "table": "song_data",
-            "onDelete": "NO ACTION",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "song_id"
-            ],
-            "referencedColumns": [
-              "id"
-            ]
-          }
         ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2c41d128deb1739b438e87536eccaec3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e8e650d0cbe113afa581d7f6072a7fa3')"
     ]
   }
 }
