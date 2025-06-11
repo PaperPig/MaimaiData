@@ -86,11 +86,16 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
             binding.accountText.setText(R.string.no_logged_in)
             binding.proberQueryBtn.visibility = View.GONE
             binding.proberLoginBtn.setText(R.string.login)
+            binding.proberLoginBtn.layoutParams = binding.proberLoginBtn.layoutParams.apply {
+                width = (260 * binding.root.context.resources.displayMetrics.density).toInt()
+            }
         } else {
             binding.accountText.text = SpUtil.getUserName()
             binding.proberQueryBtn.visibility = View.VISIBLE
             binding.proberLoginBtn.setText(R.string.change_account)
-
+            binding.proberLoginBtn.layoutParams = binding.proberLoginBtn.layoutParams.apply {
+                width = (120 * binding.root.context.resources.displayMetrics.density).toInt()
+            }
         }
     }
 
