@@ -144,6 +144,8 @@ class ProberActivity : AppCompatActivity() {
                 val hasNickname = it.asJsonObject.has("nickname")
                 if (hasNickname) {
                     SpUtil.saveDivingFishNickname(it.asJsonObject.get("nickname").asString)
+                } else {
+                    SpUtil.saveDivingFishNickname("")
                 }
             }
 

@@ -330,6 +330,7 @@ class SongDetailActivity : AppCompatActivity() {
                 equals("舞萌DX 2022") -> versionDrawable = R.drawable.maimaidx_2022
                 equals("舞萌DX 2023") -> versionDrawable = R.drawable.maimaidx_2023
                 equals("舞萌DX 2024") -> versionDrawable = R.drawable.maimaidx_2024
+                equals("舞萌DX 2025") -> versionDrawable = R.drawable.maimaidx_2025
             }
         }
         Glide.with(view.context)

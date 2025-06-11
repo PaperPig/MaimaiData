@@ -149,6 +149,7 @@ class VersionCheckActivity : AppCompatActivity() {
             Version("舞萌DX 2022", R.drawable.maimaidx_2022),
             Version("舞萌DX 2023", R.drawable.maimaidx_2023),
             Version("舞萌DX 2024", R.drawable.maimaidx_2024),
+            Version("舞萌DX 2025", R.drawable.maimaidx_2025),
         )
     }
 

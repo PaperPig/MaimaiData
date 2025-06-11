@@ -60,13 +60,14 @@ object CreateBest50 {
             val textPaint = TextPaint()
 
 
-            //绘制rating数据图
+            // 绘制rating数据图
             val mainBitmap =
                 createBitmap(CONTAINER_WIDTH, CONTAINER_HEIGHT)
             val canvas = Canvas(mainBitmap)
 
             val threadPool = Executors.newFixedThreadPool(5)
 
+            // 绘制旧版本乐曲
             for (i in old.indices) {
                 println(Thread.currentThread().name)
                 threadPool.submit {
@@ -83,7 +84,8 @@ object CreateBest50 {
                     )
                 }.get()
             }
-            //绘制现行版本乐曲
+
+            // 绘制现行版本乐曲
             for (i in new.indices) {
                 println(Thread.currentThread().name)
 
@@ -137,8 +139,6 @@ object CreateBest50 {
             } else {
                 SpUtil.getUserName()
             }
-
-            SpUtil.saveDivingFishNickname("")
 
             containerCanvas.drawText(
                 name,
