@@ -312,6 +312,8 @@ class SongDetailActivity : AppCompatActivity() {
                 startsWith("235") -> versionDrawable = R.drawable.maimaidx_festival_plus
                 startsWith("240") -> versionDrawable = R.drawable.maimaidx_buddies
                 startsWith("245") -> versionDrawable = R.drawable.maimaidx_buddies_plus
+                startsWith("250") -> versionDrawable = R.drawable.maimaidx_prism
+                startsWith("255") -> versionDrawable = R.drawable.maimaidx_prism_plus
             }
         }
         Glide.with(view.context)
