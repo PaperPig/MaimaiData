@@ -3,6 +3,7 @@ package com.paperpig.maimaidata.network.vpn.core;
 import android.util.Log;
 
 import com.paperpig.maimaidata.network.vpn.tcpip.CommonMethods;
+import com.paperpig.maimaidata.utils.Constants;
 
 import java.util.Locale;
 
@@ -97,7 +98,7 @@ public class HttpHostHeaderParser {
                     if (offset + length > limit) return null;
                     String serverName = new String(buffer, offset, length);
                     if (ProxyConfig.IS_DEBUG)
-                        Log.d(Constant.TAG, "SNI: " + serverName);
+                        Log.d(Constants.TAG_VPN, "SNI: " + serverName);
                     return serverName;
                 } else {
                     offset += length;

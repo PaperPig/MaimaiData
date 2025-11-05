@@ -53,6 +53,9 @@
     <string name="bpm">BPM</string>
     <string name="genre">歌曲分类</string>
     <string name="add_version">添加版本</string>
+    <string name="play_title_1">播放曲名1</string>
+    <string name="play_title_2">播放曲名2</string>
+
 
     <string name="maimai_achievement_format">%.2f%%</string>
     <string name="maimaidx_scope_achievement_desc">%.4f%%-—%.4f%%</string>

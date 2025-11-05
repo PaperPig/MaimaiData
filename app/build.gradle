@@ -98,4 +98,7 @@ dependencies {
 
     //liveData
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.8.7"
+
+    //tts
+    implementation 'io.github.whitemagic2014:tts-edge-java:1.3.1'
 }

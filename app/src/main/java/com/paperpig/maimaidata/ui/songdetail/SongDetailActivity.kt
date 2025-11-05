@@ -1,19 +1,16 @@
 package com.paperpig.maimaidata.ui.songdetail
 
 import android.app.ActivityOptions
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -21,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.paperpig.maimaidata.R
@@ -34,18 +32,20 @@ import com.paperpig.maimaidata.repository.AliasRepository
 import com.paperpig.maimaidata.repository.RecordRepository
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.SpUtil
+import com.paperpig.maimaidata.utils.TtsManager
 import com.paperpig.maimaidata.utils.setCopyOnLongClick
 import com.paperpig.maimaidata.utils.setShrinkOnTouch
 import com.paperpig.maimaidata.utils.toDp
 import com.paperpig.maimaidata.widgets.Settings
-import com.paperpig.maimaidata.utils.setCopyOnLongClick
-import com.paperpig.maimaidata.utils.setShrinkOnTouch
+import kotlinx.coroutines.launch
 
 
 class SongDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySongDetailBinding
 
     private lateinit var data: SongWithChartsEntity
+
+    private val mediaPlayer = MediaPlayer()
 
     companion object {
         const val EXTRA_DATA_KEY = "data"
@@ -135,21 +135,33 @@ class SongDetailActivity : AppCompatActivity() {
             setVersionImage(songAddVersion, songData.version)
             setCnVersionImage(songAddCnVersion, songData.from)
 
-                val colorFilter: (Boolean) -> Int = { isFavor: Boolean ->
-                    if (isFavor) {
-                        0
-                    } else {
-                        Color.WHITE
-                    }
+            val colorFilter: (Boolean) -> Int = { isFavor: Boolean ->
+                if (isFavor) {
+                    0
+                } else {
+                    Color.WHITE
                 }
-                favButton.apply {
-                    setColorFilter(colorFilter.invoke(SpUtil.isFavorite(songData.id.toString())))
-                    setOnClickListener {
-                        val isFavor = SpUtil.isFavorite(songData.id.toString())
-                        SpUtil.setFavorite(songData.id.toString(), !isFavor)
-                        setColorFilter(colorFilter.invoke(!isFavor))
-                    }
+            }
+            favButton.apply {
+                setColorFilter(colorFilter.invoke(SpUtil.isFavorite(songData.id.toString())))
+                setOnClickListener {
+                    val isFavor = SpUtil.isFavorite(songData.id.toString())
+                    SpUtil.setFavorite(songData.id.toString(), !isFavor)
+                    setColorFilter(colorFilter.invoke(!isFavor))
                 }
+            }
+            llTtsPlay1.apply {
+                setOnClickListener {
+                    playTTS(songData.title)
+                }
+            }
+
+            llTtsPlay2.apply {
+                setOnClickListener {
+                    playTTS(songData.titleKana)
+                }
+            }
+
 
             //显示别名
             if (Settings.getEnableShowAlias()) {
@@ -245,6 +257,18 @@ class SongDetailActivity : AppCompatActivity() {
 
         binding.viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
         binding.tabLayout.setupWithViewPager(binding.viewPager)
+    }
+
+    private fun playTTS(content: String) {
+        lifecycleScope.launch {
+            val transTTSFilePath = TtsManager.transTTS(content)
+            mediaPlayer.apply {
+                reset()
+                setDataSource(transTTSFilePath)
+                prepare()
+                start()
+            }
+        }
     }
 
 
