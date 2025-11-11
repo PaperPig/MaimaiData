@@ -19,8 +19,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -111,9 +109,9 @@ public class WechatCrawler {
         try {
             Response response = call.execute();
             String data = Objects.requireNonNull(response.body()).string();
-            Matcher matcher = Pattern.compile("<html.*>([\\s\\S]*)</html>").matcher(data);
-            if (matcher.find()) data = Objects.requireNonNull(matcher.group(1));
-            data = Pattern.compile("\\s+").matcher(data).replaceAll(" ");
+//            Matcher matcher = Pattern.compile("<html.*>([\\s\\S]*)</html>").matcher(data);
+//            if (matcher.find()) data = Objects.requireNonNull(matcher.group(1));
+//            data = Pattern.compile("\\s+").matcher(data).replaceAll(" ");
 
             // Upload data to maimai-prober
             writeLog(diffMap.get(diff) + " 难度的数据已获取，正在上传至水鱼查分器");
