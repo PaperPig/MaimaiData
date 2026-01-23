@@ -14,8 +14,8 @@ android {
         applicationId = "com.paperpig.maimaidata"
         minSdk = 24
         targetSdk = 34
-        versionCode = 60
-        versionName = "2.6.0"
+        versionCode = 61
+        versionName = "2.6.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         ksp {

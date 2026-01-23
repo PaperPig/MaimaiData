@@ -1,19 +1,15 @@
 package com.paperpig.maimaidata.ui.songdetail
 
 import android.app.ActivityOptions
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -38,8 +34,6 @@ import com.paperpig.maimaidata.utils.setCopyOnLongClick
 import com.paperpig.maimaidata.utils.setShrinkOnTouch
 import com.paperpig.maimaidata.utils.toDp
 import com.paperpig.maimaidata.widgets.Settings
-import com.paperpig.maimaidata.utils.setCopyOnLongClick
-import com.paperpig.maimaidata.utils.setShrinkOnTouch
 
 
 class SongDetailActivity : AppCompatActivity() {
@@ -312,6 +306,8 @@ class SongDetailActivity : AppCompatActivity() {
                 startsWith("235") -> versionDrawable = R.drawable.maimaidx_festival_plus
                 startsWith("240") -> versionDrawable = R.drawable.maimaidx_buddies
                 startsWith("245") -> versionDrawable = R.drawable.maimaidx_buddies_plus
+                startsWith("250") -> versionDrawable = R.drawable.maimaidx_prism
+                startsWith("255") -> versionDrawable = R.drawable.maimaidx_prism_plus
             }
         }
         Glide.with(view.context)
