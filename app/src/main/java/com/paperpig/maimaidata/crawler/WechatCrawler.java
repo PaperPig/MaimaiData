@@ -29,6 +29,7 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Call;
 import okhttp3.ConnectionSpec;
+import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -44,6 +45,12 @@ public class WechatCrawler {
     private static final int MAX_RETRY_COUNT = 4;
 
     private static final String TAG = "Crawler";
+
+    private static final String WX_WINDOWS_UA =
+            "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) " +
+                    "Chrome/81.0.4044.138 Safari/537.36 NetType/WIFI " +
+                    "MicroMessenger/7.0.20.1781(0x6700143B) WindowsWechat(0x6307001e)";
+
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -179,7 +186,28 @@ public class WechatCrawler {
 
         Log.d(TAG, wechatAuthUrl);
 
-        Request request = new Request.Builder().addHeader("Host", "tgk-wcaime.wahlap.com").addHeader("Upgrade-Insecure-Requests", "1").addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 12; IN2010 Build/RKQ1.211119.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/86.0.4240.99 XWEB/4317 MMWEBSDK/20220903 Mobile Safari/537.36 MMWEBID/363 MicroMessenger/8.0.28.2240(0x28001C57) WeChat/arm64 Weixin NetType/WIFI Language/zh_CN ABI/arm64").addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/wxpic,image/tpg,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9").addHeader("X-Requested-With", "com.tencent.mm").addHeader("Sec-Fetch-Site", "none").addHeader("Sec-Fetch-Mode", "navigate").addHeader("Sec-Fetch-User", "?1").addHeader("Sec-Fetch-Dest", "document").addHeader("Accept-Encoding", "gzip, deflate").addHeader("Accept-Language", "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7").get().url(wechatAuthUrl).build();
+        Headers headers = new Headers.Builder()
+                .add("Connection", "keep-alive")
+                .add("Upgrade-Insecure-Requests", "1")
+                .add("User-Agent", WX_WINDOWS_UA)
+                .add(
+                        "Accept",
+                        "text/html,application/xhtml+xml,application/xml;q=0.9," +
+                                "image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+                )
+                .add("Sec-Fetch-Site", "none")
+                .add("Sec-Fetch-Mode", "navigate")
+                .add("Sec-Fetch-User", "?1")
+                .add("Sec-Fetch-Dest", "document")
+                .add("Accept-Encoding", "gzip, deflate, br")
+                .add("Accept-Language", "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7")
+                .build();
+
+        Request request = new Request.Builder()
+                .headers(headers)
+                .get()
+                .url(wechatAuthUrl)
+                .build();
 
         Call call = client.newCall(request);
         Response response = call.execute();
@@ -221,7 +249,6 @@ public class WechatCrawler {
         builder.connectTimeout(120, TimeUnit.SECONDS);
         builder.readTimeout(120, TimeUnit.SECONDS);
         builder.writeTimeout(120, TimeUnit.SECONDS);
-
         builder.followRedirects(followRedirect);
         builder.followSslRedirects(followRedirect);
 
