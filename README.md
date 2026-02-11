@@ -6,7 +6,12 @@ MaimaiData是一款为舞萌DX玩家开发的Android App
 
 ## 最近更新
 
-### v2.6.0 Latest
+### v2.6.2 Latest
+1. 添加资源文件
+2. 修复部分歌曲无法上传到查分器的问题
+3. 修复无法获取公众号成绩的问题
+
+### v2.6.0 
 
 1. 适配舞萌DX2025
 2. 增加了历史搜索功能
@@ -43,7 +48,7 @@ MaimaiData是一款为舞萌DX玩家开发的Android App
 ## 感谢
 感谢[Diving-Fish](https://github.com/Diving-Fish/maimaidx-prober)提供的谱面数据
 
-感谢[Xray Bot](https://download.fanyu.site/maimai/alias.json)提供的别名库
+感谢[maimaiDX](https://github.com/Yuri-YuzuChaN/maimaiDX)提供的别名库
 
 传分功能实现方式来自[bakapiano](https://github.com/bakapiano/maimaidx-prober-updater-android)
 
