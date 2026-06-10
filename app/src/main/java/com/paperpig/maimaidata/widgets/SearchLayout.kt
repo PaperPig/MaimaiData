@@ -17,9 +17,9 @@ import com.google.android.material.slider.Slider
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ItemSearchHistoryBinding
 import com.paperpig.maimaidata.databinding.LayoutSongSearchBinding
+import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.model.SongData
 import com.paperpig.maimaidata.utils.SpUtil
-import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -64,7 +64,8 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
         binding.versionDx2022Checkbox,
         binding.versionDx2023Checkbox,
         binding.versionDx2024Checkbox,
-        binding.versionDx2025Checkbox
+        binding.versionDx2025Checkbox,
+        binding.versionDx2026Checkbox,
     )
 
 
@@ -274,7 +275,7 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
         private val onItemClick: (String) -> Unit
     ) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
-        inner class HistoryViewHolder(binding: ItemSearchHistoryBinding) :
+        class HistoryViewHolder(binding: ItemSearchHistoryBinding) :
             RecyclerView.ViewHolder(binding.root) {
             val textView = binding.historyItemText
         }

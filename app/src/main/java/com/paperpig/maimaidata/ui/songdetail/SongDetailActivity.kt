@@ -242,7 +242,7 @@ class SongDetailActivity : AppCompatActivity() {
     }
 
 
-    inner class LevelDataFragmentAdapter(
+    class LevelDataFragmentAdapter(
         fragmentManager: FragmentManager,
         behavior: Int,
         private val list: List<Fragment>
@@ -328,6 +328,7 @@ class SongDetailActivity : AppCompatActivity() {
                 equals("舞萌DX 2023") -> versionDrawable = R.drawable.maimaidx_2023
                 equals("舞萌DX 2024") -> versionDrawable = R.drawable.maimaidx_2024
                 equals("舞萌DX 2025") -> versionDrawable = R.drawable.maimaidx_2025
+                equals("舞萌DX 2026") -> versionDrawable = R.drawable.maimaidx_2026
             }
         }
         Glide.with(view.context)

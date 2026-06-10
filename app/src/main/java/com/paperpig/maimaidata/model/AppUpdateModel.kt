@@ -47,7 +47,19 @@ data class AppUpdateModel(
      * dx2025 json url
      */
     @SerializedName("data_url_3")
-    var dataUrl3: String? = null
+    var dataUrl3: String? = null,
+
+    /**
+     * dx2026 json data version string
+     */
+    @SerializedName("data_version_4")
+    var dataVersion4: String? = null,
+
+    /**
+     * dx2026 json url
+     */
+    @SerializedName("data_url_4")
+    var dataUrl4: String? = null
 
 
 )
