@@ -186,7 +186,7 @@ object CreateBest50 {
                 context,
                 containerBitmap,
                 PictureUtils.imagePath,
-                "best40_${time}"
+                "best50_${time}"
             )
         }
 
