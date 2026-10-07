@@ -19,7 +19,6 @@ import com.paperpig.maimaidata.db.AppDataBase
 import com.paperpig.maimaidata.repository.SongWithChartRepository
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.Constants
-import com.paperpig.maimaidata.widgets.AnimationHelper
 import com.paperpig.maimaidata.widgets.SearchLayout
 import com.paperpig.maimaidata.widgets.Settings
 import me.zhanghai.android.fastscroll.FastScrollerBuilder
@@ -28,7 +27,6 @@ import me.zhanghai.android.fastscroll.FastScrollerBuilder
 class SongListFragment : BaseFragment<FragmentSongListBinding>() {
     private lateinit var binding: FragmentSongListBinding
     private lateinit var songAdapter: SongListAdapter
-    private lateinit var animationHelper: AnimationHelper
 
     private val showAnimator by lazy {
         ValueAnimator.ofInt(binding.searchLayout.height, binding.root.height).apply {
@@ -72,9 +70,6 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        animationHelper = AnimationHelper(layoutInflater)
-        binding.root.addView(animationHelper.loadLayout(), 0)
-        animationHelper.startAnimation()
         isShowingSearchLayout = binding.searchLayout.isVisible
 
         FastScrollerBuilder(binding.songListRecyclerView).build()
@@ -180,19 +175,25 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
     }
 
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (hidden) {
+            binding.maimaiBgView.pauseAnimation()
+        } else {
+            binding.maimaiBgView.resumeAnimation()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        animationHelper.resumeAnimation()
+        if (!isHidden) {
+            binding.maimaiBgView.resumeAnimation()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        animationHelper.pauseAnimation()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        animationHelper.stopAnimation()
+        binding.maimaiBgView.pauseAnimation()
     }
 
 }

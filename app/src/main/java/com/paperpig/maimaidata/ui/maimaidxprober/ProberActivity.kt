@@ -25,10 +25,7 @@ import com.paperpig.maimaidata.utils.CreateBest50
 import com.paperpig.maimaidata.utils.JsonConvertToDb
 import com.paperpig.maimaidata.utils.PermissionHelper
 import com.paperpig.maimaidata.utils.SpUtil
-import com.paperpig.maimaidata.widgets.AnimationHelper
 import com.paperpig.maimaidata.widgets.Settings
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
@@ -41,8 +38,6 @@ class ProberActivity : AppCompatActivity() {
     private var newRating = listOf<RecordEntity>()
     private var dataList = listOf<SongWithChartsEntity>()
 
-    private lateinit var animationHelper: AnimationHelper
-
     private lateinit var permissionHelper: PermissionHelper
 
     val requestPermissionLauncher =
@@ -54,10 +49,6 @@ class ProberActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityProberBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        animationHelper = AnimationHelper(layoutInflater)
-        binding.proberContainerLayout.addView(animationHelper.loadLayout(), 0)
-        animationHelper.startAnimation()
 
         setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.apply {
@@ -253,17 +244,12 @@ class ProberActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        animationHelper.resumeAnimation()
+        binding.maimaiBgView.resumeAnimation()
     }
 
     override fun onPause() {
         super.onPause()
-        animationHelper.pauseAnimation()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        animationHelper.stopAnimation()
+        binding.maimaiBgView.pauseAnimation()
     }
 
 
