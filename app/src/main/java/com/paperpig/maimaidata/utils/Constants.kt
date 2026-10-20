@@ -6,7 +6,7 @@ object Constants {
     const val CHART_TYPE_SD = "SD"
 
     const val VOICE_NAME = "ja-JP-NanamiNeural"
-    const val VOICE_SAVE_DIR = "/tts/"
+    const val VOICE_SAVE_DIR = "tts"
 
 
     const val TAG_VPN: String = "VpnProxy"
