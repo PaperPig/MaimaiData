@@ -7,6 +7,7 @@ import com.paperpig.maimaidata.BuildConfig;
 import com.paperpig.maimaidata.network.vpn.tcpip.CommonMethods;
 import com.paperpig.maimaidata.network.vpn.tunnel.Config;
 import com.paperpig.maimaidata.network.vpn.tunnel.httpconnect.HttpConnectConfig;
+import com.paperpig.maimaidata.utils.Constants;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -27,8 +28,8 @@ public class ProxyConfig {
     HashMap<String, Boolean> m_DomainMap;
 
     int m_dns_ttl = 10;
-    String m_welcome_info = Constant.TAG;
-    String m_session_name = Constant.TAG;
+    String m_welcome_info = Constants.TAG_VPN;
+    String m_session_name = Constants.TAG_VPN;
     String m_user_agent = System.getProperty("http.agent");
     int m_mtu = 1500;
 

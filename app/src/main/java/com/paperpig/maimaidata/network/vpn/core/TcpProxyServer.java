@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.paperpig.maimaidata.network.vpn.tcpip.CommonMethods;
 import com.paperpig.maimaidata.network.vpn.tunnel.Tunnel;
+import com.paperpig.maimaidata.utils.Constants;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -25,12 +26,12 @@ public class TcpProxyServer implements Runnable {
     public TcpProxyServer(int port) throws IOException {
         m_Selector = Selector.open();
         m_ServerSocketChannel = ServerSocketChannel.open();
-        m_ServerSocketChannel.socket().setSoTimeout(1000*30);
+        m_ServerSocketChannel.socket().setSoTimeout(1000 * 30);
         m_ServerSocketChannel.configureBlocking(false);
         m_ServerSocketChannel.socket().bind(new InetSocketAddress(port));
         m_ServerSocketChannel.register(m_Selector, SelectionKey.OP_ACCEPT);
         this.Port = (short) m_ServerSocketChannel.socket().getLocalPort();
-        Log.d(Constant.TAG, "AsyncTcpServer listen on " + (this.Port & 0xFFFF));
+        Log.d(Constants.TAG_VPN, "AsyncTcpServer listen on " + (this.Port & 0xFFFF));
     }
 
     public synchronized void start() {
@@ -45,7 +46,7 @@ public class TcpProxyServer implements Runnable {
             try {
                 m_Selector.close();
             } catch (Exception e) {
-                Log.e(Constant.TAG, "Exception when closing m_Selector", e);
+                Log.e(Constants.TAG_VPN, "Exception when closing m_Selector", e);
             } finally {
                 m_Selector = null;
             }
@@ -55,7 +56,7 @@ public class TcpProxyServer implements Runnable {
             try {
                 m_ServerSocketChannel.close();
             } catch (Exception e) {
-                Log.e(Constant.TAG, "Exception when closing m_ServerSocketChannel", e);
+                Log.e(Constants.TAG_VPN, "Exception when closing m_ServerSocketChannel", e);
             } finally {
                 m_ServerSocketChannel = null;
             }
@@ -82,17 +83,17 @@ public class TcpProxyServer implements Runnable {
                                 onAccepted(key);
                             }
                         } catch (Exception e) {
-                            Log.d(Constant.TAG, e.toString());
+                            Log.d(Constants.TAG_VPN, e.toString());
                         }
                     }
                     keyIterator.remove();
                 }
             }
         } catch (Exception e) {
-            Log.e(Constant.TAG, "TcpServer", e);
+            Log.e(Constants.TAG_VPN, "TcpServer", e);
         } finally {
             this.stop();
-            Log.d(Constant.TAG, "TcpServer thread exited.");
+            Log.d(Constants.TAG_VPN, "TcpServer thread exited.");
         }
     }
 
@@ -102,7 +103,7 @@ public class TcpProxyServer implements Runnable {
         if (session != null) {
             if (ProxyConfig.Instance.needProxy(session.RemoteIP)) {
                 if (ProxyConfig.IS_DEBUG)
-                    Log.d(Constant.TAG, String.format("%d/%d:[PROXY] %s=>%s:%d", NatSessionManager.getSessionCount(),
+                    Log.d(Constants.TAG_VPN, String.format("%d/%d:[PROXY] %s=>%s:%d", NatSessionManager.getSessionCount(),
                             Tunnel.SessionCount, session.RemoteHost,
                             CommonMethods.ipIntToString(session.RemoteIP), session.RemotePort & 0xFFFF));
                 return InetSocketAddress.createUnresolved(session.RemoteHost, session.RemotePort & 0xFFFF);
@@ -128,8 +129,7 @@ public class TcpProxyServer implements Runnable {
                 if (destAddress.getPort() == 80 && destAddress.getHostName().endsWith("wahlap.com")) {
                     destAddress = new InetSocketAddress("192.168.1.3", 3000);
                     remoteTunnel.connect(destAddress);
-                }
-                else {
+                } else {
                     remoteTunnel.connect(destAddress);
                 }
 

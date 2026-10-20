@@ -4,12 +4,15 @@ import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -17,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.paperpig.maimaidata.R
@@ -30,16 +34,31 @@ import com.paperpig.maimaidata.repository.AliasRepository
 import com.paperpig.maimaidata.repository.RecordRepository
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.SpUtil
+import com.paperpig.maimaidata.utils.TtsManager
 import com.paperpig.maimaidata.utils.setCopyOnLongClick
 import com.paperpig.maimaidata.utils.setShrinkOnTouch
 import com.paperpig.maimaidata.utils.toDp
 import com.paperpig.maimaidata.widgets.Settings
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 
 class SongDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySongDetailBinding
 
     private lateinit var data: SongWithChartsEntity
+
+    // 异步准备音频，并统一处理解码或播放失败。
+    private val mediaPlayer = MediaPlayer().apply {
+        setOnPreparedListener { it.start() }
+        setOnErrorListener { _, what, extra ->
+            Log.e("TTS", "Audio playback failed: $what, $extra")
+            showTtsError()
+            true
+        }
+    }
+    private var ttsJob: Job? = null
 
     companion object {
         const val EXTRA_DATA_KEY = "data"
@@ -129,21 +148,18 @@ class SongDetailActivity : AppCompatActivity() {
             setVersionImage(songAddVersion, songData.version)
             setCnVersionImage(songAddCnVersion, songData.from)
 
-                val colorFilter: (Boolean) -> Int = { isFavor: Boolean ->
-                    if (isFavor) {
-                        0
-                    } else {
-                        Color.WHITE
-                    }
+            llTtsPlay1.apply {
+                setOnClickListener {
+                    playTTS(songData.title)
                 }
-                favButton.apply {
-                    setColorFilter(colorFilter.invoke(SpUtil.isFavorite(songData.id.toString())))
-                    setOnClickListener {
-                        val isFavor = SpUtil.isFavorite(songData.id.toString())
-                        SpUtil.setFavorite(songData.id.toString(), !isFavor)
-                        setColorFilter(colorFilter.invoke(!isFavor))
-                    }
+            }
+
+            llTtsPlay2.apply {
+                setOnClickListener {
+                    playTTS(songData.titleKana)
                 }
+            }
+
 
             //显示别名
             if (Settings.getEnableShowAlias()) {
@@ -239,6 +255,44 @@ class SongDetailActivity : AppCompatActivity() {
 
         binding.viewPager.adapter = LevelDataFragmentAdapter(supportFragmentManager, -1, list)
         binding.tabLayout.setupWithViewPager(binding.viewPager)
+    }
+
+    // 仅播放最近一次点击的曲名，避免较慢的旧请求覆盖新请求。
+    private fun playTTS(content: String) {
+        if (content.isBlank()) return
+        ttsJob?.cancel()
+        mediaPlayer.reset()
+        ttsJob = lifecycleScope.launch {
+            try {
+                val transTTSFilePath = TtsManager.transTTS(content)
+                mediaPlayer.setDataSource(transTTSFilePath)
+                mediaPlayer.prepareAsync()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.e("TTS", "Failed to play song title", e)
+                mediaPlayer.reset()
+                showTtsError()
+            }
+        }
+    }
+
+    // 提示网络或音频异常，允许用户重新点击播放。
+    private fun showTtsError() {
+        Toast.makeText(this, R.string.tts_play_failed, Toast.LENGTH_SHORT).show()
+    }
+
+    // 离开详情页时停止语音，防止后台请求完成后突然播放。
+    override fun onStop() {
+        ttsJob?.cancel()
+        mediaPlayer.reset()
+        super.onStop()
+    }
+
+    // 释放原生播放器，避免多次打开详情页积累音频资源。
+    override fun onDestroy() {
+        mediaPlayer.release()
+        super.onDestroy()
     }
 
 

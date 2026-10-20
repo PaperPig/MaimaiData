@@ -10,6 +10,7 @@ import com.paperpig.maimaidata.network.vpn.dns.ResourcePointer;
 import com.paperpig.maimaidata.network.vpn.tcpip.CommonMethods;
 import com.paperpig.maimaidata.network.vpn.tcpip.IPHeader;
 import com.paperpig.maimaidata.network.vpn.tcpip.UDPHeader;
+import com.paperpig.maimaidata.utils.Constants;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -51,7 +52,7 @@ public class DnsProxy implements Runnable {
             try {
                 m_Client.close();
             } catch (Exception e) {
-                Log.e(Constant.TAG, "Exception when closing m_Client", e);
+                Log.e(Constants.TAG_VPN, "Exception when closing m_Client", e);
             } finally {
                 m_Client = null;
             }
@@ -85,13 +86,13 @@ public class DnsProxy implements Runnable {
                         OnDnsResponseReceived(ipHeader, udpHeader, dnsPacket);
                     }
                 } catch (Exception e) {
-                    Log.e(Constant.TAG, "Exception when reading DNS packet", e);
+                    Log.e(Constants.TAG_VPN, "Exception when reading DNS packet", e);
                 }
             }
         } catch (Exception e) {
-            Log.e(Constant.TAG, "Exception in DnsResolver main loop", e);
+            Log.e(Constants.TAG_VPN, "Exception in DnsResolver main loop", e);
         } finally {
-            Log.d(Constant.TAG, "DnsResolver Thread Exited.");
+            Log.d(Constants.TAG_VPN, "DnsResolver Thread Exited.");
             this.stop();
         }
     }
@@ -176,7 +177,7 @@ public class DnsProxy implements Runnable {
         Question question = dnsPacket.Questions[0];
 
         if (ProxyConfig.IS_DEBUG)
-            Log.d(Constant.TAG, "DNS Query " + question.Domain);
+            Log.d(Constants.TAG_VPN, "DNS Query " + question.Domain);
 
         if (question.Type == 1) {
             if (ProxyConfig.Instance.needProxy(question.Domain)) {
@@ -184,7 +185,7 @@ public class DnsProxy implements Runnable {
                 tamperDnsResponse(ipHeader.m_Data, dnsPacket, fakeIP);
 
                 if (ProxyConfig.IS_DEBUG)
-                    Log.d(Constant.TAG, "interceptDns FakeDns: " +
+                    Log.d(Constants.TAG_VPN, "interceptDns FakeDns: " +
                             question.Domain + " " +
                             CommonMethods.ipIntToString(fakeIP));
 
@@ -239,10 +240,10 @@ public class DnsProxy implements Runnable {
                 if (LocalVpnService.Instance.protect(m_Client)) {
                     m_Client.send(packet);
                 } else {
-                    Log.e(Constant.TAG, "VPN protect udp socket failed.");
+                    Log.e(Constants.TAG_VPN, "VPN protect udp socket failed.");
                 }
             } catch (IOException e) {
-                Log.e(Constant.TAG, "protect", e);
+                Log.e(Constants.TAG_VPN, "protect", e);
             }
         }
     }
