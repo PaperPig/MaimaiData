@@ -30,7 +30,8 @@ object JsonConvertToDb {
                 song.basic_info.is_new,
                 song.basic_info.kanji,
                 song.basic_info.comment,
-                song.basic_info.buddy
+                song.basic_info.buddy,
+                reading = song.reading
             )
         }
 

@@ -1,15 +1,19 @@
 package com.paperpig.maimaidata.ui.songdetail
 
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.Animatable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
+import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -51,14 +55,24 @@ class SongDetailActivity : AppCompatActivity() {
 
     // 异步准备音频，并统一处理解码或播放失败。
     private val mediaPlayer = MediaPlayer().apply {
-        setOnPreparedListener { it.start() }
-        setOnErrorListener { _, what, extra ->
+        setOnPreparedListener {
+            it.start()
+            updateTtsState(TtsState.PLAYING)
+        }
+        setOnCompletionListener { updateTtsState(TtsState.IDLE) }
+        setOnErrorListener { player, what, extra ->
             Log.e("TTS", "Audio playback failed: $what, $extra")
+            player.reset()
             showTtsError()
             true
         }
     }
     private var ttsJob: Job? = null
+    private var ttsAnimator: ObjectAnimator? = null
+    private var ttsState = TtsState.IDLE
+
+    // 区分语音准备和实际播放，以便按钮显示对应反馈。
+    private enum class TtsState { IDLE, LOADING, PLAYING }
 
     companion object {
         const val EXTRA_DATA_KEY = "data"
@@ -148,15 +162,12 @@ class SongDetailActivity : AppCompatActivity() {
             setVersionImage(songAddVersion, songData.version)
             setCnVersionImage(songAddCnVersion, songData.from)
 
-            llTtsPlay1.apply {
-                setOnClickListener {
-                    playTTS(songData.title)
-                }
-            }
-
-            llTtsPlay2.apply {
-                setOnClickListener {
-                    playTTS(songData.titleKana)
+            // 同一按钮负责播放和取消，加载期间也能立即停止。
+            ttsPlayButton.setOnClickListener {
+                if (ttsState == TtsState.IDLE) {
+                    playTTS(songData.reading)
+                } else {
+                    stopTts()
                 }
             }
 
@@ -262,6 +273,7 @@ class SongDetailActivity : AppCompatActivity() {
         if (content.isBlank()) return
         ttsJob?.cancel()
         mediaPlayer.reset()
+        updateTtsState(TtsState.LOADING)
         ttsJob = lifecycleScope.launch {
             try {
                 val transTTSFilePath = TtsManager.transTTS(content)
@@ -279,13 +291,52 @@ class SongDetailActivity : AppCompatActivity() {
 
     // 提示网络或音频异常，允许用户重新点击播放。
     private fun showTtsError() {
+        updateTtsState(TtsState.IDLE)
         Toast.makeText(this, R.string.tts_play_failed, Toast.LENGTH_SHORT).show()
+    }
+
+    // 仅对图标执行加载和声波动画，保持按钮底座稳定，减少视觉干扰。
+    private fun updateTtsState(state: TtsState) {
+        ttsState = state
+        ttsAnimator?.cancel()
+        ttsAnimator = null
+        (binding.ttsPlayButton.drawable as? Animatable)?.stop()
+        binding.ttsPlayButton.apply {
+            val icon = when (state) {
+                TtsState.IDLE -> R.drawable.mmd_ic_tts_play
+                TtsState.LOADING -> R.drawable.mmd_ic_tts_loading
+                TtsState.PLAYING -> R.drawable.mmd_ic_tts_playing
+            }
+            setImageResource(icon)
+            contentDescription = getString(when (state) {
+                TtsState.IDLE -> R.string.play_title
+                TtsState.LOADING -> R.string.tts_loading
+                TtsState.PLAYING -> R.string.tts_stop
+            })
+            ttsAnimator = when (state) {
+                TtsState.IDLE -> null
+                TtsState.LOADING -> ObjectAnimator.ofInt(drawable, "level", 0, 10000).apply {
+                    duration = 1000
+                    interpolator = LinearInterpolator()
+                    repeatCount = ValueAnimator.INFINITE
+                }
+                TtsState.PLAYING -> null
+            }
+            ttsAnimator?.start()
+            (drawable as? Animatable)?.start()
+        }
+    }
+
+    // 取消合成和播放，统一清理按钮动效。
+    private fun stopTts() {
+        ttsJob?.cancel()
+        mediaPlayer.reset()
+        updateTtsState(TtsState.IDLE)
     }
 
     // 离开详情页时停止语音，防止后台请求完成后突然播放。
     override fun onStop() {
-        ttsJob?.cancel()
-        mediaPlayer.reset()
+        stopTts()
         super.onStop()
     }
 

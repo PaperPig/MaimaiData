@@ -54,8 +54,9 @@
     <string name="bpm">BPM</string>
     <string name="genre">歌曲分类</string>
     <string name="add_version">添加版本</string>
-    <string name="play_title_1">播放曲名1</string>
-    <string name="play_title_2">播放曲名2</string>
+    <string name="play_title">播放曲名</string>
+    <string name="tts_loading">正在加载，点击取消</string>
+    <string name="tts_stop">停止播放曲名</string>
     <string name="tts_play_failed">语音播放失败，请稍后重试</string>
 
 

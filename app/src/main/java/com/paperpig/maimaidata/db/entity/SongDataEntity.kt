@@ -62,6 +62,10 @@ data class SongDataEntity(
 
     // 双人协谱标记
     val buddy: String?,
+
+    // 曲名朗读内容，当前使用标题初始化。
+    @ColumnInfo(defaultValue = "''")
+    val reading: String = title,
 ) : Parcelable {
     @IgnoredOnParcel
     @Ignore

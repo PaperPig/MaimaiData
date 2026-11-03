@@ -43,6 +43,18 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <!-- 将朗读按钮叠放于曲绘内侧，使用独立圆形底保证复杂封面上的可读性。 -->
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/tts_play_button"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/mmd_tts_button_bg"
+                    android:contentDescription="@string/play_title"
+                    android:padding="12dp"
+                    app:srcCompat="@drawable/mmd_ic_tts_play"
+                    app:layout_constraintBottom_toBottomOf="@id/song_jacket"
+                    app:layout_constraintEnd_toEndOf="@id/song_jacket" />
+
                 <ImageView
                     android:id="@+id/song_type"
                     android:layout_width="wrap_content"
@@ -155,59 +167,6 @@
                     app:layout_constraintStart_toEndOf="@id/song_id_label"
                     app:layout_constraintTop_toTopOf="@id/song_id_label"
                     tools:text="100" />
-
-                <LinearLayout
-                    android:id="@+id/ll_tts_play_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="@id/song_id_label"
-                    app:layout_constraintStart_toEndOf="@id/song_id_text"
-                    app:layout_constraintTop_toTopOf="@id/song_id_label">
-
-                    <TextView
-                        android:id="@+id/tv_tts_play_1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/play_title_1"
-                        android:textColor="@color/white" />
-
-                    <ImageView
-                        android:id="@+id/iv_tts_play_1"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginStart="2dp"
-                        android:src="@drawable/mmd_ic_play" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_tts_play_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="@id/song_id_label"
-                    app:layout_constraintStart_toEndOf="@id/ll_tts_play_1"
-                    app:layout_constraintTop_toTopOf="@id/song_id_label">
-
-                    <TextView
-                        android:id="@+id/tv_tts_play_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/play_title_2"
-                        android:textColor="@color/white" />
-
-                    <ImageView
-                        android:id="@+id/iv_tts_play_2"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginStart="2dp"
-                        android:src="@drawable/mmd_ic_play" />
-                </LinearLayout>
-
 
                 <TextView
                     android:id="@+id/alias_label"

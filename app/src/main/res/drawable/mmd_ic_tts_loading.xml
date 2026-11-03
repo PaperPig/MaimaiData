@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="0"
+    android:toDegrees="360"
+    android:pivotX="50%"
+    android:pivotY="50%">
+    <vector
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportWidth="24"
+        android:viewportHeight="24">
+        <path
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="#40FFFFFF"
+            android:strokeWidth="2"
+            android:pathData="M12,4 A8,8 0,1 1,12 20 A8,8 0,1 1,12 4" />
+        <path
+            android:fillColor="@android:color/transparent"
+            android:strokeColor="@color/white"
+            android:strokeLineCap="round"
+            android:strokeWidth="2"
+            android:pathData="M12,4 A8,8 0,0 1,20 12" />
+    </vector>
+</rotate>
