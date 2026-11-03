@@ -19,6 +19,7 @@ import com.paperpig.maimaidata.db.AppDataBase
 import com.paperpig.maimaidata.repository.SongWithChartRepository
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.Constants
+import com.paperpig.maimaidata.utils.SpUtil
 import com.paperpig.maimaidata.widgets.SearchLayout
 import com.paperpig.maimaidata.widgets.Settings
 import me.zhanghai.android.fastscroll.FastScrollerBuilder
@@ -75,13 +76,26 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
         FastScrollerBuilder(binding.songListRecyclerView).build()
         binding.songListRecyclerView.apply {
             songAdapter = SongListAdapter()
+            songAdapter.setCompactMode(SpUtil.isSongListCompact())
             adapter = songAdapter
             layoutManager = LinearLayoutManager(context)
+            itemAnimator = SongListItemAnimator()
         }
 
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onPrepareMenu(menu: Menu) {
-                menu.findItem(R.id.search).isVisible = !isHidden
+                val isHiddenFragment = isHidden
+                menu.findItem(R.id.search)?.isVisible = !isHiddenFragment
+                menu.findItem(R.id.switch_layout)?.apply {
+                    isVisible = !isHiddenFragment
+                    if (songAdapter.isCompactMode) {
+                        setIcon(R.drawable.ic_view_agenda)
+                        setTitle(R.string.switch_to_normal_layout)
+                    } else {
+                        setIcon(R.drawable.ic_view_compact)
+                        setTitle(R.string.switch_to_compact_layout)
+                    }
+                }
             }
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -95,22 +109,42 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
                         hideKeyboard(view)
                         return true
                     }
+
+                    R.id.switch_layout -> {
+                        toggleLayoutMode()
+                        return true
+                    }
                 }
                 return false
             }
 
-        })
+        }, viewLifecycleOwner)
 
-        requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (binding.searchLayout.isVisible) {
-                    showOrHideSearchBar()
-                } else {
-                    requireActivity().finish()
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (binding.searchLayout.isVisible) {
+                        showOrHideSearchBar()
+                    } else {
+                        requireActivity().finish()
+                    }
                 }
-            }
-        })
+            })
         loadData()
+    }
+
+    private var lastToggleTime = 0L
+
+    private fun toggleLayoutMode() {
+        val now = System.currentTimeMillis()
+        if (now - lastToggleTime < 350L) return
+        lastToggleTime = now
+
+        val newMode = !songAdapter.isCompactMode
+        songAdapter.setCompactMode(newMode)
+        SpUtil.setSongListCompact(newMode)
+        requireActivity().invalidateOptionsMenu()
     }
 
 
@@ -177,6 +211,7 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        requireActivity().invalidateOptionsMenu()
         if (hidden) {
             binding.maimaiBgView.pauseAnimation()
         } else {

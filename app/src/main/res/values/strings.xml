@@ -177,4 +177,9 @@
     <string name="accountManagement">账号管理</string>
     <string name="selectAccount">选择账号</string>
 
+    <string name="switch_layout">切换布局</string>
+    <string name="switch_to_compact_layout">切换为精简布局</string>
+    <string name="switch_to_normal_layout">切换为常规布局</string>
+    <string name="switched_to_compact_layout">已切换至精简布局</string>
+    <string name="switched_to_normal_layout">已切换至常规布局</string>
 </resources>

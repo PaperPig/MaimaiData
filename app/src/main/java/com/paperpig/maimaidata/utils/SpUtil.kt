@@ -44,6 +44,7 @@ object SpUtil {
     private const val KEY_LAST_UPDATE_TIME = "chart_stats_db_last_update_time"
 
     private const val KEY_SEARCH_HISTORY = "search_history"
+    private const val KEY_SONG_LIST_COMPACT_MODE = "song_list_compact_mode"
 
     fun init(appContext: Application) {
         application = appContext
@@ -129,6 +130,12 @@ object SpUtil {
         return songInfoPrefs.all
             .filter { it.value == true }
             .keys.toList()
+    }
+
+    fun isSongListCompact(): Boolean = songInfoPrefs.getBoolean(KEY_SONG_LIST_COMPACT_MODE, false)
+
+    fun setSongListCompact(compact: Boolean) {
+        songInfoPrefs.edit { putBoolean(KEY_SONG_LIST_COMPACT_MODE, compact) }
     }
 
     // ================= VERSION INFO =================
