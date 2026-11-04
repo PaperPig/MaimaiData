@@ -414,6 +414,10 @@ class SongDetailActivity : AppCompatActivity() {
                 startsWith("250") -> versionDrawable = R.drawable.maimaidx_prism
                 startsWith("255") -> versionDrawable = R.drawable.maimaidx_prism_plus
                 startsWith("260") -> versionDrawable = R.drawable.maimaidx_circle
+                // 为 CiRCLE PLUS 收录曲目显示对应的日文版本标识。
+                startsWith("265") -> versionDrawable = R.drawable.maimaidx_circle_plus
+                // 为 MAGiCAL 收录曲目显示对应的日文版本标识。
+                startsWith("270") -> versionDrawable = R.drawable.maimaidx_magical
             }
         }
         Glide.with(view.context)
