@@ -138,8 +138,12 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
 
     private fun toggleLayoutMode() {
         val now = System.currentTimeMillis()
-        if (now - lastToggleTime < 350L) return
+        // 智能防抖：若正在播放切换动画或 250ms 内快速连击，则忽略，避免动画踩踏
+        if (now - lastToggleTime < 250L || binding.songListRecyclerView.itemAnimator?.isRunning == true) return
         lastToggleTime = now
+
+        // 停止当前滚动，锁定坐标基准，防止惯性滚动中切换导致视觉穿帮
+        binding.songListRecyclerView.stopScroll()
 
         val newMode = !songAdapter.isCompactMode
         songAdapter.setCompactMode(newMode)
