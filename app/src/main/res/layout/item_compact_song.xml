@@ -42,6 +42,23 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/songNewBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="17dp"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/song_new_badge_compact_bg"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:letterSpacing="0.04"
+                android:paddingStart="7dp"
+                android:paddingEnd="7dp"
+                android:text="@string/new_song_badge"
+                android:textColor="@color/white"
+                android:textSize="9sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
             <ImageView
                 android:id="@+id/songType"
                 android:layout_width="38dp"

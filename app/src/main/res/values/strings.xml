@@ -182,4 +182,8 @@
     <string name="switch_to_normal_layout">切换为常规布局</string>
     <string name="switched_to_compact_layout">已切换至精简布局</string>
     <string name="switched_to_normal_layout">已切换至常规布局</string>
+    <string name="prioritize_new_songs">优先显示新歌</string>
+    <string name="prioritize_new_songs_on">优先显示新歌（已开启）</string>
+    <string name="prioritize_new_songs_off">优先显示新歌（已关闭）</string>
+    <string name="new_song_badge" translatable="false">NEW</string>
 </resources>

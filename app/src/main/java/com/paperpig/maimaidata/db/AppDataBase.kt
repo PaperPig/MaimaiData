@@ -28,7 +28,10 @@ import com.paperpig.maimaidata.utils.SpUtil
 @Database(
     entities = [SongDataEntity::class, ChartEntity::class, AliasEntity::class, RecordEntity::class, ChartStatsEntity::class],
     version = DATABASE_VERSION,
-    autoMigrations = [AutoMigration(from = 1, to = 2, spec = AppDataBase.ReadingMigration::class)]
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2, spec = AppDataBase.ReadingMigration::class),
+        AutoMigration(from = 2, to = 3)
+    ]
 )
 @TypeConverters(ListIntConverter::class)
 abstract class AppDataBase : RoomDatabase() {
@@ -48,7 +51,7 @@ abstract class AppDataBase : RoomDatabase() {
     }
 
     companion object {
-        const val DATABASE_VERSION = 2
+        const val DATABASE_VERSION = 3
         const val DATABASE_NAME = "maimaidata_db"
 
         @Volatile

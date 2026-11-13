@@ -53,6 +53,7 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
     inner class NormalViewHolder(binding: ItemNormalSongBinding) :
         ViewHolder(binding.root) {
         val cardContainer: View = binding.cardContainer
+        val songNewBadge: TextView = binding.songNewBadge
         val songJacket: ImageView = binding.songJacket
         val songTitle: TextView = binding.songTitle
         val songArtist: TextView = binding.songArtist
@@ -68,6 +69,7 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
     inner class UtageViewHolder(binding: ItemUtageSongBinding) :
         ViewHolder(binding.root) {
         val cardContainer: View = binding.cardContainer
+        val songNewBadge: TextView = binding.songNewBadge
         val songJacket: ImageView = binding.songJacket
         val songTitle: TextView = binding.songTitle
         val songArtist: TextView = binding.songArtist
@@ -80,6 +82,7 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
 
     inner class CompactNormalViewHolder(binding: ItemCompactSongBinding) :
         ViewHolder(binding.root) {
+        val songNewBadge: TextView = binding.songNewBadge
         val songJacket: ImageView = binding.songJacket
         val songTitle: TextView = binding.songTitle
         val songArtist: TextView = binding.songArtist
@@ -93,6 +96,7 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
 
     inner class CompactUtageViewHolder(binding: ItemCompactUtageSongBinding) :
         ViewHolder(binding.root) {
+        val songNewBadge: TextView = binding.songNewBadge
         val songJacket: ImageView = binding.songJacket
         val songTitle: TextView = binding.songTitle
         val songArtist: TextView = binding.songArtist
@@ -166,6 +170,15 @@ class SongListAdapter : RecyclerView.Adapter<ViewHolder>() {
             is UtageViewHolder -> holder.cardContainer
             else -> holder.itemView
         }
+
+        val newBadge = when (holder) {
+            is NormalViewHolder -> holder.songNewBadge
+            is UtageViewHolder -> holder.songNewBadge
+            is CompactNormalViewHolder -> holder.songNewBadge
+            is CompactUtageViewHolder -> holder.songNewBadge
+            else -> null
+        }
+        newBadge?.visibility = if (songData.isLatestUpdate) View.VISIBLE else View.GONE
 
         val bgLayer =
             ((cardView.background as? LayerDrawable)?.getDrawable(0) as? LayerDrawable)

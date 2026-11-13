@@ -66,6 +66,10 @@ data class SongDataEntity(
     // 曲名朗读内容，优先使用数据源中的 reading，缺失或空白时回退为标题。
     @ColumnInfo(defaultValue = "''")
     val reading: String = title,
+
+    // 是否为本次更新新增曲目
+    @ColumnInfo(name = "is_latest_update", defaultValue = "0")
+    val isLatestUpdate: Boolean = false,
 ) : Parcelable {
     @IgnoredOnParcel
     @Ignore

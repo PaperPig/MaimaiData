@@ -20,6 +20,7 @@ data class SongData(
     val type: String,
     var alias: List<String>?,
     val reading: String? = null,
+    val is_latest_update: Boolean = false,
 ) : Parcelable {
 
     @ColorRes

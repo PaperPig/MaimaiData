@@ -116,6 +116,16 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onPrepareMenu(menu: Menu) {
                 val isHiddenFragment = isHidden
+                menu.findItem(R.id.prioritize_new_songs)?.apply {
+                    isVisible = !isHiddenFragment
+                    if (isPrioritizeNewSongsEnabled()) {
+                        setIcon(R.drawable.ic_new_songs_priority_on)
+                        setTitle(R.string.prioritize_new_songs_on)
+                    } else {
+                        setIcon(R.drawable.ic_new_songs_priority_off)
+                        setTitle(R.string.prioritize_new_songs_off)
+                    }
+                }
                 menu.findItem(R.id.search)?.isVisible = !isHiddenFragment
                 menu.findItem(R.id.switch_layout)?.apply {
                     isVisible = !isHiddenFragment
@@ -135,6 +145,11 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
+                    R.id.prioritize_new_songs -> {
+                        togglePrioritizeNewSongs()
+                        return true
+                    }
+
                     R.id.search -> {
                         showOrHideSearchBar()
                         hideKeyboard(view)
@@ -164,27 +179,115 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
 
     private var lastToggleTime = 0L
 
-    private fun toggleLayoutMode() {
+    private fun canToggleToolbarAction(): Boolean {
         val now = System.currentTimeMillis()
         // 智能防抖：若正在播放切换动画或 250ms 内快速连击，则忽略，避免动画踩踏
-        if (now - lastToggleTime < 250L || binding.songListRecyclerView.itemAnimator?.isRunning == true) return
+        if (now - lastToggleTime < 250L || binding.songListRecyclerView.itemAnimator?.isRunning == true) {
+            return false
+        }
         lastToggleTime = now
-
         // 停止当前滚动，锁定坐标基准，防止惯性滚动中切换导致视觉穿帮
         binding.songListRecyclerView.stopScroll()
+        return true
+    }
+
+    private fun animateToolbarItem(itemId: Int) {
+        binding.root.postOnAnimation {
+            activity?.findViewById<View>(itemId)?.apply {
+                animate().cancel()
+                alpha = 0.35f
+                animate()
+                    .alpha(1f)
+                    .setDuration(180L)
+                    .start()
+            }
+        }
+    }
+
+    private fun fadeRefreshSongList(scrollToTop: Boolean) {
+        val recyclerView = binding.songListRecyclerView
+        recyclerView.animate().cancel()
+        recyclerView.animate()
+            .alpha(0f)
+            .setDuration(120L)
+            .withEndAction {
+                if (!isAdded || !recyclerView.isAttachedToWindow) {
+                    recyclerView.alpha = 1f
+                    return@withEndAction
+                }
+                applySongList(scrollToTop = scrollToTop)
+                recyclerView.animate()
+                    .alpha(1f)
+                    .setDuration(160L)
+                    .start()
+            }
+            .start()
+    }
+
+    private fun toggleLayoutMode() {
+        if (!canToggleToolbarAction()) return
 
         val newMode = !songAdapter.isCompactMode
         songAdapter.setCompactMode(newMode)
         SpUtil.setSongListCompact(newMode)
         requireActivity().invalidateOptionsMenu()
+        animateToolbarItem(R.id.switch_layout)
     }
 
+
+    private var isPrioritizeNewSongs: Boolean? = null
+    private var baseSongList: List<com.paperpig.maimaidata.db.entity.SongWithChartsEntity> =
+        emptyList()
+
+    private fun isPrioritizeNewSongsEnabled(): Boolean {
+        return isPrioritizeNewSongs
+            ?: com.paperpig.maimaidata.utils.SpUtil.isPrioritizeNewSongs().also {
+                isPrioritizeNewSongs = it
+            }
+    }
+
+    private fun togglePrioritizeNewSongs() {
+        if (!canToggleToolbarAction()) return
+
+        val nextState = !isPrioritizeNewSongsEnabled()
+        isPrioritizeNewSongs = nextState
+        com.paperpig.maimaidata.utils.SpUtil.setPrioritizeNewSongs(nextState)
+        fadeRefreshSongList(scrollToTop = true)
+        (activity as? MainActivity)?.setBottomBarVisible(true)
+        requireActivity().invalidateOptionsMenu()
+        animateToolbarItem(R.id.prioritize_new_songs)
+        android.widget.Toast.makeText(
+            requireContext(),
+            if (nextState) R.string.prioritize_new_songs_on else R.string.prioritize_new_songs_off,
+            android.widget.Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun updateSongList(
+        songs: List<com.paperpig.maimaidata.db.entity.SongWithChartsEntity>,
+        scrollToTop: Boolean = false
+    ) {
+        baseSongList = songs
+        applySongList(scrollToTop = scrollToTop)
+    }
+
+    private fun applySongList(scrollToTop: Boolean = false) {
+        val displayList = if (isPrioritizeNewSongsEnabled()) {
+            baseSongList.sortedByDescending { it.songData.isLatestUpdate }
+        } else {
+            baseSongList
+        }
+        songAdapter.setData(displayList)
+        if (scrollToTop && displayList.isNotEmpty()) {
+            binding.songListRecyclerView.scrollToPosition(0)
+        }
+    }
 
     fun loadData() {
         SongWithChartRepository.getInstance(AppDataBase.getInstance().songWithChartDao())
             .getAllSongWithCharts().observe(requireActivity()) {
 
-                songAdapter.setData(it.filterNot { it.songData.genre == Constants.GENRE_UTAGE })
+                updateSongList(it.filterNot { it.songData.genre == Constants.GENRE_UTAGE })
 
                 binding.searchLayout.setOnSearchResultListener(it, object :
                     SearchLayout.OnSearchListener {
@@ -213,7 +316,7 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
                             true
                         )
                             .observe(requireActivity()) {
-                                songAdapter.setData(it)
+                                updateSongList(it, scrollToTop = true)
                                 showOrHideSearchBar()
                                 hideKeyboard(view)
                             }

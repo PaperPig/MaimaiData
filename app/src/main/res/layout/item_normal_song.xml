@@ -166,6 +166,26 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/songNewBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_gravity="start|top"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/song_new_badge_bg"
+        android:elevation="7dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:letterSpacing="0.06"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:text="@string/new_song_badge"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <TextView
         android:id="@+id/songGenre"
         android:layout_width="wrap_content"
         android:layout_height="32dp"

@@ -45,6 +45,7 @@ object SpUtil {
 
     private const val KEY_SEARCH_HISTORY = "search_history"
     private const val KEY_SONG_LIST_COMPACT_MODE = "song_list_compact_mode"
+    private const val KEY_PRIORITIZE_NEW_SONGS = "prioritize_new_songs"
 
     fun init(appContext: Application) {
         application = appContext
@@ -136,6 +137,12 @@ object SpUtil {
 
     fun setSongListCompact(compact: Boolean) {
         songInfoPrefs.edit { putBoolean(KEY_SONG_LIST_COMPACT_MODE, compact) }
+    }
+
+    fun isPrioritizeNewSongs(): Boolean = songInfoPrefs.getBoolean(KEY_PRIORITIZE_NEW_SONGS, false)
+
+    fun setPrioritizeNewSongs(prioritize: Boolean) {
+        songInfoPrefs.edit { putBoolean(KEY_PRIORITIZE_NEW_SONGS, prioritize) }
     }
 
     // ================= VERSION INFO =================
