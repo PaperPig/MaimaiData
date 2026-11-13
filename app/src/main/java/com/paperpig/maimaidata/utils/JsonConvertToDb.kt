@@ -31,7 +31,7 @@ object JsonConvertToDb {
                 song.basic_info.kanji,
                 song.basic_info.comment,
                 song.basic_info.buddy,
-                reading = song.reading
+                reading = song.reading?.takeIf { it.isNotBlank() } ?: song.title
             )
         }
 

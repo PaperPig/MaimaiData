@@ -63,7 +63,7 @@ data class SongDataEntity(
     // 双人协谱标记
     val buddy: String?,
 
-    // 曲名朗读内容，当前使用标题初始化。
+    // 曲名朗读内容，优先使用数据源中的 reading，缺失或空白时回退为标题。
     @ColumnInfo(defaultValue = "''")
     val reading: String = title,
 ) : Parcelable {

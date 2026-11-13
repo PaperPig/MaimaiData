@@ -19,10 +19,8 @@ data class SongData(
     var title_kana: String,
     val type: String,
     var alias: List<String>?,
+    val reading: String? = null,
 ) : Parcelable {
-    // 数据源暂未提供独立读音，统一使用标题作为入库朗读内容。
-    val reading: String
-        get() = title
 
     @ColorRes
     fun getBgColor() =
