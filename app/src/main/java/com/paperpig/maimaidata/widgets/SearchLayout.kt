@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.AutoTransition
 import androidx.transition.Transition
@@ -162,6 +163,10 @@ class SearchLayout(context: Context, attrs: AttributeSet) : LinearLayout(context
                 }
             }
         }
+    }
+
+    fun updateBottomInset(bottomInset: Int) {
+        binding.searchScrollView.updatePadding(bottom = bottomInset)
     }
 
     fun setOnSearchResultListener(

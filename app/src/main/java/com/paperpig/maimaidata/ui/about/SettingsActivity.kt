@@ -2,19 +2,19 @@ package com.paperpig.maimaidata.ui.about
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivitySettingsBinding
+import com.paperpig.maimaidata.ui.BaseActivity
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : BaseActivity<ActivitySettingsBinding>() {
 
+    override fun inflateBinding() = ActivitySettingsBinding.inflate(layoutInflater)
 
-    private lateinit var binding: ActivitySettingsBinding
+    override fun topInsetTargetView(): View = binding.toolbarLayout.toolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         if (savedInstanceState == null) {
             supportFragmentManager
                 .beginTransaction()

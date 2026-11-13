@@ -12,12 +12,15 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.FragmentSongListBinding
 import com.paperpig.maimaidata.db.AppDataBase
 import com.paperpig.maimaidata.repository.SongWithChartRepository
 import com.paperpig.maimaidata.ui.BaseFragment
+import com.paperpig.maimaidata.ui.MainActivity
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.SpUtil
 import com.paperpig.maimaidata.widgets.SearchLayout
@@ -53,6 +56,15 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
 
     private var isShowingSearchLayout = false
 
+    private val searchBackCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            if (binding.searchLayout.isVisible) {
+                showOrHideSearchBar()
+                hideKeyboard(view)
+            }
+        }
+    }
+
     companion object {
 
         @JvmStatic
@@ -80,6 +92,25 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
             adapter = songAdapter
             layoutManager = LinearLayoutManager(context)
             itemAnimator = SongListItemAnimator()
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (isHidden || isShowingSearchLayout) return
+                    (activity as? MainActivity)?.onContentScrolled(
+                        dy = dy,
+                        canScrollUp = recyclerView.canScrollVertically(-1)
+                    )
+                }
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE &&
+                        !isHidden &&
+                        !isShowingSearchLayout &&
+                        !recyclerView.canScrollVertically(-1)
+                    ) {
+                        (activity as? MainActivity)?.setBottomBarVisible(true)
+                    }
+                }
+            })
         }
 
         requireActivity().addMenuProvider(object : MenuProvider {
@@ -120,17 +151,14 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
 
         }, viewLifecycleOwner)
 
+        searchBackCallback.isEnabled = isShowingSearchLayout
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (binding.searchLayout.isVisible) {
-                        showOrHideSearchBar()
-                    } else {
-                        requireActivity().finish()
-                    }
-                }
-            })
+            searchBackCallback
+        )
+        (activity as? MainActivity)?.let {
+            updateBottomPadding(it.getBottomContentPaddingPx(), it.getSystemBottomInsetPx())
+        }
         loadData()
     }
 
@@ -210,16 +238,45 @@ class SongListFragment : BaseFragment<FragmentSongListBinding>() {
             }
         }
         isShowingSearchLayout = !isShowingSearchLayout
+        searchBackCallback.isEnabled = !isHidden && isShowingSearchLayout
+        (activity as? MainActivity)?.setBottomBarVisible(!isShowingSearchLayout)
+    }
+
+    fun updateBottomPadding(contentPaddingBottom: Int, systemBottomInset: Int) {
+        if (!isAdded) return
+        binding.songListRecyclerView.updatePadding(bottom = contentPaddingBottom)
+        binding.searchLayout.updateBottomInset(systemBottomInset)
+    }
+
+    /**
+     * 再次点击底栏当前 Tab：优先收起搜索面板，否则平滑滚动回列表顶部
+     */
+    fun onTabReselected() {
+        if (!isAdded) return
+        if (binding.searchLayout.isVisible) {
+            showOrHideSearchBar()
+            hideKeyboard(view)
+            return
+        }
+        val layoutManager = binding.songListRecyclerView.layoutManager as? LinearLayoutManager
+        val firstVisible = layoutManager?.findFirstVisibleItemPosition() ?: 0
+        if (firstVisible > 18) {
+            binding.songListRecyclerView.scrollToPosition(18)
+        }
+        binding.songListRecyclerView.smoothScrollToPosition(0)
+        (activity as? MainActivity)?.setBottomBarVisible(true)
     }
 
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        searchBackCallback.isEnabled = !hidden && isShowingSearchLayout
         requireActivity().invalidateOptionsMenu()
         if (hidden) {
             binding.maimaiBgView.pauseAnimation()
         } else {
             binding.maimaiBgView.resumeAnimation()
+            (activity as? MainActivity)?.setBottomBarVisible(!isShowingSearchLayout)
         }
     }
 

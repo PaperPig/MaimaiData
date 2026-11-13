@@ -16,6 +16,7 @@ import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.repository.ChartStatsRepository
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.utils.Constants
+import com.paperpig.maimaidata.utils.applyBottomSystemBarsPadding
 import com.paperpig.maimaidata.utils.setCopyOnLongClick
 import com.paperpig.maimaidata.utils.setShrinkOnTouch
 import com.paperpig.maimaidata.utils.toDp
@@ -52,6 +53,10 @@ class SongLevelFragment : BaseFragment<FragmentSongLevelBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.root.applyBottomSystemBarsPadding(
+            includeHorizontal = true,
+            useRootInsets = true
+        )
 
         if (record != null) {
             binding.chartStatusGroup.visibility = View.VISIBLE

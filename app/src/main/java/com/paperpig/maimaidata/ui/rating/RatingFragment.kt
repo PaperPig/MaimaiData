@@ -19,6 +19,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.MenuProvider
+import androidx.core.view.updatePadding
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.paperpig.maimaidata.R
@@ -29,6 +31,7 @@ import com.paperpig.maimaidata.model.Rating
 import com.paperpig.maimaidata.network.server.HttpServerService
 import com.paperpig.maimaidata.network.vpn.core.LocalVpnService
 import com.paperpig.maimaidata.ui.BaseFragment
+import com.paperpig.maimaidata.ui.MainActivity
 import com.paperpig.maimaidata.ui.about.SettingsActivity
 import com.paperpig.maimaidata.ui.checklist.LevelCheckActivity
 import com.paperpig.maimaidata.ui.checklist.VersionCheckActivity
@@ -102,6 +105,19 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as? MainActivity)?.let {
+            updateBottomPadding(it.getBottomContentPaddingPx())
+        }
+        binding.root.setOnScrollChangeListener(
+            NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+                if (isHidden) return@OnScrollChangeListener
+                val dy = scrollY - oldScrollY
+                (activity as? MainActivity)?.onContentScrolled(
+                    dy = dy,
+                    canScrollUp = scrollY > 0
+                )
+            }
+        )
         binding.ratingResultRecycler.apply {
             resultAdapter = RatingResultAdapter()
             layoutManager = LinearLayoutManager(context)
@@ -387,6 +403,20 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
         super.onDestroy()
         CrawlerCaller.removeOnWechatCrawlerListener()
         LocalVpnService.removeOnStatusChangedListener(this)
+    }
+
+    fun updateBottomPadding(contentPaddingBottom: Int) {
+        if (!isAdded) return
+        binding.root.updatePadding(bottom = contentPaddingBottom)
+    }
+
+    /**
+     * 再次点击底栏当前 Tab：平滑滚动回顶部
+     */
+    fun onTabReselected() {
+        if (!isAdded) return
+        binding.root.smoothScrollTo(0, 0)
+        (activity as? MainActivity)?.setBottomBarVisible(true)
     }
 
     private fun showHelpDialog() {

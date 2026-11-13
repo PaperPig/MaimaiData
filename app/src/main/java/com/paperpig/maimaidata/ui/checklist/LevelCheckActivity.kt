@@ -2,7 +2,7 @@ package com.paperpig.maimaidata.ui.checklist
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
 import androidx.lifecycle.MediatorLiveData
 import androidx.core.view.isVisible
 import com.google.android.flexbox.FlexDirection
@@ -15,17 +15,20 @@ import com.paperpig.maimaidata.db.entity.RecordEntity
 import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.repository.RecordRepository
 import com.paperpig.maimaidata.repository.SongWithChartRepository
+import com.paperpig.maimaidata.ui.BaseActivity
 import com.paperpig.maimaidata.utils.SpUtil
 
-class LevelCheckActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLevelCheckBinding
+class LevelCheckActivity : BaseActivity<ActivityLevelCheckBinding>() {
     private var searchLevelString = ""
+
+    override fun inflateBinding() = ActivityLevelCheckBinding.inflate(layoutInflater)
+
+    override fun topInsetTargetView(): View = binding.toolbarLayout.toolbar
+
+    override fun bottomInsetTargetView(): View = binding.levelCheckRecycler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityLevelCheckBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.apply {

@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.paperpig.maimaidata.db.entity.RecordEntity
 import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
+import com.paperpig.maimaidata.utils.applyBottomSystemBarsPadding
 
 class ProberVersionAdapter(dataList: List<SongWithChartsEntity>) :
     RecyclerView.Adapter<ProberVersionAdapter.ViewHolder>() {
@@ -20,6 +21,8 @@ class ProberVersionAdapter(dataList: List<SongWithChartsEntity>) :
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
             )
+            clipToPadding = false
+            applyBottomSystemBarsPadding(includeHorizontal = true)
         }
         return ViewHolder(recyclerView)
     }

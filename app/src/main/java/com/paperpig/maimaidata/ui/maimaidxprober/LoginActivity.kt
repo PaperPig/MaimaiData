@@ -6,22 +6,27 @@ import android.text.InputType
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityLoginBinding
 import com.paperpig.maimaidata.model.ResponseErrorBody
 import com.paperpig.maimaidata.network.MaimaiDataRequests
+import com.paperpig.maimaidata.ui.BaseActivity
 import com.paperpig.maimaidata.utils.SpUtil
 
-class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
+class LoginActivity : BaseActivity<ActivityLoginBinding>() {
     private var isPasswordVisible = false
+
+    override val includeImeInBottomInset: Boolean = true
+
+    override fun inflateBinding() = ActivityLoginBinding.inflate(layoutInflater)
+
+    override fun topInsetTargetView(): View = binding.toolbarLayout.toolbar
+
+    override fun bottomInsetTargetView(): View = binding.container
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         setSupportActionBar(binding.toolbarLayout.toolbar)
 
         supportActionBar?.apply {

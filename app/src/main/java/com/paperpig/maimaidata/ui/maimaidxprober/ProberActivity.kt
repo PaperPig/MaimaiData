@@ -8,7 +8,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.materialdialogs.MaterialDialog
@@ -20,6 +19,7 @@ import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.network.MaimaiDataRequests
 import com.paperpig.maimaidata.repository.RecordRepository
 import com.paperpig.maimaidata.repository.SongWithChartRepository
+import com.paperpig.maimaidata.ui.BaseActivity
 import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.CreateBest50
 import com.paperpig.maimaidata.utils.JsonConvertToDb
@@ -29,8 +29,7 @@ import com.paperpig.maimaidata.widgets.Settings
 import kotlinx.coroutines.launch
 
 
-class ProberActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityProberBinding
+class ProberActivity : BaseActivity<ActivityProberBinding>() {
 
     private lateinit var proberVersionAdapter: ProberVersionAdapter
     private var recordList = listOf<RecordEntity>()
@@ -45,10 +44,12 @@ class ProberActivity : AppCompatActivity() {
             permissionHelper.onRequestPermissionsResult(result)
         }
 
+    override fun inflateBinding() = ActivityProberBinding.inflate(layoutInflater)
+
+    override fun topInsetTargetView(): View = binding.toolbarLayout.toolbar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityProberBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.apply {

@@ -18,7 +18,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -36,6 +35,7 @@ import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.repository.AliasRepository
 import com.paperpig.maimaidata.repository.RecordRepository
+import com.paperpig.maimaidata.ui.BaseActivity
 import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.SpUtil
 import com.paperpig.maimaidata.utils.TtsManager
@@ -48,8 +48,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
-class SongDetailActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySongDetailBinding
+class SongDetailActivity : BaseActivity<ActivitySongDetailBinding>() {
 
     private lateinit var data: SongWithChartsEntity
 
@@ -85,14 +84,16 @@ class SongDetailActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBeforeSetContentView() {
+        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
+    }
+
+    override fun inflateBinding() = ActivitySongDetailBinding.inflate(layoutInflater)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS)
-        binding = ActivitySongDetailBinding.inflate(layoutInflater)
 
         with(binding) {
-            setContentView(root)
-
             setSupportActionBar(toolbar)
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)

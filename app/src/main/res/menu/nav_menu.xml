@@ -3,11 +3,11 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/navDXSongList"
-            android:icon="@drawable/ic_list"
+            android:icon="@drawable/ic_nav_song_list_selector"
             android:title="@string/dx_song_list" />
         <item
             android:id="@+id/navDxTarget"
-            android:icon="@drawable/ic_rating"
+            android:icon="@drawable/ic_nav_rating_selector"
             android:title="@string/dx_rating_correlation" />
     </group>
 </menu>

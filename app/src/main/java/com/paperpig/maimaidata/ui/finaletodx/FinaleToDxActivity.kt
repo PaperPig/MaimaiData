@@ -2,14 +2,16 @@ package com.paperpig.maimaidata.ui.finaletodx
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityFinaleToDxBinding
+import com.paperpig.maimaidata.ui.BaseActivity
 import com.paperpig.maimaidata.utils.getInt
 
-class FinaleToDxActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityFinaleToDxBinding
+class FinaleToDxActivity : BaseActivity<ActivityFinaleToDxBinding>() {
+
+    override val includeImeInBottomInset: Boolean = true
 
 
     private var tapCount = 0
@@ -43,10 +45,14 @@ class FinaleToDxActivity : AppCompatActivity() {
     private var breakGood = 0
     private var breakMiss = 0
 
+    override fun inflateBinding() = ActivityFinaleToDxBinding.inflate(layoutInflater)
+
+    override fun topInsetTargetView(): View = binding.toolbarLayout.toolbar
+
+    override fun bottomInsetTargetView(): View = binding.finaleScrollView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityFinaleToDxBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.apply {

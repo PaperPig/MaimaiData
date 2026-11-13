@@ -15,7 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:paddingBottom="56dp" />
 
     <com.paperpig.maimaidata.widgets.SearchLayout
         android:id="@+id/search_layout"

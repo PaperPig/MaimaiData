@@ -53,4 +53,10 @@
 
     <color name="mmd_color_red">#FF4646</color>
     <color name="mmd_color_green">#2FCA4C</color>
+
+    <color name="nav_bar_bg">#FFFFFF</color>
+    <color name="nav_bar_divider">#EBEBEB</color>
+    <color name="nav_bar_inactive">#757575</color>
+    <color name="nav_bar_indicator">#1FFA3582</color>
+    <color name="nav_bar_ripple">#22FA3582</color>
 </resources>

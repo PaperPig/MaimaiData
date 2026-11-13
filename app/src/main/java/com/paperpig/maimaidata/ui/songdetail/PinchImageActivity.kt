@@ -6,9 +6,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.lifecycleScope
@@ -20,13 +18,17 @@ import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.databinding.ActivityPinchImageBinding
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.network.MaimaiDataClient
+import com.paperpig.maimaidata.ui.BaseActivity
 import com.paperpig.maimaidata.utils.PermissionHelper
 import com.paperpig.maimaidata.utils.PictureUtils
+import com.paperpig.maimaidata.utils.applyBottomSystemBarsMargin
 import com.paperpig.maimaidata.utils.setDebouncedClickListener
 import kotlinx.coroutines.launch
 
-class PinchImageActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityPinchImageBinding
+class PinchImageActivity : BaseActivity<ActivityPinchImageBinding>() {
+
+    override val lightNavigationBar: Boolean = false
+    override val lightStatusBar: Boolean = false
 
     private lateinit var permissionHelper: PermissionHelper
 
@@ -50,12 +52,15 @@ class PinchImageActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun inflateBinding() = ActivityPinchImageBinding.inflate(layoutInflater)
 
+    override fun onApplyCustomEdgeToEdgeInsets() {
+        binding.saveCoverBtn.applyBottomSystemBarsMargin()
+        binding.shareCoverBtn.applyBottomSystemBarsMargin(includeHorizontal = false)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        binding = ActivityPinchImageBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         permissionHelper = PermissionHelper.with(this)
 

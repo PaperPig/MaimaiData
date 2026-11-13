@@ -5,7 +5,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MediatorLiveData
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
@@ -18,18 +17,20 @@ import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.model.Version
 import com.paperpig.maimaidata.repository.RecordRepository
 import com.paperpig.maimaidata.repository.SongWithChartRepository
+import com.paperpig.maimaidata.ui.BaseActivity
 import com.paperpig.maimaidata.utils.SpUtil
 
-class VersionCheckActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityVersionCheckBinding
+class VersionCheckActivity : BaseActivity<ActivityVersionCheckBinding>() {
     private var searchVersionString = ""
 
+    override fun inflateBinding() = ActivityVersionCheckBinding.inflate(layoutInflater)
+
+    override fun topInsetTargetView(): View = binding.toolbarLayout.toolbar
+
+    override fun bottomInsetTargetView(): View = binding.versionCheckRecycler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = ActivityVersionCheckBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         setSupportActionBar(binding.toolbarLayout.toolbar)
         supportActionBar?.apply {

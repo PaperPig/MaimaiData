@@ -10,23 +10,40 @@
         layout="@layout/title" />
 
     <FrameLayout
-        android:id="@+id/fragment_content"
+        android:id="@+id/main_content_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1">
 
+        <FrameLayout
+            android:id="@+id/fragment_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/main_bottom_navi_view"
-        android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:layout_gravity="start"
-        android:background="@color/white"
-        app:itemIconSize="24dp"
-        app:itemPaddingBottom="8dp"
-        app:itemTextColor="@drawable/nav_bar_text_color_selector"
-        app:itemIconTint="@drawable/nav_bar_text_color_selector"
-        app:menu="@menu/nav_menu" />
+        <LinearLayout
+            android:id="@+id/bottom_nav_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:elevation="8dp"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/bottom_nav_divider"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/nav_bar_divider" />
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/main_bottom_navi_view"
+                style="@style/MainBottomNavStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                app:elevation="0dp"
+                app:menu="@menu/nav_menu" />
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>
 
 

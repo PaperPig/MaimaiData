@@ -35,5 +35,24 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="MainBottomNavStyle" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemActiveIndicatorStyle">@style/MainBottomNavActiveIndicator</item>
+        <item name="itemIconTint">@drawable/nav_bar_text_color_selector</item>
+        <item name="itemRippleColor">@color/nav_bar_ripple</item>
+        <item name="itemIconSize">24dp</item>
+        <item name="itemPaddingTop">8dp</item>
+        <item name="itemPaddingBottom">8dp</item>
+        <item name="labelVisibilityMode">unlabeled</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="backgroundTint">@color/nav_bar_bg</item>
+        <item name="android:background">@color/nav_bar_bg</item>
+    </style>
+
+    <style name="MainBottomNavActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/nav_bar_indicator</item>
+        <item name="android:width">56dp</item>
+        <item name="android:height">32dp</item>
+    </style>
+
 
 </resources>
