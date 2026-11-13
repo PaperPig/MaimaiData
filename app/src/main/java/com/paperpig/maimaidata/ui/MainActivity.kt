@@ -335,24 +335,30 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     }.onNegative { d, _ ->
                         d.dismiss()
                     }.autoDismiss(true).cancelable(true).show()
-            } else if (SpUtil.getDataVersion() < it.dataVersion4!!
-            ) {
-                MaterialDialog.Builder(this)
-                    .title(this@MainActivity.getString(R.string.maimai_data_data_update_title))
-                    .content(
-                        String.format(
-                            this@MainActivity.getString(R.string.maimai_data_data_update_info),
-                            SpUtil.getDataVersion(),
-                            it.dataVersion4
-                        )
-                    ).positiveText(R.string.maimai_data_update_download)
-                    .negativeText(R.string.common_cancel).onPositive { _, which ->
-                        if (DialogAction.POSITIVE == which) {
-                            startDataDownload(it)
-                        }
-                    }.onNegative { d, _ ->
-                        d.dismiss()
-                    }.autoDismiss(true).cancelable(true).show()
+            } else {
+                val nextDataVersion = it.dataVersion5
+                val nextDataUrl = it.dataUrl5
+                if (!nextDataVersion.isNullOrBlank()
+                    && !nextDataUrl.isNullOrBlank()
+                    && SpUtil.getDataVersion() < nextDataVersion
+                ) {
+                    MaterialDialog.Builder(this)
+                        .title(this@MainActivity.getString(R.string.maimai_data_data_update_title))
+                        .content(
+                            String.format(
+                                this@MainActivity.getString(R.string.maimai_data_data_update_info),
+                                SpUtil.getDataVersion(),
+                                nextDataVersion
+                            )
+                        ).positiveText(R.string.maimai_data_update_download)
+                        .negativeText(R.string.common_cancel).onPositive { _, which ->
+                            if (DialogAction.POSITIVE == which) {
+                                startDataDownload(it)
+                            }
+                        }.onNegative { d, _ ->
+                            d.dismiss()
+                        }.autoDismiss(true).cancelable(true).show()
+                }
             }
         }, {
             it.printStackTrace()
@@ -397,12 +403,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     private fun startDataDownload(appUpdateModel: AppUpdateModel) {
+        val dataUrl = appUpdateModel.dataUrl5?.takeIf { it.isNotBlank() } ?: return
+        val dataVersion = appUpdateModel.dataVersion5?.takeIf { it.isNotBlank() } ?: return
         val updateDialog =
             MaterialDialog.Builder(this).title(getString(R.string.maimai_data_download_title))
                 .content(getString(R.string.maimai_data_start_download)).cancelable(false).show()
         downloadTask =
             DownloadTask.Builder(
-                appUpdateModel.dataUrl4!!,
+                dataUrl,
                 filesDir.path,
                 "songdata.json"
             )
@@ -434,7 +442,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         AppDataBase.getInstance().songWithChartDao()
                     ).updateDatabase(data)
                     if (result) {
-                        SpUtil.setDataVersion(appUpdateModel.dataVersion4!!)
+                        SpUtil.setDataVersion(dataVersion)
                     }
                 }
             }
