@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.format.Formatter
 import android.view.HapticFeedbackConstants
 import android.view.View
 import android.view.animation.OvershootInterpolator
@@ -21,9 +22,6 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
-import com.liulishuo.okdownload.DownloadTask
-import com.liulishuo.okdownload.core.cause.ResumeFailedCause
-import com.liulishuo.okdownload.core.listener.DownloadListener3
 import com.paperpig.maimaidata.BuildConfig
 import com.paperpig.maimaidata.MaimaiDataApplication
 import com.paperpig.maimaidata.R
@@ -37,10 +35,13 @@ import com.paperpig.maimaidata.repository.SongDataRepository
 import com.paperpig.maimaidata.repository.SongWithChartRepository
 import com.paperpig.maimaidata.ui.rating.RatingFragment
 import com.paperpig.maimaidata.ui.songlist.SongListFragment
+import com.paperpig.maimaidata.utils.DownloadUtils
 import com.paperpig.maimaidata.utils.JsonConvertToDb
 import com.paperpig.maimaidata.utils.SpUtil
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.io.File
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
@@ -49,7 +50,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var updateDisposable: Disposable? = null
     private var checkChartStatusDisposable: Disposable? = null
     private var isUpdateChecked = false
-    private var downloadTask: DownloadTask? = null
+    private var downloadJob: Job? = null
     private var currentTabId: Int = R.id.navDXSongList
     private var isBottomBarVisible = true
     private var isImeVisible = false
@@ -407,63 +408,54 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         val dataVersion = appUpdateModel.dataVersion5?.takeIf { it.isNotBlank() } ?: return
         val updateDialog =
             MaterialDialog.Builder(this).title(getString(R.string.maimai_data_download_title))
-                .content(getString(R.string.maimai_data_start_download)).cancelable(false).show()
-        downloadTask =
-            DownloadTask.Builder(
-                dataUrl,
-                filesDir.path,
-                "songdata.json"
-            )
-                .setMinIntervalMillisCallbackProcess(16).setPassIfAlreadyCompleted(false).build()
+                .content(getString(R.string.maimai_data_start_download)).cancelable(false).build()
 
+        downloadJob?.cancel()
+        downloadJob = DownloadUtils.download(
+            scope = lifecycleScope,
+            url = dataUrl,
+            targetFile = File(filesDir, "songdata.json"),
+            callback = object : DownloadUtils.DownloadCallback {
+                override fun onStart() = updateDialog.show()
 
-        downloadTask!!.enqueue(object : DownloadListener3() {
-            override fun retry(task: DownloadTask, cause: ResumeFailedCause) {
-            }
+                override fun onProgress(downloaded: Long, total: Long, progress: Int) {
+                    val downloadedText = Formatter.formatShortFileSize(this@MainActivity, downloaded)
+                    val text = if (total > 0L && progress >= 0) {
+                        val totalText = Formatter.formatShortFileSize(this@MainActivity, total)
+                        "$downloadedText / $totalText ($progress%)"
+                    } else {
+                        downloadedText
+                    }
+                    updateDialog.setContent(text)
+                }
 
-            override fun connected(
-                task: DownloadTask, blockCount: Int, currentOffset: Long, totalLength: Long
-            ) {
-            }
-
-            override fun progress(task: DownloadTask, currentOffset: Long, totalLength: Long) {
-                updateDialog.setContent("$currentOffset/$totalLength")
-            }
-
-            override fun started(task: DownloadTask) {
-                updateDialog.show()
-            }
-
-            override fun completed(task: DownloadTask) {
-                updateDialog.dismiss()
-                lifecycleScope.launch {
+                override suspend fun onSuccess(file: File) {
+                    updateDialog.dismiss()
                     val data = SongDataRepository().getData(this@MainActivity)
-                    val result = SongWithChartRepository.getInstance(
+                    check(data.isNotEmpty()) { "Parsed song data is empty" }
+                    val updated = SongWithChartRepository.getInstance(
                         AppDataBase.getInstance().songWithChartDao()
                     ).updateDatabase(data)
-                    if (result) {
-                        SpUtil.setDataVersion(dataVersion)
+                    check(updated) { "Failed to update local database" }
+                    SpUtil.setDataVersion(dataVersion)
+                }
+
+                override fun onCancel() {
+                    if (!isFinishing && !isDestroyed) {
+                        updateDialog.dismiss()
                     }
                 }
-            }
 
-            override fun canceled(task: DownloadTask) {
-                updateDialog.dismiss()
+                override fun onError(e: Exception) {
+                    updateDialog.dismiss()
+                    Toast.makeText(
+                        this@MainActivity,
+                        getString(R.string.maimai_data_download_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
-
-            override fun error(task: DownloadTask, e: Exception) {
-                Toast.makeText(
-                    this@MainActivity,
-                    getString(R.string.maimai_data_download_error),
-                    Toast.LENGTH_SHORT
-                ).show()
-                updateDialog.dismiss()
-            }
-
-            override fun warn(task: DownloadTask) {
-            }
-
-        })
+        )
     }
 
     private fun showFragment(tabId: Int, animate: Boolean = true) {

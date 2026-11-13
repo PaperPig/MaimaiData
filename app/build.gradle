@@ -87,7 +87,6 @@ dependencies {
 
     implementation("com.afollestad.material-dialogs:core:0.9.6.0")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
-    implementation("com.liulishuo.okdownload:okdownload:1.0.7")
 
     implementation("org.nanohttpd:nanohttpd:2.2.0")
 
