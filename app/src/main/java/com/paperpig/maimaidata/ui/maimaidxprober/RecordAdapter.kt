@@ -110,8 +110,13 @@ class RecordAdapter(private val dataList: List<SongWithChartsEntity>) :
             viewHolder.songRating.text = String.format(
                 context.getString(R.string.rating_scope), ConvertUtils.achievementToRating(
                     (record.ds * 10).toInt(),
-                    (record.achievements * 10000).toInt()
-                ), (record.ds * 22.512).toInt()
+                    (record.achievements * 10000).toInt(),
+                    record.isAp()
+                ), ConvertUtils.achievementToRating(
+                    (record.ds * 10).toInt(),
+                    1005000,
+                    isAp = true
+                )
             )
 
             dataList.find { it.songData.id == record.songId }?.let { data ->

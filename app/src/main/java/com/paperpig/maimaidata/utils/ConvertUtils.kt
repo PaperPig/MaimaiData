@@ -2,9 +2,9 @@ package com.paperpig.maimaidata.utils
 
 object ConvertUtils {
     /**
-     * 通过定数和达成率计算单曲rating
+     * 通过定数、达成率和是否 AP 计算单曲 rating（适配 CiRCLE 规则：AP/AP+ 额外 +1）
      */
-    fun achievementToRating(level: Int, achi: Int): Int {
+    fun achievementToRating(level: Int, achi: Int, isAp: Boolean = false): Int {
         val multiplier = when (achi) {
             in 1005000..Int.MAX_VALUE -> 22.4
             1004999 -> 22.2
@@ -30,6 +30,7 @@ object ConvertUtils {
             in 100000..199999 -> 1.6
             else -> 0.0
         }
-        return (achi.coerceAtMost(1005000) * level * multiplier / 10000000).toInt()
+        val baseRating = (achi.coerceAtMost(1005000) * level * multiplier / 10000000).toInt()
+        return if (isAp && level > 0 && achi > 0) baseRating + 1 else baseRating
     }
 }

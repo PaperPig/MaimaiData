@@ -267,12 +267,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="单曲rating = 歌曲定数 x 系数 x 达成率(取整，不计小数)" />
+                android:text="单曲rating = 歌曲定数 x 系数 x 达成率(最高按100.5%计算，向下取整) + AP奖励(AP/AP+ 额外 +1)" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="歌曲rating = 15个最高单曲rating(舞萌2026分类) + 35个最高单曲rating(舞萌2026以外分类)" />
+                android:text="歌曲rating = 15个最高单曲rating(现行版本+上一版本，即最新两代新曲) + 35个最高单曲rating(其余历史版本)" />
         </LinearLayout>
 
         <TextView
@@ -286,13 +286,15 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="4dp">
 
             <EditText
                 android:id="@+id/input_song_level"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
                 android:gravity="center"
@@ -303,7 +305,7 @@
             <EditText
                 android:id="@+id/input_song_achievement"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableEnd="@drawable/baseline_percent_24"
                 android:ems="10"
@@ -312,11 +314,18 @@
                 android:importantForAutofill="no"
                 android:inputType="numberDecimal" />
 
+            <CheckBox
+                android:id="@+id/input_song_ap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:text="AP" />
+
             <TextView
                 android:id="@+id/output_single_rating"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
                 android:gravity="center"
                 android:text="0" />
         </LinearLayout>

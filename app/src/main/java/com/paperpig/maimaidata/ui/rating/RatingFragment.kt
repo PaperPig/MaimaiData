@@ -153,57 +153,18 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
             onCalculate(binding.targetRatingEdit.text.toString())
         }
 
-        binding.inputSongLevel.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // 文本变化前
-            }
+        val singleRatingTextWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // 文本变化时
-            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
 
             override fun afterTextChanged(s: Editable?) {
-                // 文本变化后
-                val songLevel = s.toString()
-                val songAchievementText = binding.inputSongAchievement.text.toString()
-                if (songAchievementText.isNotEmpty() && songAchievementText != "."
-                    && songLevel.isNotEmpty() && songLevel != "."
-                ) {
-                    binding.outputSingleRating.text = ConvertUtils.achievementToRating(
-                        (binding.inputSongLevel.text.toString().toFloat() * 10).toInt(),
-                        (binding.inputSongAchievement.text.toString().toFloat() * 10000).toInt()
-                    ).toString()
-                } else {
-                    binding.outputSingleRating.text = "0"
-                }
+                updateSingleRating()
             }
-        })
-
-        binding.inputSongAchievement.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // 文本变化前
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // 文本变化时
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                // 文本变化后
-                val songAchievement = s.toString()
-                val songLevelText = binding.inputSongLevel.text.toString()
-                if (songAchievement.isNotEmpty() && songAchievement != "."
-                    && songLevelText.isNotEmpty() && songLevelText != "."
-                ) {
-                    binding.outputSingleRating.text = ConvertUtils.achievementToRating(
-                        (binding.inputSongLevel.text.toString().toFloat() * 10).toInt(),
-                        (binding.inputSongAchievement.text.toString().toFloat() * 10000).toInt()
-                    ).toString()
-                } else {
-                    binding.outputSingleRating.text = "0"
-                }
-            }
-        })
+        }
+        binding.inputSongLevel.addTextChangedListener(singleRatingTextWatcher)
+        binding.inputSongAchievement.addTextChangedListener(singleRatingTextWatcher)
+        binding.inputSongAp.setOnCheckedChangeListener { _, _ -> updateSingleRating() }
 
         CrawlerCaller.setOnWechatCrawlerListener(this)
         LocalVpnService.addOnStatusChangedListener(this)
@@ -417,6 +378,20 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
         if (!isAdded) return
         binding.root.smoothScrollTo(0, 0)
         (activity as? MainActivity)?.setBottomBarVisible(true)
+    }
+
+    private fun updateSingleRating() {
+        val level = binding.inputSongLevel.text.toString().toDoubleOrNull()
+        val achievement = binding.inputSongAchievement.text.toString().toDoubleOrNull()
+        binding.outputSingleRating.text = if (level != null && achievement != null) {
+            ConvertUtils.achievementToRating(
+                Math.round(level * 10).toInt(),
+                Math.round(achievement * 10000).toInt(),
+                isAp = binding.inputSongAp.isChecked
+            ).toString()
+        } else {
+            "0"
+        }
     }
 
     private fun showHelpDialog() {

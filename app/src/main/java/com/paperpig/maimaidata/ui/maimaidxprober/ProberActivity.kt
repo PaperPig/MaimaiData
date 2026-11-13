@@ -180,13 +180,13 @@ class ProberActivity : BaseActivity<ActivityProberBinding>() {
                 binding.oldVersionRdoBtn.text = String.format(
                     getString(R.string.old_version_35), oldRating.sumOf {
                         ConvertUtils.achievementToRating(
-                            (it.ds * 10).toInt(), (it.achievements * 10000).toInt()
+                            (it.ds * 10).toInt(), (it.achievements * 10000).toInt(), it.isAp()
                         )
                     })
                 binding.newVersionRdoBtn.text = String.format(
                     getString(R.string.new_version_15), newRating.sumOf {
                         ConvertUtils.achievementToRating(
-                            (it.ds * 10).toInt(), (it.achievements * 10000).toInt()
+                            (it.ds * 10).toInt(), (it.achievements * 10000).toInt(), it.isAp()
                         )
                     })
 

@@ -71,6 +71,8 @@ data class RecordEntity(
     @ColumnInfo(name = "type")
     val type: String
 ) : Parcelable {
+    fun isAp(): Boolean = fc == "ap" || fc == "app"
+
     fun getFcIcon() = when (fc) {
         "fc" -> R.drawable.mmd_player_rtsong_fc
         "fcp" -> R.drawable.mmd_player_rtsong_fcp
