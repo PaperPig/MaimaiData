@@ -31,25 +31,6 @@
         app:defaultValue=""
         app:iconSpaceReserved="false" />
 
-    <ListPreference
-        app:defaultValue="diving_fish"
-        app:dialogTitle="@string/settings_prober_upload_target"
-        app:entries="@array/prober_upload_target_options"
-        app:entryValues="@array/prober_upload_target_values"
-        app:iconSpaceReserved="false"
-        app:key="prober_upload_target"
-        app:title="@string/settings_prober_upload_target"
-        app:useSimpleSummaryProvider="true" />
-
-    <MultiSelectListPreference
-        app:iconSpaceReserved="false"
-        app:key="select_difficulties"
-        app:title="@string/settings_update_difficulty"
-        app:dialogTitle="@string/settings_difficulty_pick"
-        app:entries="@array/difficulty_options"
-        app:entryValues="@array/difficulty_values"
-        app:defaultValue="@array/difficulty_default" />
-
     <Preference
         app:fragment="com.paperpig.maimaidata.ui.about.AboutFragment"
         app:iconSpaceReserved="false"

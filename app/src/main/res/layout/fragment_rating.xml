@@ -14,254 +14,508 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="12dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="4dp">
 
-            <TextView
-                android:id="@+id/prober_label"
-                android:layout_width="wrap_content"
+            <!-- 卡片一：查分器账号与查分入口 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="12dp"
-                android:text="@string/maimaidx_prober"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
 
-
-            <TextView
-                android:id="@+id/account_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/current_user"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="@+id/prober_label"
-                app:layout_constraintStart_toStartOf="@+id/prober_label"
-                app:layout_constraintTop_toBottomOf="@id/prober_label" />
-
-
-            <TextView
-                android:id="@+id/account_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="@+id/prober_label"
-                app:layout_constraintStart_toStartOf="@+id/prober_label"
-                app:layout_constraintTop_toBottomOf="@id/account_label" />
-
-            <Button
-                android:id="@+id/prober_login_btn"
-                style="@style/ButtonStyle"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/change_account"
-                app:layout_constraintEnd_toStartOf="@id/prober_query_btn"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/account_text" />
-
-            <Button
-                android:id="@+id/prober_query_btn"
-                style="@style/ButtonStyle"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="@string/query_record"
-                app:layout_constraintBottom_toBottomOf="@id/prober_login_btn"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/prober_login_btn"
-                app:layout_constraintTop_toTopOf="@id/prober_login_btn" />
-
-
-            <Button
-                android:id="@+id/prober_version_check_btn"
-                style="@style/ButtonStyle"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/version_query"
-                app:layout_constraintEnd_toStartOf="@+id/prober_level_check_btn"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/prober_login_btn" />
-
-            <Button
-                android:id="@+id/prober_level_check_btn"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="@string/level_query"
-                app:layout_constraintBottom_toBottomOf="@+id/prober_version_check_btn"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/prober_version_check_btn"
-                app:layout_constraintTop_toTopOf="@id/prober_version_check_btn" />
-
-            <Button
-                android:id="@+id/prober_finale_to_dx_btn"
-                style="@style/ButtonStyle"
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/dx_score_transform"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/prober_version_check_btn" />
-
-            <TextView
-                android:id="@+id/lxns_account_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/lxns_prober"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/prober_finale_to_dx_btn" />
-
-            <TextView
-                android:id="@+id/lxns_account_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/lxns_not_bound"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lxns_account_label" />
-
-            <Button
-                android:id="@+id/lxns_bind_btn"
-                style="@style/ButtonStyle"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/lxns_bind"
-                app:layout_constraintEnd_toStartOf="@id/lxns_query_btn"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lxns_account_text" />
-
-            <Button
-                android:id="@+id/lxns_query_btn"
-                style="@style/ButtonStyle"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="@string/query_record"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/lxns_bind_btn"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/lxns_bind_btn"
-                app:layout_constraintTop_toTopOf="@id/lxns_bind_btn" />
-
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/prober_upload_target_group"
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:checkedButton="@id/target_diving_fish_btn"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lxns_bind_btn"
-                app:selectionRequired="true"
-                app:singleSelection="true">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/target_diving_fish_btn"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:paddingHorizontal="4dp"
-                    android:text="@string/prober_target_diving_fish"
-                    android:textSize="12sp" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/target_lxns_btn"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                    <TextView
+                        android:id="@+id/prober_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/maimaidx_prober"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <!-- 水鱼查分器 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/account_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/diving_fish_prober"
+                            android:textColor="@color/textColor"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/account_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:gravity="end"
+                            android:maxLines="1"
+                            android:textColor="@color/gray"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/prober_login_btn"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/change_account"
+                            app:cornerRadius="10dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/prober_query_btn"
+                            style="@style/ButtonStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:text="@string/query_record"
+                            app:cornerRadius="10dp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="14dp"
+                        android:background="@color/divider" />
+
+                    <!-- 落雪查分器 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/lxns_account_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/lxns_prober"
+                            android:textColor="@color/textColor"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/lxns_account_text"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:gravity="end"
+                            android:maxLines="1"
+                            android:text="@string/lxns_not_bound"
+                            android:textColor="@color/gray"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/lxns_bind_btn"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/lxns_bind"
+                            app:cornerRadius="10dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/lxns_query_btn"
+                            style="@style/ButtonStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:text="@string/query_record"
+                            android:visibility="gone"
+                            app:cornerRadius="10dp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 卡片二：微信代理传分 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:paddingHorizontal="4dp"
-                    android:text="@string/prober_target_lxns"
-                    android:textSize="12sp" />
+                    android:padding="16dp">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/target_both_btn"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="0dp"
+                    <TextView
+                        android:id="@+id/prober_proxy_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/prober_proxy_section_title"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@id/prober_proxy_update_help_iv"
+                        app:layout_constraintEnd_toStartOf="@id/prober_proxy_update_help_iv"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/prober_proxy_update_help_iv" />
+
+                    <ImageView
+                        android:id="@+id/prober_proxy_update_help_iv"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_tips"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/prober_upload_target_group"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        app:checkedButton="@id/target_diving_fish_btn"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/prober_proxy_update_help_iv"
+                        app:selectionRequired="true"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/target_diving_fish_btn"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:paddingHorizontal="4dp"
+                            android:text="@string/prober_target_diving_fish"
+                            android:textSize="12sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/target_lxns_btn"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:paddingHorizontal="4dp"
+                            android:text="@string/prober_target_lxns"
+                            android:textSize="12sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/target_both_btn"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:paddingHorizontal="4dp"
+                            android:text="@string/prober_target_both"
+                            android:textSize="12sp" />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                    <TextView
+                        android:id="@+id/prober_diff_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/prober_upload_difficulty_label"
+                        android:textColor="@color/gray"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/prober_upload_target_group" />
+
+                    <LinearLayout
+                        android:id="@+id/prober_difficulty_grid"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/prober_diff_label">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_diff_basic"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="38dp"
+                                android:layout_weight="1"
+                                android:checkable="true"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:minHeight="0dp"
+                                android:paddingHorizontal="4dp"
+                                android:text="BASIC"
+                                android:textColor="@color/selector_filter_btn_text"
+                                android:textSize="12sp"
+                                app:backgroundTint="@color/selector_filter_btn_bg"
+                                app:cornerRadius="8dp"
+                                app:strokeColor="@color/selector_filter_btn_stroke" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_diff_advanced"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="38dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:checkable="true"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:minHeight="0dp"
+                                android:paddingHorizontal="4dp"
+                                android:text="ADVANCED"
+                                android:textColor="@color/selector_filter_btn_text"
+                                android:textSize="12sp"
+                                app:backgroundTint="@color/selector_filter_btn_bg"
+                                app:cornerRadius="8dp"
+                                app:strokeColor="@color/selector_filter_btn_stroke" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_diff_expert"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="38dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:checkable="true"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:minHeight="0dp"
+                                android:paddingHorizontal="4dp"
+                                android:text="EXPERT"
+                                android:textColor="@color/selector_filter_btn_text"
+                                android:textSize="12sp"
+                                app:backgroundTint="@color/selector_filter_btn_bg"
+                                app:cornerRadius="8dp"
+                                app:strokeColor="@color/selector_filter_btn_stroke" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_diff_master"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="38dp"
+                                android:layout_weight="1"
+                                android:checkable="true"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:minHeight="0dp"
+                                android:paddingHorizontal="4dp"
+                                android:text="MASTER"
+                                android:textColor="@color/selector_filter_btn_text"
+                                android:textSize="12sp"
+                                app:backgroundTint="@color/selector_filter_btn_bg"
+                                app:cornerRadius="8dp"
+                                app:strokeColor="@color/selector_filter_btn_stroke" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_diff_remaster"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="38dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:checkable="true"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:minHeight="0dp"
+                                android:paddingHorizontal="4dp"
+                                android:text="RE:MASTER"
+                                android:textColor="@color/selector_filter_btn_text"
+                                android:textSize="12sp"
+                                app:backgroundTint="@color/selector_filter_btn_bg"
+                                app:cornerRadius="8dp"
+                                app:strokeColor="@color/selector_filter_btn_stroke" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_diff_utage"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="38dp"
+                                android:layout_marginStart="8dp"
+                                android:layout_weight="1"
+                                android:checkable="true"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                android:minHeight="0dp"
+                                android:paddingHorizontal="4dp"
+                                android:text="宴会场"
+                                android:textColor="@color/selector_filter_btn_text"
+                                android:textSize="12sp"
+                                app:backgroundTint="@color/selector_filter_btn_bg"
+                                app:cornerRadius="8dp"
+                                app:strokeColor="@color/selector_filter_btn_stroke" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/prober_proxy_update_btn"
+                        style="@style/ButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/start_proxy"
+                        app:cornerRadius="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/prober_difficulty_grid" />
+
+                    <androidx.constraintlayout.widget.Group
+                        android:id="@+id/prober_proxy_status_group"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        app:constraint_referenced_ids="prober_proxy_indicator,prober_proxy_simple_text" />
+
+                    <TextView
+                        android:id="@+id/prober_proxy_simple_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/status_box_bg"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:lines="2"
+                        android:padding="8dp"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/prober_proxy_update_btn" />
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/prober_proxy_indicator"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="@id/prober_proxy_simple_text"
+                        app:layout_constraintStart_toStartOf="@id/prober_proxy_simple_text"
+                        app:layout_constraintTop_toBottomOf="@id/prober_proxy_simple_text" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 卡片三：进度与工具 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:paddingHorizontal="4dp"
-                    android:text="@string/prober_target_both"
-                    android:textSize="12sp" />
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-            <Button
-                android:id="@+id/prober_proxy_update_btn"
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="@string/start_proxy"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/prober_upload_target_group" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/prober_tools_section_title"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
-            <ImageView
-                android:id="@+id/prober_proxy_update_help_iv"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="12dp"
-                android:src="@drawable/ic_tips"
-                app:layout_constraintBottom_toBottomOf="@+id/prober_proxy_update_btn"
-                app:layout_constraintStart_toEndOf="@+id/prober_proxy_update_btn"
-                app:layout_constraintTop_toTopOf="@id/prober_proxy_update_btn" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
 
-            <androidx.constraintlayout.widget.Group
-                android:id="@+id/prober_proxy_status_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="invisible"
-                app:constraint_referenced_ids="prober_proxy_indicator,prober_proxy_simple_text" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/prober_version_check_btn"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/version_query"
+                            app:cornerRadius="10dp" />
 
-            <TextView
-                android:id="@+id/prober_proxy_simple_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="12dp"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:lines="2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/prober_proxy_update_btn" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/prober_level_check_btn"
+                            style="?attr/materialButtonOutlinedStyle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="1"
+                            android:text="@string/level_query"
+                            app:cornerRadius="10dp" />
+                    </LinearLayout>
 
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/prober_proxy_indicator"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:indeterminate="true"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/prober_proxy_simple_text"
-                app:layout_constraintStart_toStartOf="@+id/prober_proxy_simple_text"
-                app:layout_constraintTop_toBottomOf="@id/prober_proxy_simple_text" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/prober_finale_to_dx_btn"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="@string/dx_score_transform"
+                        app:cornerRadius="10dp" />
 
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
 
         <LinearLayout

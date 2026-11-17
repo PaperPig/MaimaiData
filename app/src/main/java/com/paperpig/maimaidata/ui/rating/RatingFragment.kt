@@ -8,6 +8,7 @@ import android.content.ClipboardManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,16 +17,20 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
 import androidx.core.view.updatePadding
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.button.MaterialButton
 import com.paperpig.maimaidata.R
 import com.paperpig.maimaidata.crawler.CrawlerCaller
+import com.paperpig.maimaidata.crawler.LxnsHtmlUploader
 import com.paperpig.maimaidata.crawler.WechatCrawlerListener
 import com.paperpig.maimaidata.databinding.FragmentRatingBinding
 import com.paperpig.maimaidata.model.Rating
@@ -101,22 +106,29 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
         refreshAccountStates()
     }
 
+    private var isUpdatingDifficultyButtons = false
+
+    private val difficultyButtons: List<Pair<MaterialButton, Int>>
+        get() = listOf(
+            binding.btnDiffBasic to 0,
+            binding.btnDiffAdvanced to 1,
+            binding.btnDiffExpert to 2,
+            binding.btnDiffMaster to 3,
+            binding.btnDiffRemaster to 4,
+            binding.btnDiffUtage to LxnsHtmlUploader.UTAGE_DIFFICULTY
+        )
+
     private fun refreshAccountStates() {
-        val density = binding.root.context.resources.displayMetrics.density
         if (SpUtil.getUserName().isEmpty()) {
             binding.accountText.setText(R.string.no_logged_in)
+            applyAccountTextStyle(binding.accountText, bound = false)
             binding.proberQueryBtn.visibility = View.GONE
             binding.proberLoginBtn.setText(R.string.login)
-            binding.proberLoginBtn.layoutParams = binding.proberLoginBtn.layoutParams.apply {
-                width = (260 * density).toInt()
-            }
         } else {
             binding.accountText.text = SpUtil.getUserName()
+            applyAccountTextStyle(binding.accountText, bound = true)
             binding.proberQueryBtn.visibility = View.VISIBLE
             binding.proberLoginBtn.setText(R.string.change_account)
-            binding.proberLoginBtn.layoutParams = binding.proberLoginBtn.layoutParams.apply {
-                width = (120 * density).toInt()
-            }
         }
 
         if (SpUtil.hasLxnsBound()) {
@@ -125,18 +137,14 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
                 SpUtil.getLxnsPlayerName().ifBlank { SpUtil.getLxnsFriendCode().toString() },
                 SpUtil.getLxnsRating()
             )
+            applyAccountTextStyle(binding.lxnsAccountText, bound = true)
             binding.lxnsQueryBtn.visibility = View.VISIBLE
             binding.lxnsBindBtn.setText(R.string.lxns_rebind)
-            binding.lxnsBindBtn.layoutParams = binding.lxnsBindBtn.layoutParams.apply {
-                width = (120 * density).toInt()
-            }
         } else {
             binding.lxnsAccountText.setText(R.string.lxns_not_bound)
+            applyAccountTextStyle(binding.lxnsAccountText, bound = false)
             binding.lxnsQueryBtn.visibility = View.GONE
             binding.lxnsBindBtn.setText(R.string.lxns_bind)
-            binding.lxnsBindBtn.layoutParams = binding.lxnsBindBtn.layoutParams.apply {
-                width = (260 * density).toInt()
-            }
         }
 
         val targetButtonId = when (Settings.getProberUploadTarget()) {
@@ -147,6 +155,19 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
         if (binding.proberUploadTargetGroup.checkedButtonId != targetButtonId) {
             binding.proberUploadTargetGroup.check(targetButtonId)
         }
+
+        val selectedDiffs = Settings.getUpdateDifficulty()
+        isUpdatingDifficultyButtons = true
+        difficultyButtons.forEach { (button, diff) ->
+            button.isChecked = selectedDiffs.contains(diff)
+        }
+        isUpdatingDifficultyButtons = false
+    }
+
+    private fun applyAccountTextStyle(textView: TextView, bound: Boolean) {
+        val colorRes = if (bound) R.color.textColor else R.color.gray
+        textView.setTextColor(ContextCompat.getColor(requireContext(), colorRes))
+        textView.setTypeface(null, if (bound) Typeface.BOLD else Typeface.NORMAL)
     }
 
 
@@ -179,10 +200,6 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
             startActivity(Intent(context, ProberActivity::class.java))
         }
 
-        binding.proberLoginBtn.setOnClickListener {
-            startActivity(Intent(context, LoginActivity::class.java))
-        }
-
         binding.proberLevelCheckBtn.setOnClickListener {
             startActivity(Intent(context, LevelCheckActivity::class.java))
         }
@@ -212,6 +229,17 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
                 else -> ProberUploadTarget.DIVING_FISH
             }
             Settings.setProberUploadTarget(target)
+        }
+
+        difficultyButtons.forEach { (button, _) ->
+            button.addOnCheckedChangeListener { _, _ ->
+                if (isUpdatingDifficultyButtons) return@addOnCheckedChangeListener
+                val selected = difficultyButtons
+                    .filter { it.first.isChecked }
+                    .map { it.second }
+                    .toSet()
+                Settings.setUpdateDifficulty(selected)
+            }
         }
 
         binding.calculateBtn.setOnClickListener {

@@ -77,6 +77,12 @@ object Settings {
 
     }
 
+    fun setUpdateDifficulty(difficulties: Set<Int>) {
+        settingsPre.edit {
+            putStringSet(KEY_SELECT_DIFFICULTIES, difficulties.map { it.toString() }.toSet())
+        }
+    }
+
     fun getProberUploadTarget(): ProberUploadTarget {
         val raw = settingsPre.getString(KEY_PROBER_UPLOAD_TARGET, DEFAULT_PROBER_UPLOAD_TARGET)
         return ProberUploadTarget.fromPrefValue(raw)

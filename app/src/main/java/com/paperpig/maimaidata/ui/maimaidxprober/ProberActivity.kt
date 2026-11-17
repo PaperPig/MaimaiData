@@ -81,7 +81,7 @@ class ProberActivity : BaseActivity<ActivityProberBinding>() {
         supportActionBar?.title = if (proberSource == SOURCE_LXNS) {
             getString(R.string.lxns_prober)
         } else {
-            getString(R.string.maimaidx_prober)
+            getString(R.string.diving_fish_prober)
         }
         binding.oldVersionRdoBtn.text = String.format(getString(R.string.old_version_35), 0)
         binding.newVersionRdoBtn.text = String.format(getString(R.string.new_version_15), 0)

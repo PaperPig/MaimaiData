@@ -106,7 +106,7 @@
     <string name="prober_update_content_step1">①.打开“开启代理”，App会自动打开代理（第一次使用请同意VPN创建请求）、复制链接、跳转微信</string>
     <string name="prober_update_content_step2">②.在微信中将复制的链接发送至聊天窗口（如文件传输助手）</string>
     <string name="prober_update_content_step3">③.点击发送的链接，等待网页提示“登录信息以获取”后，即可关闭页面返回App</string>
-    <string name="prober_update_content_step4">④.App开始获取分数信息，并根据设置中的同步目标与难度选择将成绩上传至水鱼或落雪查分器</string>
+    <string name="prober_update_content_step4">④.App开始获取分数信息，并根据所选的同步目标与难度将成绩上传至水鱼或落雪查分器</string>
     <string name="change_account">更换账户</string>
     <string name="query_record">查分</string>
     <string name="rank">RANK</string>
@@ -188,6 +188,10 @@
     <string name="new_song_badge" translatable="false">NEW</string>
 
     <string name="lxns_prober">落雪查分器</string>
+    <string name="diving_fish_prober">水鱼查分器</string>
+    <string name="prober_proxy_section_title">微信代理传分</string>
+    <string name="prober_upload_difficulty_label">上传难度</string>
+    <string name="prober_tools_section_title">进度与工具</string>
     <string name="lxns_not_bound">未绑定</string>
     <string name="lxns_bind">绑定账号</string>
     <string name="lxns_rebind">更换绑定</string>
