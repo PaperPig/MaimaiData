@@ -113,6 +113,90 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/prober_version_check_btn" />
 
+            <TextView
+                android:id="@+id/lxns_account_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/lxns_prober"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/prober_finale_to_dx_btn" />
+
+            <TextView
+                android:id="@+id/lxns_account_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/lxns_not_bound"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lxns_account_label" />
+
+            <Button
+                android:id="@+id/lxns_bind_btn"
+                style="@style/ButtonStyle"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/lxns_bind"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lxns_account_text" />
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/prober_upload_target_group"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:checkedButton="@id/target_diving_fish_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lxns_bind_btn"
+                app:selectionRequired="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/target_diving_fish_btn"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingHorizontal="4dp"
+                    android:text="@string/prober_target_diving_fish"
+                    android:textSize="12sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/target_lxns_btn"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingHorizontal="4dp"
+                    android:text="@string/prober_target_lxns"
+                    android:textSize="12sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/target_both_btn"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingHorizontal="4dp"
+                    android:text="@string/prober_target_both"
+                    android:textSize="12sp" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
             <Button
                 android:id="@+id/prober_proxy_update_btn"
                 android:layout_width="260dp"
@@ -121,7 +205,7 @@
                 android:text="@string/start_proxy"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/prober_finale_to_dx_btn" />
+                app:layout_constraintTop_toBottomOf="@id/prober_upload_target_group" />
 
             <ImageView
                 android:id="@+id/prober_proxy_update_help_iv"

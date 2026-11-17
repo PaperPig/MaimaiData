@@ -68,6 +68,7 @@ public class WechatCrawler {
         diffMap.put(2, "Expert");
         diffMap.put(3, "Master");
         diffMap.put(4, "Re:Master");
+        diffMap.put(LxnsHtmlUploader.UTAGE_DIFFICULTY, "宴会场");
         buildHttpClient(false);
     }
 
@@ -152,6 +153,18 @@ public class WechatCrawler {
     }
 
     public void fetchAndUploadData(String username, String password, Set<Integer> difficulties, String wechatAuthUrl) throws IOException {
+        fetchAndUploadData(username, password, difficulties, wechatAuthUrl, true, false, "");
+    }
+
+    public void fetchAndUploadData(
+            String username,
+            String password,
+            Set<Integer> difficulties,
+            String wechatAuthUrl,
+            boolean uploadDivingFish,
+            boolean uploadLxns,
+            String lxnsUserToken
+    ) throws IOException {
         if (wechatAuthUrl.startsWith("http"))
             wechatAuthUrl = wechatAuthUrl.replaceFirst("http", "https");
 
@@ -171,7 +184,14 @@ public class WechatCrawler {
 
         // Fetch maimai data
         try {
-            this.fetchMaimaiData(username, password, difficulties);
+            this.fetchMaimaiData(
+                    username,
+                    password,
+                    difficulties,
+                    uploadDivingFish,
+                    uploadLxns,
+                    lxnsUserToken
+            );
             writeLog("maimai 数据更新完成");
             finishUpdate();
         } catch (Exception error) {
@@ -236,9 +256,26 @@ public class WechatCrawler {
         }
     }
 
-    private void fetchMaimaiData(String username, String password, Set<Integer> difficulties) throws IOException {
+    private void fetchMaimaiData(
+            String username,
+            String password,
+            Set<Integer> difficulties,
+            boolean uploadDivingFish,
+            boolean uploadLxns,
+            String lxnsUserToken
+    ) throws IOException {
         this.buildHttpClient(false);
-        fetchAndUploadData(username, password, difficulties);
+        if (uploadDivingFish) {
+            Set<Integer> divingFishDiffs = LxnsHtmlUploader.filterSupportedDifficulties(difficulties);
+            if (divingFishDiffs.isEmpty()) {
+                writeLog("水鱼查分器未选择任何难度，已跳过水鱼上传");
+            } else {
+                fetchAndUploadData(username, password, divingFishDiffs);
+            }
+        }
+        if (uploadLxns) {
+            new LxnsHtmlUploader().uploadAll(client, lxnsUserToken, difficulties);
+        }
     }
 
     private void buildHttpClient(boolean followRedirect) {

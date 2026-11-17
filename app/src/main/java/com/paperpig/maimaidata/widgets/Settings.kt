@@ -2,7 +2,25 @@ package com.paperpig.maimaidata.widgets
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.preference.PreferenceManager
+
+
+enum class ProberUploadTarget(val prefValue: String) {
+    DIVING_FISH("diving_fish"),
+    LXNS("lxns"),
+    BOTH("both");
+
+    fun includesDivingFish(): Boolean = this == DIVING_FISH || this == BOTH
+
+    fun includesLxns(): Boolean = this == LXNS || this == BOTH
+
+    companion object {
+        fun fromPrefValue(value: String?): ProberUploadTarget {
+            return entries.firstOrNull { it.prefValue == value } ?: DIVING_FISH
+        }
+    }
+}
 
 
 object Settings {
@@ -33,6 +51,9 @@ object Settings {
     private const val KEY_SELECT_DIFFICULTIES = "select_difficulties"
     private val DEFAULT_SELECT = setOf("2", "3", "4")
 
+    private const val KEY_PROBER_UPLOAD_TARGET = "prober_upload_target"
+    private const val DEFAULT_PROBER_UPLOAD_TARGET = "diving_fish"
+
 
     fun getEnableAliasSearch() =
         settingsPre.getBoolean(KEY_ALIAS_SEARCH, DEFAULT_ALIAS_SEARCH)
@@ -54,5 +75,16 @@ object Settings {
             settingsPre.getStringSet(KEY_SELECT_DIFFICULTIES, DEFAULT_SELECT) ?: DEFAULT_SELECT
         return selectedSet.mapNotNull { it.toIntOrNull() }.toSet()
 
+    }
+
+    fun getProberUploadTarget(): ProberUploadTarget {
+        val raw = settingsPre.getString(KEY_PROBER_UPLOAD_TARGET, DEFAULT_PROBER_UPLOAD_TARGET)
+        return ProberUploadTarget.fromPrefValue(raw)
+    }
+
+    fun setProberUploadTarget(target: ProberUploadTarget) {
+        settingsPre.edit {
+            putString(KEY_PROBER_UPLOAD_TARGET, target.prefValue)
+        }
     }
 }

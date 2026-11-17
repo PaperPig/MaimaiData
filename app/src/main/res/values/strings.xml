@@ -106,7 +106,7 @@
     <string name="prober_update_content_step1">①.打开“开启代理”，App会自动打开代理（第一次使用请同意VPN创建请求）、复制链接、跳转微信</string>
     <string name="prober_update_content_step2">②.在微信中将复制的链接发送至聊天窗口（如文件传输助手）</string>
     <string name="prober_update_content_step3">③.点击发送的链接，等待网页提示“登录信息以获取”后，即可关闭页面返回App</string>
-    <string name="prober_update_content_step4">④.App开始获取分数信息，并根据设置中的难度选择将对应难度的成绩上传至水鱼网</string>
+    <string name="prober_update_content_step4">④.App开始获取分数信息，并根据设置中的同步目标与难度选择将成绩上传至水鱼或落雪查分器</string>
     <string name="change_account">更换账户</string>
     <string name="query_record">查分</string>
     <string name="rank">RANK</string>
@@ -186,4 +186,28 @@
     <string name="prioritize_new_songs_on">优先显示新歌（已开启）</string>
     <string name="prioritize_new_songs_off">优先显示新歌（已关闭）</string>
     <string name="new_song_badge" translatable="false">NEW</string>
+
+    <string name="lxns_prober">落雪查分器</string>
+    <string name="lxns_not_bound">未绑定</string>
+    <string name="lxns_bind">绑定账号</string>
+    <string name="lxns_rebind">更换绑定</string>
+    <string name="lxns_unbind">解除绑定</string>
+    <string name="lxns_unbind_success">已解除落雪账号绑定</string>
+    <string name="lxns_bind_title">绑定落雪查分器</string>
+    <string name="lxns_user_token_hint">请输入落雪个人 API 密钥（X-User-Token）</string>
+    <string name="lxns_bind_confirm">验证并绑定</string>
+    <string name="lxns_bind_success">落雪绑定成功：%1$s（Rating %2$d）</string>
+    <string name="lxns_pending_sync_name">待首次同步</string>
+    <string name="lxns_bind_pending_success">密钥已保存，该账号尚未同步过玩家数据，请开启代理传分以完成建档</string>
+    <string name="lxns_bind_tips">请前往落雪查分器网页「账号详情」生成个人 API 密钥后粘贴到此处。密钥仅保存在本地，不依赖开发者密钥。</string>
+    <string name="lxns_invalid_token_input">请输入有效的个人 API 密钥</string>
+    <string name="lxns_bound_summary">%1$s（Rating %2$d）</string>
+    <string name="prober_upload_target_title">传分目标</string>
+    <string name="prober_target_diving_fish">仅水鱼</string>
+    <string name="prober_target_lxns">仅落雪</string>
+    <string name="prober_target_both">水鱼+落雪</string>
+    <string name="settings_prober_upload_target">默认更新查分器目标</string>
+    <string name="vpn_please_bind_lxns">请先配置落雪查分器个人 API 密钥</string>
+    <string name="vpn_please_login_both">请先登录水鱼账号并配置落雪个人 API 密钥</string>
+    <string name="lxns_no_difficulty_selected">未选择任何难度，将仅同步玩家信息与最近游玩记录</string>
 </resources>

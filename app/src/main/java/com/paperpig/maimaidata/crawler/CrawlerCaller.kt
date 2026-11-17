@@ -60,12 +60,20 @@ object CrawlerCaller {
                 onError(e)
             }
             try {
+                val target = Settings.getProberUploadTarget()
+                val uploadDivingFish = target.includesDivingFish() && SpUtil.getUserName().isNotEmpty()
+                val lxnsUserToken = SpUtil.getLxnsUserToken()
+                val uploadLxns = target.includesLxns() && lxnsUserToken.isNotBlank()
+
                 val crawler = WechatCrawler()
                 crawler.fetchAndUploadData(
                     SpUtil.getUserName(),
                     SpUtil.getPassword(),
                     getDifficulties(),
-                    authUrl
+                    authUrl,
+                    uploadDivingFish,
+                    uploadLxns,
+                    lxnsUserToken
                 )
             } catch (e: IOException) {
                 onError(e)

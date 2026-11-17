@@ -39,6 +39,10 @@ object SpUtil {
     private const val KEY_LAST_QUERY_LEVEL = "last_query_level"
     private const val KEY_LAST_QUERY_VERSION = "last_query_version"
     private const val KEY_DIVING_FISH_NICKNAME = "diving_fish_nickname"
+    private const val KEY_LXNS_USER_TOKEN = "lxns_user_token"
+    private const val KEY_LXNS_FRIEND_CODE = "lxns_friend_code"
+    private const val KEY_LXNS_PLAYER_NAME = "lxns_player_name"
+    private const val KEY_LXNS_RATING = "lxns_rating"
 
     private const val KEY_VERSION = "db_version"
     private const val KEY_LAST_UPDATE_TIME = "chart_stats_db_last_update_time"
@@ -115,8 +119,37 @@ object SpUtil {
         userInfoPrefs.edit { putString(KEY_DIVING_FISH_NICKNAME, nickname) }
     }
 
-    fun getDivingFishNickname(): String {
-        return userInfoPrefs.getString(KEY_DIVING_FISH_NICKNAME, "") ?: ""
+
+    fun getDivingFishNickname(): String = userInfoPrefs.getString(KEY_DIVING_FISH_NICKNAME, "") ?: ""
+
+    // ================= LXNS PROBER INFO =================
+
+    fun getLxnsUserToken(): String = userInfoPrefs.getString(KEY_LXNS_USER_TOKEN, "")?.trim() ?: ""
+
+    fun getLxnsFriendCode(): Long = userInfoPrefs.getLong(KEY_LXNS_FRIEND_CODE, 0L)
+
+    fun getLxnsPlayerName(): String = userInfoPrefs.getString(KEY_LXNS_PLAYER_NAME, "") ?: ""
+
+    fun getLxnsRating(): Int = userInfoPrefs.getInt(KEY_LXNS_RATING, 0)
+
+    fun hasLxnsBound(): Boolean = getLxnsUserToken().isNotBlank()
+
+    fun saveLxnsAccount(userToken: String, friendCode: Long, playerName: String, rating: Int) {
+        userInfoPrefs.edit {
+            putString(KEY_LXNS_USER_TOKEN, userToken.trim())
+            putLong(KEY_LXNS_FRIEND_CODE, friendCode)
+            putString(KEY_LXNS_PLAYER_NAME, playerName)
+            putInt(KEY_LXNS_RATING, rating)
+        }
+    }
+
+    fun clearLxnsAccount() {
+        userInfoPrefs.edit {
+            remove(KEY_LXNS_USER_TOKEN)
+            remove(KEY_LXNS_FRIEND_CODE)
+            remove(KEY_LXNS_PLAYER_NAME)
+            remove(KEY_LXNS_RATING)
+        }
     }
 
     // ================= SONG INFO =================

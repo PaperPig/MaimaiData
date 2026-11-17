@@ -21,6 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.MenuProvider
 import androidx.core.view.updatePadding
 import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.paperpig.maimaidata.R
@@ -28,6 +29,7 @@ import com.paperpig.maimaidata.crawler.CrawlerCaller
 import com.paperpig.maimaidata.crawler.WechatCrawlerListener
 import com.paperpig.maimaidata.databinding.FragmentRatingBinding
 import com.paperpig.maimaidata.model.Rating
+import com.paperpig.maimaidata.network.lxns.LxnsClient
 import com.paperpig.maimaidata.network.server.HttpServerService
 import com.paperpig.maimaidata.network.vpn.core.LocalVpnService
 import com.paperpig.maimaidata.ui.BaseFragment
@@ -37,10 +39,16 @@ import com.paperpig.maimaidata.ui.checklist.LevelCheckActivity
 import com.paperpig.maimaidata.ui.checklist.VersionCheckActivity
 import com.paperpig.maimaidata.ui.finaletodx.FinaleToDxActivity
 import com.paperpig.maimaidata.ui.maimaidxprober.LoginActivity
+import com.paperpig.maimaidata.ui.maimaidxprober.LxnsBindDialog
 import com.paperpig.maimaidata.ui.maimaidxprober.ProberActivity
 import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.SpUtil
 import com.paperpig.maimaidata.utils.getInt
+import com.paperpig.maimaidata.widgets.ProberUploadTarget
+import com.paperpig.maimaidata.widgets.Settings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.floor
@@ -54,6 +62,11 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
     private lateinit var resultAdapter: RatingResultAdapter
 
     private val proberUpdateDialog by lazy { ProberUpdateDialog(requireContext()) }
+    private val lxnsBindDialog by lazy {
+        LxnsBindDialog(requireContext()) {
+            refreshAccountStates()
+        }
+    }
     private lateinit var proberUpdateTipsDialog: MaterialDialog
 
 
@@ -85,6 +98,10 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
 
     override fun onResume() {
         super.onResume()
+        refreshAccountStates()
+    }
+
+    private fun refreshAccountStates() {
         if (SpUtil.getUserName().isEmpty()) {
             binding.accountText.setText(R.string.no_logged_in)
             binding.proberQueryBtn.visibility = View.GONE
@@ -99,6 +116,27 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
             binding.proberLoginBtn.layoutParams = binding.proberLoginBtn.layoutParams.apply {
                 width = (120 * binding.root.context.resources.displayMetrics.density).toInt()
             }
+        }
+
+        if (SpUtil.hasLxnsBound()) {
+            binding.lxnsAccountText.text = getString(
+                R.string.lxns_bound_summary,
+                SpUtil.getLxnsPlayerName().ifBlank { SpUtil.getLxnsFriendCode().toString() },
+                SpUtil.getLxnsRating()
+            )
+            binding.lxnsBindBtn.setText(R.string.lxns_rebind)
+        } else {
+            binding.lxnsAccountText.setText(R.string.lxns_not_bound)
+            binding.lxnsBindBtn.setText(R.string.lxns_bind)
+        }
+
+        val targetButtonId = when (Settings.getProberUploadTarget()) {
+            ProberUploadTarget.DIVING_FISH -> R.id.target_diving_fish_btn
+            ProberUploadTarget.LXNS -> R.id.target_lxns_btn
+            ProberUploadTarget.BOTH -> R.id.target_both_btn
+        }
+        if (binding.proberUploadTargetGroup.checkedButtonId != targetButtonId) {
+            binding.proberUploadTargetGroup.check(targetButtonId)
         }
     }
 
@@ -146,6 +184,21 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
 
         binding.proberFinaleToDxBtn.setOnClickListener {
             startActivity(Intent(context, FinaleToDxActivity::class.java))
+        }
+
+        binding.lxnsBindBtn.setOnClickListener {
+            lxnsBindDialog.refreshState()
+            lxnsBindDialog.show()
+        }
+
+        binding.proberUploadTargetGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            val target = when (checkedId) {
+                R.id.target_lxns_btn -> ProberUploadTarget.LXNS
+                R.id.target_both_btn -> ProberUploadTarget.BOTH
+                else -> ProberUploadTarget.DIVING_FISH
+            }
+            Settings.setProberUploadTarget(target)
         }
 
         binding.calculateBtn.setOnClickListener {
@@ -214,13 +267,39 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
     }
 
     private fun startProxyServices() {
-        if (SpUtil.getUserName().isEmpty()) {
-            Toast.makeText(
-                requireContext(),
-                getString(R.string.vpn_please_login),
-                Toast.LENGTH_SHORT
-            ).show()
-            return
+        val target = Settings.getProberUploadTarget()
+        val missingDivingFish = target.includesDivingFish() && SpUtil.getUserName().isEmpty()
+        val missingLxns = target.includesLxns() && !SpUtil.hasLxnsBound()
+
+        when {
+            missingDivingFish && missingLxns -> {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.vpn_please_login_both),
+                    Toast.LENGTH_SHORT
+                ).show()
+                return
+            }
+
+            missingDivingFish -> {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.vpn_please_login),
+                    Toast.LENGTH_SHORT
+                ).show()
+                return
+            }
+
+            missingLxns -> {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.vpn_please_bind_lxns),
+                    Toast.LENGTH_SHORT
+                ).show()
+                lxnsBindDialog.refreshState()
+                lxnsBindDialog.show()
+                return
+            }
         }
         startVPNService()
         startHttpService()
@@ -348,6 +427,25 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
     override fun onFinishUpdate() {
         binding.proberProxyIndicator.visibility = View.INVISIBLE
         stopHttpService()
+        refreshLxnsPlayerProfileIfNeeded()
+    }
+
+    private fun refreshLxnsPlayerProfileIfNeeded() {
+        if (!isAdded || view == null) return
+        val token = SpUtil.getLxnsUserToken()
+        if (!Settings.getProberUploadTarget().includesLxns() || token.isBlank()) return
+        viewLifecycleOwner.lifecycleScope.launch {
+            runCatching {
+                withContext(Dispatchers.IO) {
+                    LxnsClient.instance.fetchUserPlayer(token)
+                }
+            }.onSuccess { player ->
+                SpUtil.saveLxnsAccount(token, player.friendCode, player.name, player.rating)
+                if (isAdded) {
+                    refreshAccountStates()
+                }
+            }
+        }
     }
 
     @SuppressLint("SetTextI18n")
