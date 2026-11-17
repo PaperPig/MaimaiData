@@ -19,6 +19,11 @@ interface LxnsApiService {
         @Header("X-User-Token") userToken: String
     ): Call<ResponseBody>
 
+    @GET("/api/v0/user/maimai/player/scores")
+    fun getUserScores(
+        @Header("X-User-Token") userToken: String
+    ): Call<ResponseBody>
+
     @Headers("Content-Type: text/plain; charset=utf-8")
     @POST("/api/v0/user/maimai/player/html")
     fun uploadUserHtml(

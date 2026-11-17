@@ -44,7 +44,8 @@ object CreateBest50 {
         context: Activity,
         dataList: List<SongWithChartsEntity>,
         old: List<RecordEntity>,
-        new: List<RecordEntity>
+        new: List<RecordEntity>,
+        preferredNickname: String? = null
     ) {
         if (old.isEmpty() && new.isEmpty()) {
             Toast.makeText(context, "尚未取得歌曲信息，请稍后重试", Toast.LENGTH_SHORT)
@@ -134,6 +135,8 @@ object CreateBest50 {
 
             val name = if (Settings.getNickname() != "") {
                 Settings.getNickname()
+            } else if (!preferredNickname.isNullOrBlank()) {
+                preferredNickname
             } else if (SpUtil.getDivingFishNickname() != "") {
                 SpUtil.getDivingFishNickname()
             } else {

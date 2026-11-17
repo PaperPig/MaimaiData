@@ -21,6 +21,7 @@ import com.paperpig.maimaidata.db.entity.SongWithChartsEntity
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.network.MaimaiDataClient
 import com.paperpig.maimaidata.ui.songdetail.SongDetailActivity
+import com.paperpig.maimaidata.utils.Constants
 import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.toDp
 
@@ -45,7 +46,9 @@ class RecordAdapter(private val dataList: List<SongWithChartsEntity>) :
                 .filter {
                     val find = dataList.find { data -> data.songData.id == it.songId }
                     if (find != null) {
-                        if (versionType == 0) {
+                        if (find.songData.genre == Constants.GENRE_UTAGE) {
+                            false
+                        } else if (versionType == 0) {
                             !find.songData.isNew
                         } else {
                             find.songData.isNew
@@ -214,6 +217,7 @@ class RecordAdapter(private val dataList: List<SongWithChartsEntity>) :
     }
 
     fun setData(list: List<RecordEntity>, version: Int) {
+        _isMatching = true
         originList = list
         versionType = version
         recordList = originList

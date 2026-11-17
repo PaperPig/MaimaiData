@@ -24,6 +24,29 @@ data class LxnsPlayer(
 )
 
 /**
+ * 落雪游玩成绩（GET /api/v0/user/maimai/player/scores 返回元素）。
+ */
+data class LxnsScore(
+    val id: Int = 0,
+    @SerializedName("song_name")
+    val songName: String = "",
+    val level: String = "",
+    @SerializedName("level_index")
+    val levelIndex: Int = 0,
+    val achievements: Double = 0.0,
+    val fc: String? = null,
+    val fs: String? = null,
+    @SerializedName("dx_score")
+    val dxScore: Int = 0,
+    @SerializedName("dx_star")
+    val dxStar: Int = 0,
+    @SerializedName("dx_rating")
+    val dxRating: Double = 0.0,
+    val rate: String = "",
+    val type: String = ""
+)
+
+/**
  * 上传成绩或 HTML 页面后返回的单个成绩变化项。
  */
 data class LxnsScoreChange(

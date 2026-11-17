@@ -43,6 +43,19 @@ class LxnsClient(
     }
 
     /**
+     * 通过个人 API 密钥获取当前授权玩家的所有游玩成绩。
+     */
+    @Throws(IOException::class)
+    fun fetchUserScores(userToken: String): List<LxnsScore> {
+        val type = object : TypeToken<LxnsResponse<List<LxnsScore>>>() {}.type
+        val result: LxnsResponse<List<LxnsScore>>? = executeOptionalWithRetry(
+            callFactory = { service.getUserScores(userToken.trim()) },
+            responseType = type
+        )
+        return result?.data ?: emptyList()
+    }
+
+    /**
      * 通过个人 API 向落雪提交单个页面的完整 NET HTML 源码。
      * 上传玩家信息或收藏品页面时服务端可能返回空 body 或无 data 字段，此时返回空列表。
      */

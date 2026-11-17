@@ -102,19 +102,20 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
     }
 
     private fun refreshAccountStates() {
+        val density = binding.root.context.resources.displayMetrics.density
         if (SpUtil.getUserName().isEmpty()) {
             binding.accountText.setText(R.string.no_logged_in)
             binding.proberQueryBtn.visibility = View.GONE
             binding.proberLoginBtn.setText(R.string.login)
             binding.proberLoginBtn.layoutParams = binding.proberLoginBtn.layoutParams.apply {
-                width = (260 * binding.root.context.resources.displayMetrics.density).toInt()
+                width = (260 * density).toInt()
             }
         } else {
             binding.accountText.text = SpUtil.getUserName()
             binding.proberQueryBtn.visibility = View.VISIBLE
             binding.proberLoginBtn.setText(R.string.change_account)
             binding.proberLoginBtn.layoutParams = binding.proberLoginBtn.layoutParams.apply {
-                width = (120 * binding.root.context.resources.displayMetrics.density).toInt()
+                width = (120 * density).toInt()
             }
         }
 
@@ -124,10 +125,18 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
                 SpUtil.getLxnsPlayerName().ifBlank { SpUtil.getLxnsFriendCode().toString() },
                 SpUtil.getLxnsRating()
             )
+            binding.lxnsQueryBtn.visibility = View.VISIBLE
             binding.lxnsBindBtn.setText(R.string.lxns_rebind)
+            binding.lxnsBindBtn.layoutParams = binding.lxnsBindBtn.layoutParams.apply {
+                width = (120 * density).toInt()
+            }
         } else {
             binding.lxnsAccountText.setText(R.string.lxns_not_bound)
+            binding.lxnsQueryBtn.visibility = View.GONE
             binding.lxnsBindBtn.setText(R.string.lxns_bind)
+            binding.lxnsBindBtn.layoutParams = binding.lxnsBindBtn.layoutParams.apply {
+                width = (260 * density).toInt()
+            }
         }
 
         val targetButtonId = when (Settings.getProberUploadTarget()) {
@@ -189,6 +198,10 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
         binding.lxnsBindBtn.setOnClickListener {
             lxnsBindDialog.refreshState()
             lxnsBindDialog.show()
+        }
+
+        binding.lxnsQueryBtn.setOnClickListener {
+            ProberActivity.actionStart(requireContext(), ProberActivity.SOURCE_LXNS)
         }
 
         binding.proberUploadTargetGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
