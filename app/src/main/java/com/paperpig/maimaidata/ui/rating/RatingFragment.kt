@@ -12,8 +12,6 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -27,7 +25,6 @@ import androidx.core.view.MenuProvider
 import androidx.core.view.updatePadding
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.button.MaterialButton
 import com.paperpig.maimaidata.R
@@ -38,7 +35,6 @@ import com.paperpig.maimaidata.databinding.FragmentRatingBinding
 import com.paperpig.maimaidata.glide.GlideApp
 import com.paperpig.maimaidata.model.PlayerProfile
 import com.paperpig.maimaidata.model.PlayerProfileFormatter
-import com.paperpig.maimaidata.model.Rating
 import com.paperpig.maimaidata.network.lxns.LxnsClient
 import com.paperpig.maimaidata.network.server.HttpServerService
 import com.paperpig.maimaidata.network.vpn.core.LocalVpnService
@@ -52,9 +48,7 @@ import com.paperpig.maimaidata.ui.finaletodx.FinaleToDxActivity
 import com.paperpig.maimaidata.ui.maimaidxprober.LoginActivity
 import com.paperpig.maimaidata.ui.maimaidxprober.LxnsBindDialog
 import com.paperpig.maimaidata.ui.maimaidxprober.ProberActivity
-import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.SpUtil
-import com.paperpig.maimaidata.utils.getInt
 import com.paperpig.maimaidata.utils.toDp
 import com.paperpig.maimaidata.widgets.ProberUploadTarget
 import com.paperpig.maimaidata.widgets.Settings
@@ -63,15 +57,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
-import kotlin.math.floor
 import kotlin.random.Random
 
 class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListener,
     LocalVpnService.onStatusChangedListener {
 
     private lateinit var binding: FragmentRatingBinding
-
-    private lateinit var resultAdapter: RatingResultAdapter
 
     private val proberUpdateDialog by lazy { ProberUpdateDialog(requireContext()) }
     private val lxnsBindDialog by lazy {
@@ -115,6 +106,7 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
     }
 
     private var isUpdatingDifficultyButtons = false
+    private var isDifficultyExpanded = false
 
     private val difficultyButtons: List<Pair<MaterialButton, Int>>
         get() = listOf(
@@ -170,6 +162,30 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
             button.isChecked = selectedDiffs.contains(diff)
         }
         isUpdatingDifficultyButtons = false
+        updateDifficultySummary(selectedDiffs)
+    }
+
+    private fun updateDifficultySummary(selectedDiffs: Set<Int>) {
+        val selectedButtons = difficultyButtons.filter { selectedDiffs.contains(it.second) }
+        binding.proberDiffSummary.text = when {
+            selectedButtons.isEmpty() -> getString(R.string.prober_upload_difficulty_none)
+            selectedButtons.size == difficultyButtons.size ->
+                getString(R.string.prober_upload_difficulty_all, difficultyButtons.size)
+            else -> selectedButtons.joinToString(" · ") { it.first.text }
+        }
+    }
+
+    private fun applyDifficultyExpandedState(expanded: Boolean, animate: Boolean) {
+        binding.proberDifficultyGrid.visibility = if (expanded) View.VISIBLE else View.GONE
+        val targetRotation = if (expanded) 180f else 0f
+        if (animate) {
+            binding.proberDiffArrow.animate()
+                .rotation(targetRotation)
+                .setDuration(150L)
+                .start()
+        } else {
+            binding.proberDiffArrow.rotation = targetRotation
+        }
     }
 
     private fun applyAccountTextStyle(textView: TextView, bound: Boolean) {
@@ -194,11 +210,6 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
                 )
             }
         )
-        binding.ratingResultRecycler.apply {
-            resultAdapter = RatingResultAdapter()
-            layoutManager = LinearLayoutManager(context)
-            adapter = resultAdapter
-        }
 
         binding.proberLoginBtn.setOnClickListener {
             startActivity(Intent(context, LoginActivity::class.java))
@@ -218,6 +229,10 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
 
         binding.proberFinaleToDxBtn.setOnClickListener {
             startActivity(Intent(context, FinaleToDxActivity::class.java))
+        }
+
+        binding.proberRatingCalcBtn.setOnClickListener {
+            startActivity(Intent(context, RatingCalculatorActivity::class.java))
         }
 
         binding.lxnsBindBtn.setOnClickListener {
@@ -243,6 +258,12 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
             Settings.setProberUploadTarget(target)
         }
 
+        applyDifficultyExpandedState(isDifficultyExpanded, animate = false)
+        binding.proberDiffToggleRow.setOnClickListener {
+            isDifficultyExpanded = !isDifficultyExpanded
+            applyDifficultyExpandedState(isDifficultyExpanded, animate = true)
+        }
+
         difficultyButtons.forEach { (button, _) ->
             button.addOnCheckedChangeListener { _, _ ->
                 if (isUpdatingDifficultyButtons) return@addOnCheckedChangeListener
@@ -251,26 +272,9 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
                     .map { it.second }
                     .toSet()
                 Settings.setUpdateDifficulty(selected)
+                updateDifficultySummary(selected)
             }
         }
-
-        binding.calculateBtn.setOnClickListener {
-            hideKeyboard(view)
-            onCalculate(binding.targetRatingEdit.text.toString())
-        }
-
-        val singleRatingTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
-
-            override fun afterTextChanged(s: Editable?) {
-                updateSingleRating()
-            }
-        }
-        binding.inputSongLevel.addTextChangedListener(singleRatingTextWatcher)
-        binding.inputSongAchievement.addTextChangedListener(singleRatingTextWatcher)
-        binding.inputSongAp.setOnCheckedChangeListener { _, _ -> updateSingleRating() }
 
         CrawlerCaller.setOnWechatCrawlerListener(this)
         LocalVpnService.addOnStatusChangedListener(this)
@@ -405,51 +409,6 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
 
     private fun stopHttpService() {
         requireContext().stopService(httpServiceIntent)
-    }
-
-    private fun showToast() {
-        val text = "请输入内容!"
-        val duration = Toast.LENGTH_SHORT
-        val toast = Toast.makeText(this.context, text, duration)
-        toast.show()
-    }
-
-    private fun onCalculate(targetString: String) {
-        val targetRating = targetString.getInt()
-        if (targetRating <= 0) {
-            showToast()
-            return
-        }
-        val rating = targetRating / 50
-
-        val minLv = getReachableLevel(rating)
-        val map = mutableMapOf<Int, Int>()
-        val list = mutableListOf<Rating>()
-
-        for (i in 150 downTo minLv) {
-
-            when (val reachableAchievement = getReachableAchievement(i, rating)) {
-                800000, 900000, 940000 ->
-                    map[reachableAchievement] = i
-
-                in 970000..1010000 ->
-                    map[reachableAchievement] = i
-            }
-        }
-
-        map.forEach {
-            list.add(
-                Rating(
-                    (it.value / 10f),
-                    String.format(Locale.getDefault(), "%.4f%%", it.key / 10000f),
-                    ConvertUtils.achievementToRating(it.value, it.key),
-                    ConvertUtils.achievementToRating(it.value, it.key) * 50
-                )
-            )
-        }
-
-        resultAdapter.setData(list)
-
     }
 
     override fun onStatusChanged(status: String, isRunning: Boolean) {
@@ -716,20 +675,6 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
         (activity as? MainActivity)?.setBottomBarVisible(true)
     }
 
-    private fun updateSingleRating() {
-        val level = binding.inputSongLevel.text.toString().toDoubleOrNull()
-        val achievement = binding.inputSongAchievement.text.toString().toDoubleOrNull()
-        binding.outputSingleRating.text = if (level != null && achievement != null) {
-            ConvertUtils.achievementToRating(
-                Math.round(level * 10).toInt(),
-                Math.round(achievement * 10000).toInt(),
-                isAp = binding.inputSongAp.isChecked
-            ).toString()
-        } else {
-            "0"
-        }
-    }
-
     private fun showHelpDialog() {
         if (::proberUpdateTipsDialog.isInitialized) {
             proberUpdateTipsDialog.show()
@@ -747,34 +692,4 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
             proberUpdateTipsDialog.show()
         }
     }
-}
-
-
-private fun getReachableLevel(rating: Int): Int {
-    for (i in 10..150) {
-        if (rating < ConvertUtils.achievementToRating(i, 1005000)) {
-            return i
-        }
-    }
-    return 0
-}
-
-private fun getReachableAchievement(level: Int, rating: Int): Int {
-    var maxAchi = 1010000
-    var minAchi = 0
-    var tempAchi: Int
-
-
-    if (ConvertUtils.achievementToRating(level, 1005000) < rating)
-        return 1010001
-    for (n in 0..20) {
-        if (maxAchi - minAchi >= 2) {
-            tempAchi = floor((maxAchi.toDouble() + minAchi) / 2).toInt()
-
-            if (ConvertUtils.achievementToRating(level, tempAchi) < rating)
-                minAchi = tempAchi
-            else maxAchi = tempAchi
-        }
-    }
-    return maxAchi
 }

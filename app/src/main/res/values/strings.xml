@@ -5,6 +5,7 @@
     <string name="common_cancel">取消</string>
 
     <string name="dx_score_transform">DX分数转换</string>
+    <string name="rating_calculator">Rating 计算</string>
     <string name="dx_rating_correlation">Rating相关</string>
     <string name="dx_song_list">曲目列表</string>
 
@@ -191,6 +192,8 @@
     <string name="diving_fish_prober">水鱼查分器</string>
     <string name="prober_proxy_section_title">微信代理传分</string>
     <string name="prober_upload_difficulty_label">上传难度</string>
+    <string name="prober_upload_difficulty_none">未选择难度</string>
+    <string name="prober_upload_difficulty_all">全部 (%1$d项)</string>
     <string name="prober_tools_section_title">进度与工具</string>
     <string name="lxns_not_bound">未绑定</string>
     <string name="lxns_bind">绑定账号</string>

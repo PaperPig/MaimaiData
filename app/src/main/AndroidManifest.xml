@@ -30,6 +30,7 @@
         <activity android:name=".ui.checklist.VersionCheckActivity" />
         <activity android:name=".ui.checklist.LevelCheckActivity" />
         <activity android:name=".ui.finaletodx.FinaleToDxActivity" />
+        <activity android:name=".ui.rating.RatingCalculatorActivity" />
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
