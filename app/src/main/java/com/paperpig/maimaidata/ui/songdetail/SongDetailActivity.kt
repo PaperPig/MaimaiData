@@ -7,14 +7,17 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Animatable
+import android.graphics.drawable.ColorDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
+import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
@@ -69,6 +72,7 @@ class SongDetailActivity : BaseActivity<ActivitySongDetailBinding>() {
     private var ttsJob: Job? = null
     private var ttsAnimator: ObjectAnimator? = null
     private var ttsState = TtsState.IDLE
+    private var ttsReadingPopup: PopupWindow? = null
 
     // 区分语音准备和实际播放，以便按钮显示对应反馈。
     private enum class TtsState { IDLE, LOADING, PLAYING }
@@ -272,6 +276,7 @@ class SongDetailActivity : BaseActivity<ActivitySongDetailBinding>() {
     // 仅播放最近一次点击的曲名，避免较慢的旧请求覆盖新请求。
     private fun playTTS(content: String) {
         if (content.isBlank()) return
+        showTtsReadingPopup(content)
         ttsJob?.cancel()
         mediaPlayer.reset()
         updateTtsState(TtsState.LOADING)
@@ -328,10 +333,48 @@ class SongDetailActivity : BaseActivity<ActivitySongDetailBinding>() {
         }
     }
 
+    // 使用悬浮气泡展示实际朗读文本，避免改动详情页原有布局高度。
+    private fun showTtsReadingPopup(content: String) {
+        dismissTtsReadingPopup()
+        val popupView = layoutInflater.inflate(R.layout.popup_tts_reading, null) as TextView
+        popupView.text = getString(R.string.tts_reading_content, content)
+        popupView.setCopyOnLongClick(content)
+
+        val popup = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            false
+        ).apply {
+            isOutsideTouchable = true
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            elevation = 6.toDp()
+            setOnDismissListener {
+                if (ttsReadingPopup === this) {
+                    ttsReadingPopup = null
+                }
+            }
+        }
+        popupView.setOnClickListener { popup.dismiss() }
+        ttsReadingPopup = popup
+
+        binding.songJacket.post {
+            if (!isFinishing && !isDestroyed && binding.songJacket.isAttachedToWindow && ttsReadingPopup === popup) {
+                popup.showAsDropDown(binding.songJacket, 0, 6.toDp().toInt())
+            }
+        }
+    }
+
+    private fun dismissTtsReadingPopup() {
+        ttsReadingPopup?.dismiss()
+        ttsReadingPopup = null
+    }
+
     // 取消合成和播放，统一清理按钮动效。
     private fun stopTts() {
         ttsJob?.cancel()
         mediaPlayer.reset()
+        dismissTtsReadingPopup()
         updateTtsState(TtsState.IDLE)
     }
 
@@ -343,6 +386,7 @@ class SongDetailActivity : BaseActivity<ActivitySongDetailBinding>() {
 
     // 释放原生播放器，避免多次打开详情页积累音频资源。
     override fun onDestroy() {
+        dismissTtsReadingPopup()
         mediaPlayer.release()
         super.onDestroy()
     }
