@@ -8,7 +8,9 @@ import android.content.ClipboardManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -33,10 +35,14 @@ import com.paperpig.maimaidata.crawler.CrawlerCaller
 import com.paperpig.maimaidata.crawler.LxnsHtmlUploader
 import com.paperpig.maimaidata.crawler.WechatCrawlerListener
 import com.paperpig.maimaidata.databinding.FragmentRatingBinding
+import com.paperpig.maimaidata.glide.GlideApp
+import com.paperpig.maimaidata.model.PlayerProfile
+import com.paperpig.maimaidata.model.PlayerProfileFormatter
 import com.paperpig.maimaidata.model.Rating
 import com.paperpig.maimaidata.network.lxns.LxnsClient
 import com.paperpig.maimaidata.network.server.HttpServerService
 import com.paperpig.maimaidata.network.vpn.core.LocalVpnService
+import com.paperpig.maimaidata.repository.PlayerProfileRepository
 import com.paperpig.maimaidata.ui.BaseFragment
 import com.paperpig.maimaidata.ui.MainActivity
 import com.paperpig.maimaidata.ui.about.SettingsActivity
@@ -49,6 +55,7 @@ import com.paperpig.maimaidata.ui.maimaidxprober.ProberActivity
 import com.paperpig.maimaidata.utils.ConvertUtils
 import com.paperpig.maimaidata.utils.SpUtil
 import com.paperpig.maimaidata.utils.getInt
+import com.paperpig.maimaidata.utils.toDp
 import com.paperpig.maimaidata.widgets.ProberUploadTarget
 import com.paperpig.maimaidata.widgets.Settings
 import kotlinx.coroutines.Dispatchers
@@ -72,6 +79,7 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
             refreshAccountStates()
         }
     }
+    private val profileRepository by lazy { PlayerProfileRepository.getInstance() }
     private lateinit var proberUpdateTipsDialog: MaterialDialog
 
 
@@ -219,6 +227,10 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
 
         binding.lxnsQueryBtn.setOnClickListener {
             ProberActivity.actionStart(requireContext(), ProberActivity.SOURCE_LXNS)
+        }
+
+        profileRepository.getProfileLiveData().observe(viewLifecycleOwner) { profile ->
+            renderPlayerProfileCard(profile)
         }
 
         binding.proberUploadTargetGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
@@ -471,6 +483,189 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
         refreshLxnsPlayerProfileIfNeeded()
     }
 
+    private fun renderPlayerProfileCard(profile: PlayerProfile?) {
+        binding.playerProfileCard.visibility = if (profile != null) View.VISIBLE else View.GONE
+        if (profile == null) return
+
+        val trophyName = profile.trophy?.name.orEmpty()
+        if (trophyName.isNotBlank()) {
+            binding.profileCardTrophyTv.visibility = View.VISIBLE
+            binding.profileCardTrophyTv.text = trophyName
+            applyTrophyStyle(binding.profileCardTrophyTv, profile.trophy?.color)
+        } else {
+            binding.profileCardTrophyTv.visibility = View.GONE
+        }
+
+        binding.profileCardNameTv.text = profile.name.ifBlank { "-" }
+
+        binding.profileCardRatingTv.text = "DX ${profile.rating}"
+        applyRatingPillStyle(binding.profileCardRatingTv, profile.rating)
+
+        binding.profileCardCourseTv.text = PlayerProfileFormatter.formatCourseRank(profile.courseRank)
+        applyCourseBadgeStyle(binding.profileCardCourseTv, profile.courseRank)
+
+        binding.profileCardClassTv.text = PlayerProfileFormatter.formatClassRank(profile.classRank)
+        applyClassBadgeStyle(binding.profileCardClassTv, profile.classRank)
+
+        binding.profileCardStarTv.text = "×${profile.star}"
+
+        binding.profileCardIconIv.clipToOutline = true
+        val iconUrl = profile.iconUrl?.takeIf { it.isNotBlank() }
+        if (iconUrl != null) {
+            GlideApp.with(this)
+                .load(iconUrl)
+                .placeholder(R.drawable.bg_profile_avatar_placeholder)
+                .into(binding.profileCardIconIv)
+        } else {
+            binding.profileCardIconIv.setImageDrawable(null)
+        }
+    }
+
+    private fun applyRatingPillStyle(textView: TextView, rating: Int) {
+        val colors = when (rating) {
+            in 0..999 -> intArrayOf(Color.parseColor("#64748B"), Color.parseColor("#64748B"))
+            in 1000..1999 -> intArrayOf(Color.parseColor("#3B82F6"), Color.parseColor("#3B82F6"))
+            in 2000..3999 -> intArrayOf(Color.parseColor("#22C55E"), Color.parseColor("#22C55E"))
+            in 4000..6999 -> intArrayOf(Color.parseColor("#F97316"), Color.parseColor("#F97316"))
+            in 7000..9999 -> intArrayOf(Color.parseColor("#EF4444"), Color.parseColor("#EF4444"))
+            in 10000..11999 -> intArrayOf(Color.parseColor("#9F51DC"), Color.parseColor("#9F51DC"))
+            in 12000..12999 -> intArrayOf(Color.parseColor("#B87333"), Color.parseColor("#B87333"))
+            in 13000..13999 -> intArrayOf(Color.parseColor("#78909C"), Color.parseColor("#78909C"))
+            in 14000..14499 -> intArrayOf(Color.parseColor("#D99B00"), Color.parseColor("#D99B00"))
+            in 14500..14999 -> intArrayOf(Color.parseColor("#C79E28"), Color.parseColor("#E6BA3C"))
+            else -> intArrayOf(
+                Color.parseColor("#FA3582"),
+                Color.parseColor("#9F51DC"),
+                Color.parseColor("#3B82F6")
+            )
+        }
+        textView.background = GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, colors).apply {
+            cornerRadius = 8.toDp()
+        }
+    }
+
+    private fun applyTrophyStyle(textView: TextView, trophyColor: String?) {
+        if (trophyColor.equals("rainbow", ignoreCase = true)) {
+            applyGradientChipStyle(
+                textView = textView,
+                fillColorsHex = listOf("#FFF0F6", "#F5EEFF", "#EEF6FF"),
+                strokeColorHex = "#E6C4EE",
+                textColorHex = "#B82570"
+            )
+            return
+        }
+        val (fillHex, strokeHex, textHex) = when (trophyColor?.lowercase(Locale.ROOT)) {
+            "gold" -> Triple("#FFF8E1", "#F0D478", "#9A6B00")
+            "silver" -> Triple("#F3F5F8", "#D0D7E0", "#4A5568")
+            "bronze" -> Triple("#FDF2EA", "#E4BF9F", "#8C4B1F")
+            else -> Triple("#F7F8FA", "#E6E8EC", "#333333")
+        }
+        applyTintedChipStyle(textView, fillHex, strokeHex, textHex)
+    }
+
+    private fun applyCourseBadgeStyle(textView: TextView, courseRank: Int) {
+        when (courseRank) {
+            // 初学者：白底红框红字
+            0 -> applyTintedChipStyle(textView, "#FFF6F6", "#FF4D4F", "#E53935")
+            // 初段~五段：铜棕色
+            in 1..5 -> applyTintedChipStyle(textView, "#FBECE1", "#D9824C", "#9A481B")
+            // 六段~十段、真传：深赤铜底 + 深赤红字
+            in 6..11 -> applyTintedChipStyle(textView, "#FCE4DC", "#B93B22", "#9E1C13")
+            // 真初段~真五段：洋红粉紫渐变
+            in 12..16 -> applyGradientChipStyle(
+                textView = textView,
+                fillColorsHex = listOf("#FBE8FF", "#F0E2FF"),
+                strokeColorHex = "#C840E9",
+                textColorHex = "#6A1B9A"
+            )
+            // 真六段~真十段：浅虹彩底 + 粉紫框
+            in 17..21 -> applyGradientChipStyle(
+                textView = textView,
+                fillColorsHex = listOf("#FFEAF4", "#FFF8DC", "#E8FAFF"),
+                strokeColorHex = "#D65DB1",
+                textColorHex = "#4A25AA"
+            )
+            // 真皆传：樱粉虹金
+            22 -> applyGradientChipStyle(
+                textView = textView,
+                fillColorsHex = listOf("#FFE8F2", "#FFF3CC", "#E3F9FF"),
+                strokeColorHex = "#E28A2B",
+                textColorHex = "#8E1B74"
+            )
+            // 里皆传：金黄底 + 紫金框 + 深紫红字
+            23 -> applyGradientChipStyle(
+                textView = textView,
+                fillColorsHex = listOf("#FFF3B0", "#FFE082"),
+                strokeColorHex = "#9C27B0",
+                textColorHex = "#880E4F"
+            )
+            else -> applyTintedChipStyle(textView, "#F7F8FA", "#E6E8EC", "#4A5568")
+        }
+    }
+
+    private fun applyClassBadgeStyle(textView: TextView, classRank: Int) {
+        when (classRank) {
+            // B5~B1：绿色
+            in 0..4 -> applyTintedChipStyle(textView, "#E8F8EC", "#28A745", "#167930")
+            // A5~A1：绯红色
+            in 5..9 -> applyTintedChipStyle(textView, "#FFECEE", "#E03E4E", "#B71C2C")
+            // S5~S1：橙铜金棕
+            in 10..14 -> applyTintedChipStyle(textView, "#FFF2E0", "#D4801F", "#8A4B08")
+            // SS5~SS1：银蓝藏青
+            in 15..19 -> applyGradientChipStyle(
+                textView = textView,
+                fillColorsHex = listOf("#EDF2FA", "#E1E9F5"),
+                strokeColorHex = "#2B4C8C",
+                textColorHex = "#1D3566"
+            )
+            // SSS5~SSS1：金红皇冠
+            in 20..24 -> applyGradientChipStyle(
+                textView = textView,
+                fillColorsHex = listOf("#FFF6D6", "#FFE9A3"),
+                strokeColorHex = "#C67C00",
+                textColorHex = "#8C2323"
+            )
+            // LEGEND：紫金虹彩
+            25 -> applyGradientChipStyle(
+                textView = textView,
+                fillColorsHex = listOf("#F6E8FF", "#FFF2CC", "#E3F5FF"),
+                strokeColorHex = "#8E24AA",
+                textColorHex = "#6A1B9A"
+            )
+            else -> applyTintedChipStyle(textView, "#F7F8FA", "#E6E8EC", "#4A5568")
+        }
+    }
+
+    private fun applyTintedChipStyle(
+        textView: TextView,
+        fillColorHex: String,
+        strokeColorHex: String,
+        textColorHex: String
+    ) {
+        textView.setTextColor(Color.parseColor(textColorHex))
+        textView.background = GradientDrawable().apply {
+            cornerRadius = 8.toDp()
+            setColor(Color.parseColor(fillColorHex))
+            setStroke(1.toDp().toInt().coerceAtLeast(1), Color.parseColor(strokeColorHex))
+        }
+    }
+
+    private fun applyGradientChipStyle(
+        textView: TextView,
+        fillColorsHex: List<String>,
+        strokeColorHex: String,
+        textColorHex: String
+    ) {
+        textView.setTextColor(Color.parseColor(textColorHex))
+        textView.background = GradientDrawable(
+            GradientDrawable.Orientation.LEFT_RIGHT,
+            fillColorsHex.map { Color.parseColor(it) }.toIntArray()
+        ).apply {
+            cornerRadius = 8.toDp()
+            setStroke(1.toDp().toInt().coerceAtLeast(1), Color.parseColor(strokeColorHex))
+        }
+    }
+
     private fun refreshLxnsPlayerProfileIfNeeded() {
         if (!isAdded || view == null) return
         val token = SpUtil.getLxnsUserToken()
@@ -493,8 +688,10 @@ class RatingFragment : BaseFragment<FragmentRatingBinding>(), WechatCrawlerListe
     override fun onError(e: Exception) {
         val timestamp = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
             .format(System.currentTimeMillis())
-        proberUpdateDialog.appendText("[$timestamp] $e\n")
-        binding.proberProxySimpleText.text = "[$timestamp] $e"
+        val message = e.message?.takeIf { it.isNotBlank() } ?: e.toString()
+        proberUpdateDialog.appendText("[$timestamp] $message\n")
+        binding.proberProxySimpleText.text = "[$timestamp] $message"
+        binding.proberProxyStatusGroup.visibility = View.VISIBLE
         binding.proberProxyIndicator.visibility = View.INVISIBLE
         stopHttpService()
     }

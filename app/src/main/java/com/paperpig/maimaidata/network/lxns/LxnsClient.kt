@@ -57,7 +57,7 @@ class LxnsClient(
 
     /**
      * 通过个人 API 向落雪提交单个页面的完整 NET HTML 源码。
-     * 上传玩家信息或收藏品页面时服务端可能返回空 body 或无 data 字段，此时返回空列表。
+     * 上传玩家信息页面时服务端可能返回空 body 或无 data 字段，此时返回空列表。
      */
     @Throws(IOException::class)
     fun uploadUserHtml(userToken: String, html: String): List<LxnsScoreChange> {

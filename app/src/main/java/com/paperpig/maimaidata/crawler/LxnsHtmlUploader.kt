@@ -24,10 +24,12 @@ class LxnsHtmlUploader(
     private val throttleDelayMs: Long = DEFAULT_THROTTLE_DELAY_MS
 ) {
 
+    @JvmOverloads
     fun uploadAll(
         netHttpClient: OkHttpClient,
         userToken: String,
-        difficulties: Set<Int>
+        difficulties: Set<Int>,
+        prefetchedFriendHtml: String? = null
     ) {
         if (userToken.isBlank()) {
             logger("落雪个人 API 密钥未配置，已跳过落雪上传")
@@ -44,8 +46,14 @@ class LxnsHtmlUploader(
 
         for ((index, task) in tasks.withIndex()) {
             try {
-                logger("落雪 - 开始获取 ${task.displayName} 页面")
-                val html = fetchHtmlWithRetry(netHttpClient, task.url, task.displayName)
+                val html = if (!prefetchedFriendHtml.isNullOrBlank() &&
+                    task.url.endsWith("friend/userFriendCode/")
+                ) {
+                    prefetchedFriendHtml
+                } else {
+                    logger("落雪 - 开始获取 ${task.displayName} 页面")
+                    fetchHtmlWithRetry(netHttpClient, task.url, task.displayName)
+                }
                 logger("落雪 - ${task.displayName} 已获取，正在上传至落雪查分器")
                 val changes = lxnsClient.uploadUserHtml(userToken, html)
                 successCount++

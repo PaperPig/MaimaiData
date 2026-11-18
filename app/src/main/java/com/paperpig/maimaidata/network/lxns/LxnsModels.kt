@@ -14,7 +14,7 @@ data class LxnsResponse<T>(
 )
 
 /**
- * 落雪玩家基本信息。
+ * 落雪玩家基本信息 DTO（仅用于落雪查分器账号绑定信息与好友码展示）。
  */
 data class LxnsPlayer(
     val name: String = "",

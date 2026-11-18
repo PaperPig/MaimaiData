@@ -265,6 +265,7 @@ public class WechatCrawler {
             String lxnsUserToken
     ) throws IOException {
         this.buildHttpClient(false);
+        String friendHtml = fetchAndSaveLocalPlayerProfile();
         if (uploadDivingFish) {
             Set<Integer> divingFishDiffs = LxnsHtmlUploader.filterSupportedDifficulties(difficulties);
             if (divingFishDiffs.isEmpty()) {
@@ -274,7 +275,25 @@ public class WechatCrawler {
             }
         }
         if (uploadLxns) {
-            new LxnsHtmlUploader().uploadAll(client, lxnsUserToken, difficulties);
+            new LxnsHtmlUploader().uploadAll(client, lxnsUserToken, difficulties, friendHtml);
+        }
+    }
+
+    private String fetchAndSaveLocalPlayerProfile() {
+        Request request = new Request.Builder()
+                .url(WahlapFriendPageParser.FRIEND_CODE_URL)
+                .get()
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful() || response.body() == null) {
+                return null;
+            }
+            String html = response.body().string();
+            WahlapFriendPageParser.saveFromFriendHtml(client, html);
+            return html;
+        } catch (Exception e) {
+            Log.w(TAG, "获取本地玩家名片失败", e);
+            return null;
         }
     }
 

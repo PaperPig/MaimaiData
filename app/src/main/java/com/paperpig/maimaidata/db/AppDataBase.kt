@@ -14,6 +14,7 @@ import com.paperpig.maimaidata.db.AppDataBase.Companion.DATABASE_VERSION
 import com.paperpig.maimaidata.db.dao.AliasDao
 import com.paperpig.maimaidata.db.dao.ChartDao
 import com.paperpig.maimaidata.db.dao.ChartStatsDao
+import com.paperpig.maimaidata.db.dao.PlayerProfileDao
 import com.paperpig.maimaidata.db.dao.RecordDao
 import com.paperpig.maimaidata.db.dao.SongDao
 import com.paperpig.maimaidata.db.dao.SongWithChartsDao
@@ -21,16 +22,25 @@ import com.paperpig.maimaidata.db.entity.AliasEntity
 import com.paperpig.maimaidata.db.entity.ChartEntity
 import com.paperpig.maimaidata.db.entity.ChartStatsEntity
 import com.paperpig.maimaidata.db.entity.ListIntConverter
+import com.paperpig.maimaidata.db.entity.PlayerProfileEntity
 import com.paperpig.maimaidata.db.entity.RecordEntity
 import com.paperpig.maimaidata.db.entity.SongDataEntity
 import com.paperpig.maimaidata.utils.SpUtil
 
 @Database(
-    entities = [SongDataEntity::class, ChartEntity::class, AliasEntity::class, RecordEntity::class, ChartStatsEntity::class],
+    entities = [
+        SongDataEntity::class,
+        ChartEntity::class,
+        AliasEntity::class,
+        RecordEntity::class,
+        ChartStatsEntity::class,
+        PlayerProfileEntity::class
+    ],
     version = DATABASE_VERSION,
     autoMigrations = [
         AutoMigration(from = 1, to = 2, spec = AppDataBase.ReadingMigration::class),
-        AutoMigration(from = 2, to = 3)
+        AutoMigration(from = 2, to = 3),
+        AutoMigration(from = 3, to = 4)
     ]
 )
 @TypeConverters(ListIntConverter::class)
@@ -41,6 +51,7 @@ abstract class AppDataBase : RoomDatabase() {
     abstract fun aliasDao(): AliasDao
     abstract fun recordDao(): RecordDao
     abstract fun chartStatsDao(): ChartStatsDao
+    abstract fun playerProfileDao(): PlayerProfileDao
 
     // 自动迁移新增字段后，为已有歌曲补齐朗读内容。
     class ReadingMigration : AutoMigrationSpec {
@@ -51,7 +62,7 @@ abstract class AppDataBase : RoomDatabase() {
     }
 
     companion object {
-        const val DATABASE_VERSION = 3
+        const val DATABASE_VERSION = 4
         const val DATABASE_NAME = "maimaidata_db"
 
         @Volatile
